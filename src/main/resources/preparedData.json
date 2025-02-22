@@ -1,0 +1,128 @@
+{
+  "trainee": [
+    {
+      "userId": "550e8400-e29b-41d4-a716-446655440000",
+      "firstname": "John",
+      "lastname": "Doe",
+      "dateOfBirth": "12.12.12",
+      "address": "some place",
+      "isActive": true
+    },
+    {
+      "userId": "550e8401-e29b-41d4-a716-446655440001",
+      "firstname": "Jane",
+      "lastname": "Doe",
+      "dateOfBirth": "10.10.10",
+      "address": "another place",
+      "isActive": true
+    },
+    {
+      "userId": "550e8402-e29b-41d4-a716-446655440002",
+      "firstname": "Mike",
+      "lastname": "Brown",
+      "dateOfBirth": "15.05.15",
+      "address": "yet another place",
+      "isActive": true
+    },
+    {
+      "userId": "550e8403-e29b-41d4-a716-446655440003",
+      "firstname": "Emily",
+      "lastname": "Clark",
+      "dateOfBirth": "20.08.20",
+      "address": "somewhere else",
+      "isActive": true
+    },
+    {
+      "userId": "550e8404-e29b-41d4-a716-446655440004",
+      "firstname": "Chris",
+      "lastname": "Wilson",
+      "dateOfBirth": "18.11.18",
+      "address": "a different place",
+      "isActive": true
+    }
+  ],
+  "trainer": [
+    {
+      "userId": "660e8400-e29b-41d4-a716-446655440000",
+      "firstname": "Alice",
+      "lastname": "Smith",
+      "specialization": "training only",
+      "isActive": true
+    },
+    {
+      "userId": "660e8340-e29b-41d4-a716-446655440000",
+      "firstname": "Alice",
+      "lastname": "Smith",
+      "specialization": "training only",
+      "isActive": true
+    },
+    {
+      "userId": "660e8401-e29b-41d4-a716-446655440001",
+      "firstname": "Bob",
+      "lastname": "Johnson",
+      "specialization": "cardio training",
+      "isActive": true
+    },
+    {
+      "userId": "660e8402-e29b-41d4-a716-446655440002",
+      "firstname": "Sarah",
+      "lastname": "Lee",
+      "specialization": "flexibility training",
+      "isActive": true
+    },
+    {
+      "userId": "660e8403-e29b-41d4-a716-446655440003",
+      "firstname": "David",
+      "lastname": "Miller",
+      "specialization": "strength training",
+      "isActive": true
+    }
+  ],
+  "trainings": [
+    {
+      "trainingId": "770e8400-e29b-41d4-a716-446655440000",
+      "traineeId": "550e8400-e29b-41d4-a716-446655440000",
+      "trainerId": "660e8400-e29b-41d4-a716-446655440000",
+      "trainingName": "Strength Training",
+      "trainingDate": "2025-02-20",
+      "trainingType": "STRENGTH_TRAINING",
+      "trainingDuration": "1 hour"
+    },
+    {
+      "trainingId": "770e8401-e29b-41d4-a716-446655440001",
+      "traineeId": "550e8401-e29b-41d4-a716-446655440001",
+      "trainerId": "660e8401-e29b-41d4-a716-446655440001",
+      "trainingName": "Cardio Session",
+      "trainingDate": "2025-02-21",
+      "trainingType": "HYPERTROPHY_TRAINING",
+      "trainingDuration": "45 minutes"
+    },
+    {
+      "trainingId": "770e8402-e29b-41d4-a716-446655440002",
+      "traineeId": "550e8402-e29b-41d4-a716-446655440002",
+      "trainerId": "660e8402-e29b-41d4-a716-446655440002",
+      "trainingName": "Yoga Flexibility",
+      "trainingDate": "2025-02-22",
+      "trainingType": "FUNCTIONAL_TRAINING",
+      "trainingDuration": "1 hour"
+    },
+    {
+      "trainingId": "770e8403-e29b-41d4-a716-446655440003",
+      "traineeId": "550e8403-e29b-41d4-a716-446655440003",
+      "trainerId": "660e8403-e29b-41d4-a716-446655440003",
+      "trainingName": "Weightlifting Basics",
+      "trainingDate": "2025-02-23",
+      "trainingType": "FUNCTIONAL_TRAINING",
+      "trainingDuration": "90 minutes"
+    },
+    {
+      "trainingId": "770e8404-e29b-41d4-a716-446655440004",
+      "traineeId": "550e8404-e29b-41d4-a716-446655440004",
+      "trainerId": "660e8401-e29b-41d4-a716-446655440001",
+      "trainingName": "High-Intensity Cardio",
+      "trainingDate": "2025-02-24",
+      "trainingType": "STRENGTH_TRAINING",
+      "trainingDuration": "30 minutes"
+    }
+  ]
+}
