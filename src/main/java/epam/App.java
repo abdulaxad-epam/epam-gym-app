@@ -1,9 +1,13 @@
 package epam;
 
 
+import epam.app.ConsoleApplication;
+import epam.config.LoadConfiguration;
 import epam.dao.TraineeDAO;
 import epam.dao.TrainerDAO;
 import epam.dao.TrainingDAO;
+
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
@@ -13,7 +17,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan("epam")
 public class App {
 
-    private final static Log log = LogFactory.getLog(App.class.getName());
+    private final static Log log = LogFactory.getLog(App.class);
 
     public static void main( String[] args ) {
 

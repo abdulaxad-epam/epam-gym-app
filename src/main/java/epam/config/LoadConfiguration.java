@@ -4,9 +4,14 @@ package epam.config;
 import epam.dao.TraineeDAO;
 import epam.dao.TrainerDAO;
 import epam.dao.TrainingDAO;
+import epam.domain.Trainee;
+import epam.domain.Trainer;
+import epam.domain.Training;
+import epam.domain.User;
 import epam.util.FileLoader;
 import epam.util.parser.*;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -15,24 +20,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+
 @Configuration
 @PropertySource("classpath:application.properties")
+@RequiredArgsConstructor
 public class LoadConfiguration {
 
     private static final String TRAINEE_KEY = "trainee";
     private static final String TRAINER_KEY = "trainer";
     private static final String TRAINING_KEY = "trainings";
 
-    private TrainingDAO trainingDAO;
-    private TrainerDAO trainerDAO;
-    private TraineeDAO traineeDAO;
+    private final TrainingDAO trainingDAO;
+    private final TrainerDAO trainerDAO;
+    private final TraineeDAO traineeDAO;
 
-    private FileLoader fileLoader;
-    private TraineeParser traineeParser;
-    private TrainerParser trainerParser;
-    private TrainingParser trainingParser;
+    private final FileLoader fileLoader;
+    private final TraineeParser traineeParser;
+    private final TrainerParser trainerParser;
+    private final TrainingParser trainingParser;
 
-    @PostConstruct
+
     public void loadDataFromFile() {
         Map<String, List<Map<String, String>>> data = fileLoader.loadFile();
 
@@ -48,47 +55,14 @@ public class LoadConfiguration {
             return;
         }
 
-        parser.parse(rawData).forEach(item -> inserter.insert(UUID.randomUUID(), item));
+        parser.parse(rawData).forEach(item -> {
+            if (item instanceof Training)
+                inserter.insert(((Training) item).getTrainingId(), item);
+            else if (item.getClass() == Trainer.class)
+                inserter.insert(((Trainer) item).getUserId(), item);
+            else if (item.getClass() ==  Trainee.class)
+                inserter.insert(((Trainee) item).getUserId(), item);
+        });
     }
 
-
-
-
-    /**
-        Setter injections
-    **/
-    @Autowired
-    public void setTrainingDAO(TrainingDAO trainingDAO) {
-        this.trainingDAO = trainingDAO;
-    }
-
-    @Autowired
-    public void setTrainerDAO(TrainerDAO trainerDAO) {
-        this.trainerDAO = trainerDAO;
-    }
-
-    @Autowired
-    public void setTraineeDAO(TraineeDAO traineeDAO) {
-        this.traineeDAO = traineeDAO;
-    }
-
-    @Autowired
-    public void setFileLoader(FileLoader fileLoader) {
-        this.fileLoader = fileLoader;
-    }
-
-    @Autowired
-    public void setTrainerParser(TrainerParser trainerParser) {
-        this.trainerParser = trainerParser;
-    }
-
-    @Autowired
-    public void setTrainingParser(TrainingParser trainingParser) {
-        this.trainingParser = trainingParser;
-    }
-
-    @Autowired
-    public void setTraineeParser(TraineeParser traineeParser) {
-        this.traineeParser = traineeParser;
-    }
 }

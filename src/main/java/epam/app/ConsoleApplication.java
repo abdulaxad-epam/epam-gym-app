@@ -1,6 +1,7 @@
 package epam.app;
 
 
+import epam.config.LoadConfiguration;
 import epam.domain.Trainee;
 import epam.domain.Trainer;
 import epam.domain.Training;
@@ -9,25 +10,39 @@ import epam.exception.TraineeNotFoundException;
 import epam.exception.TrainerNotFoundException;
 import epam.exception.TrainingNotFoundException;
 import epam.facade.TrainingFacade;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class ConsoleApplication {
     private final Scanner scanner = new Scanner(System.in);
     private TrainingFacade trainingFacade;
+
+    private final LoadConfiguration loadConfiguration;
 
     @Autowired
     public void setTrainingFacade(TrainingFacade trainingFacade) {
         this.trainingFacade = trainingFacade;
     }
 
-//    @PostConstruct
+    @PostConstruct
+    public void init() {
+        loadConfiguration.loadDataFromFile();
+        start();
+    }
+
     public void start() {
         boolean running = true;
         while (running) {
@@ -189,7 +204,7 @@ public class ConsoleApplication {
         }
     }
 
-    private void createTrainee() {
+    void createTrainee() {
         System.out.println("\n=== Create Trainee ===");
 
         System.out.print("Enter first name: ");
@@ -198,8 +213,19 @@ public class ConsoleApplication {
         System.out.print("Enter last name: ");
         String lastName = scanner.nextLine();
 
-        System.out.print("Enter date of birth (YYYY-MM-DD): ");
-        String dateOfBirth = scanner.nextLine();
+        String dateOfBirth = null;
+        while (dateOfBirth == null) {
+            System.out.print("Enter date of birth (YYYY-MM-DD): ");
+            String input = scanner.nextLine();
+
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate.parse(input, formatter);
+                dateOfBirth = input;
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format or values. Please use YYYY-MM-DD format with valid month/day values.");
+            }
+        }
 
         System.out.print("Enter address: ");
         String address = scanner.nextLine();
@@ -224,8 +250,7 @@ public class ConsoleApplication {
         }
     }
 
-
-    private void updateTrainee() {
+    void updateTrainee() {
         System.out.println("\n=== Update Trainee ===");
         System.out.print("Enter trainee ID: ");
         String idStr = scanner.nextLine();
@@ -250,10 +275,25 @@ public class ConsoleApplication {
                 existingTrainee.setLastname(lastName);
             }
 
-            System.out.print("Date of birth [" + existingTrainee.getDateOfBirth() + "]: ");
-            String dateOfBirth = scanner.nextLine();
-            if (!dateOfBirth.isEmpty()) {
-                existingTrainee.setDateOfBirth(dateOfBirth);
+            String dateOfBirth = existingTrainee.getDateOfBirth();
+            boolean validDate = false;
+            while (!validDate) {
+                System.out.print("Date of birth [" + existingTrainee.getDateOfBirth() + "]: ");
+                String input = scanner.nextLine();
+
+                if (input.isEmpty()) {
+                    validDate = true;
+                } else {
+                    try {
+
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                        LocalDate.parse(input, formatter);
+                        existingTrainee.setDateOfBirth(input);
+                        validDate = true;
+                    } catch (DateTimeParseException e) {
+                        System.out.println("Invalid date format or values. Please use YYYY-MM-DD format with valid month/day values.");
+                    }
+                }
             }
 
             System.out.print("Address [" + existingTrainee.getAddress() + "]: ");
@@ -270,12 +310,16 @@ public class ConsoleApplication {
 
             trainingFacade.updateTrainee(id, existingTrainee);
             System.out.println("Trainee updated successfully");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid UUID format");
+        } catch (TraineeNotFoundException e) {
+            System.out.println("Trainee not found");
         } catch (Exception e) {
             System.out.println("Error updating trainee: " + e.getMessage());
         }
     }
 
-    private void deleteTrainee() {
+    void deleteTrainee() {
         System.out.println("\n=== Delete Trainee ===");
         System.out.print("Enter trainee ID: ");
         String idStr = scanner.nextLine();
@@ -293,7 +337,7 @@ public class ConsoleApplication {
         }
     }
 
-    private void viewTrainee() {
+    void viewTrainee() {
         System.out.println("\n=== View Trainee ===");
         System.out.print("Enter trainee ID: ");
         String idStr = scanner.nextLine();
@@ -311,17 +355,21 @@ public class ConsoleApplication {
         }
     }
 
-    private void viewAllTrainees() {
+    void viewAllTrainees() {
         System.out.println("\n=== All Trainees ===");
         try {
             List<Trainee> trainees = trainingFacade.getAllTrainees();
-            trainees.forEach(System.out::println);
+            if (trainees.isEmpty()) {
+                System.out.println("No trainees found in the system.");
+            } else {
+                trainees.forEach(System.out::println);
+            }
         } catch (Exception e) {
             System.out.println("Error viewing trainees: " + e.getMessage());
         }
     }
 
-    private void createTrainer() {
+    void createTrainer() {
         System.out.println("\n=== Create Trainer ===");
 
         System.out.print("Enter first name: ");
@@ -352,7 +400,7 @@ public class ConsoleApplication {
         }
     }
 
-    private void updateTrainer() {
+    void updateTrainer() {
         System.out.println("\n=== Update Trainer ===");
         System.out.print("Enter trainer ID: ");
         String idStr = scanner.nextLine();
@@ -391,12 +439,16 @@ public class ConsoleApplication {
 
             trainingFacade.updateTrainer(id, existingTrainer);
             System.out.println("Trainer updated successfully");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid UUID format");
+        } catch (TrainerNotFoundException e) {
+            System.out.println("Trainer not found");
         } catch (Exception e) {
             System.out.println("Error updating trainer: " + e.getMessage());
         }
     }
 
-    private void deleteTrainer() {
+    void deleteTrainer() {
         System.out.println("\n=== Delete Trainer ===");
         System.out.print("Enter trainer ID: ");
         String idStr = scanner.nextLine();
@@ -414,7 +466,7 @@ public class ConsoleApplication {
         }
     }
 
-    private void viewTrainer() {
+    void viewTrainer() {
         System.out.println("\n=== View Trainer ===");
         System.out.print("Enter trainer ID: ");
         String idStr = scanner.nextLine();
@@ -432,11 +484,15 @@ public class ConsoleApplication {
         }
     }
 
-    private void viewAllTrainers() {
+    void viewAllTrainers() {
         System.out.println("\n=== All Trainers ===");
         try {
             List<Trainer> trainers = trainingFacade.getAllTrainers();
-            trainers.forEach(System.out::println);
+            if (trainers.isEmpty()) {
+                System.out.println("No trainers found in the system.");
+            } else {
+                trainers.forEach(System.out::println);
+            }
         } catch (Exception e) {
             System.out.println("Error viewing trainers: " + e.getMessage());
         }
@@ -448,30 +504,81 @@ public class ConsoleApplication {
         System.out.print("Enter training name: ");
         String name = scanner.nextLine();
 
-        System.out.print("Enter trainee ID: ");
-        String traineeId = scanner.nextLine();
 
-        System.out.print("Enter trainer ID: ");
-        String trainerId = scanner.nextLine();
+        Trainee trainee = null;
+        UUID traineeUuid = null;
+        while (trainee == null) {
+            System.out.print("Enter trainee ID: ");
+            String traineeId = scanner.nextLine();
 
-        System.out.print("Enter training date (YYYY-MM-DD): ");
-        String trainingDate = scanner.nextLine();
+            try {
+                traineeUuid = UUID.fromString(traineeId);
+                trainee = trainingFacade.getTraineeById(traineeUuid);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid UUID format. Please try again.");
+            } catch (TraineeNotFoundException e) {
+                System.out.println("There's no trainee with ID '" + traineeId + "'. Please try again.");
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage() + ". Please try again.");
+            }
+        }
 
-        System.out.println("Enter training type (Available types: " +
-                String.join(", ", Arrays.toString(TrainingType.values())) + "): ");
-        String trainingType = scanner.nextLine();
+        Trainer trainer = null;
+        UUID trainerUuid = null;
+        while (trainer == null) {
+            System.out.print("Enter trainer ID: ");
+            String trainerId = scanner.nextLine();
 
-        System.out.print("Enter training duration (e.g., '2 hours'): ");
-        String duration = scanner.nextLine();
+            try {
+                trainerUuid = UUID.fromString(trainerId);
+                trainer = trainingFacade.getTrainerById(trainerUuid);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid UUID format. Please try again.");
+            } catch (TrainerNotFoundException e) {
+                System.out.println("There's no trainer with ID '" + trainerId + "'. Please try again.");
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage() + ". Please try again.");
+            }
+        }
 
-        Training training = new Training.TrainingBuilder()
+        String trainingDate = null;
+        while (trainingDate == null) {
+            System.out.print("Enter training date (YYYY-MM-DD): ");
+            String input = scanner.nextLine();
+
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate.parse(input, formatter);
+                trainingDate = input;
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format or values. Please use YYYY-MM-DD format with valid month/day values.");
+            }
+        }
+
+        TrainingType trainingTypeEnum = null;
+        while (trainingTypeEnum == null) {
+            System.out.println("Enter training type. Available types: " +
+                    Arrays.toString(TrainingType.values()) + ": ");
+            String trainingType = scanner.nextLine().toUpperCase();
+
+            try {
+                trainingTypeEnum = TrainingType.valueOf(trainingType);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid training type. Please select from the available options.");
+            }
+        }
+
+        System.out.print("Enter training duration in days: ");
+        int duration = scanner.nextInt();
+
+        Training training = Training.builder()
                 .trainingId(UUID.randomUUID())
                 .trainingName(name)
-                .traineeId(traineeId)
-                .trainerId(trainerId)
+                .traineeId(traineeUuid.toString())
+                .trainerId(trainerUuid.toString())
                 .trainingDate(trainingDate)
-                .trainingType(TrainingType.valueOf(trainingType.toUpperCase()))
-                .trainingDuration(duration)
+                .trainingType(trainingTypeEnum)
+                .trainingDuration(duration + " days")
                 .build();
 
         UUID id = UUID.randomUUID();
@@ -505,7 +612,11 @@ public class ConsoleApplication {
         System.out.println("\n=== All Trainings ===");
         try {
             List<Training> trainings = trainingFacade.getAllTrainings();
-            trainings.forEach(System.out::println);
+            if (trainings.isEmpty()) {
+                System.out.println("No trainings found in the system.");
+            } else {
+                trainings.forEach(System.out::println);
+            }
         } catch (Exception e) {
             System.out.println("Error viewing trainings: " + e.getMessage());
         }

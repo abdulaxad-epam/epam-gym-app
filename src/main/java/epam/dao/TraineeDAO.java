@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public class TraineeDAO implements Train<Trainee>{
+public class TraineeDAO implements TrainingUserRepository<Trainee>{
 
     private final Map<UUID, Trainee> inMemoryTrainee;
 
@@ -26,6 +26,7 @@ public class TraineeDAO implements Train<Trainee>{
 
     public Trainee update(UUID id, Trainee trainee) {
         if (inMemoryTrainee.containsKey(id)) {
+            trainee = updateUsername(trainee);
             inMemoryTrainee.replace(id, trainee);
             return trainee;
         }

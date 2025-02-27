@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -35,16 +36,16 @@ public class FileLoader {
 
         File file = new File(storageFilePath);
         if (!file.exists()) {
-            log.error("Data file not found: " + storageFilePath);
+            log.error("Data file not found: "+ storageFilePath);
             return Map.of();
         }
 
         try {
-            log.info("Loading data from file: " + storageFilePath);
+            log.info("Loading data from file: "+ storageFilePath);
             return objectMapper.readValue(file, new TypeReference<>() {
             });
         } catch (IOException e) {
-            log.error("Error reading data from file: " + storageFilePath, e);
+            log.error("Error reading data from file: "+ storageFilePath, e);
             throw new RuntimeException("Failed to load data from file: " + storageFilePath, e);
         }
 

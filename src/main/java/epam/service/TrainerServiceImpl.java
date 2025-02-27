@@ -4,6 +4,7 @@ package epam.service;
 import epam.dao.TrainerDAO;
 import epam.domain.Trainer;
 import epam.exception.TrainerNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +17,11 @@ import java.util.UUID;
 
 
 @Service
+@RequiredArgsConstructor
 public class TrainerServiceImpl implements TrainerService {
 
     private static final Log log = LogFactory.getLog(TrainerServiceImpl.class);
-    private TrainerDAO trainerDAO;
-
-    @Autowired
-    public void TrainerServiceImpl(TrainerDAO trainerDAO) {
-        this.trainerDAO = trainerDAO;
-    }
+    private final TrainerDAO trainerDAO;
 
     @Override
     public Trainer createTrainer(UUID id, Trainer trainer) {
@@ -62,7 +59,6 @@ public class TrainerServiceImpl implements TrainerService {
             throw new TrainerNotFoundException("Trainer with ID [" + id + "] not found");
         }
     }
-
     @Override
     public List<Trainer> getAllTrainers() {
         log.info("Fetching all trainers...");

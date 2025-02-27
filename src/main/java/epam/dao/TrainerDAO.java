@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public class TrainerDAO implements Train<Trainer> {
+public class TrainerDAO implements TrainingUserRepository<Trainer> {
 
     private final Map<UUID, Trainer> inMemoryTrainer;
 
@@ -24,6 +24,7 @@ public class TrainerDAO implements Train<Trainer> {
     }
 
     public Trainer update(UUID id, Trainer trainer) {
+        trainer = updateUsername(trainer);
         inMemoryTrainer.replace(id, trainer);
         return trainer;
 

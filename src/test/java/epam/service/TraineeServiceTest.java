@@ -11,13 +11,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class TraineeServiceTest {
@@ -130,5 +138,36 @@ public class TraineeServiceTest {
 
         //Verify
         verify(traineeDAO).findById(givenTrainee1.getUserId());
+    }
+
+    @Test
+    void testGetAllTrainees_ReturnsEmptyList_WhenNoTraineesExist() {
+        when(traineeDAO.findAll()).thenReturn(Collections.emptyMap());
+
+        List<Trainee> result = traineeService.getAllTrainees();
+
+        assertTrue(result.isEmpty(), "Result should be an empty list");
+        verify(traineeDAO, times(1)).findAll();
+    }
+
+    @Test
+    void testGetAllTrainees_ReturnsListOfTrainees_WhenTraineesExist() {
+        UUID id1 = UUID.randomUUID();
+        UUID id2 = UUID.randomUUID();
+        Trainee trainee1 = new Trainee("Alice", "Smith");
+        Trainee trainee2 = new Trainee("Bob", "Johnson");
+
+        Map<UUID, Trainee> traineeMap = new HashMap<>();
+        traineeMap.put(id1, trainee1);
+        traineeMap.put(id2, trainee2);
+
+        when(traineeDAO.findAll()).thenReturn(traineeMap);
+
+        List<Trainee> result = traineeService.getAllTrainees();
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains(trainee1), "Result should contain trainee1");
+        assertTrue(result.contains(trainee2), "Result should contain trainee2");
+        verify(traineeDAO, times(1)).findAll();
     }
 }

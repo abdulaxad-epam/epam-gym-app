@@ -8,22 +8,22 @@ import java.util.Map;
 import java.util.UUID;
 
 @FunctionalInterface
-public interface Train<T extends User> {
-    Log log = LogFactory.getLog(Train.class);
+public interface TrainingUserRepository<T extends User> {
+    Log log = LogFactory.getLog(TrainingUserRepository.class);
 
     Map<UUID, T> getInMemoryStorage();
 
-    default T insert(UUID id, T train) {
+    default T insert(UUID id, T trainingUser) {
         Map<UUID, T> inMemoryStorage = getInMemoryStorage();
 
-        train.setUsername(train.getFirstname() + "." + train.getLastname());
+        trainingUser = updateUsername(trainingUser);
 
-        String oldUserName = train.getUsername();
+        String oldUserName = trainingUser.getUsername();
         String newUsername = oldUserName;
 
         int count = 1;
 
-        log.info("Inserting user with ID: "+id+" and username: "+oldUserName);
+        log.info("Inserting user with ID: " + id + " and username: " + oldUserName);
 
         while (isUsernameExists(newUsername)) {
             log.warn("Username '" + newUsername + "' already exists! Trying '" + oldUserName + count + "'");
@@ -31,11 +31,17 @@ public interface Train<T extends User> {
             count++;
         }
 
-        train.setUsername(newUsername);
-        inMemoryStorage.put(id, train);
+        trainingUser.setUsername(newUsername);
+        trainingUser.setUserId(id);
+        inMemoryStorage.put(trainingUser.getUserId(), trainingUser);
 
         log.info("User '" + id + "' inserted with final username '" + newUsername + "'");
-        return train;
+        return trainingUser;
+    }
+
+    default T updateUsername(T trainingUser) {
+        trainingUser.setUsername(trainingUser.getFirstname() + "." + trainingUser.getLastname());
+        return trainingUser;
     }
 
     default boolean isUsernameExists(String username) {
@@ -44,7 +50,7 @@ public interface Train<T extends User> {
                 .anyMatch(trainee -> trainee.getUsername().equals(username));
 
         if (exists) {
-            log.debug("Username '"+username+"' already exists in storage");
+            log.debug("Username '" + username + "' already exists in storage");
         }
         return exists;
     }

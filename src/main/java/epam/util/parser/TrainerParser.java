@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -14,6 +15,7 @@ public class TrainerParser implements EntityParser<Trainer> {
     public List<Trainer> parse(List<Map<String, String>> trainers) {
         return trainers.stream().map(data -> {
             Trainer trainer = Trainer.builder()
+                    .userId(UUID.fromString(data.get("userId")))
                     .firstname(data.get("firstname"))
                     .lastname(data.get("lastname"))
                     .specialization(data.get("specialization"))

@@ -2,24 +2,25 @@ package epam.domain;
 
 
 import epam.util.PasswordGenerator;
-import lombok.*;
+import lombok.Data;
+import lombok.Builder;
+import lombok.ToString;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
-@Setter
-@Getter
+@Data
 @ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
 
-    @Builder.Default
-    private UUID userId = UUID.randomUUID();
+    private UUID userId;
 
     private String firstname;
-
 
     private String lastname;
 

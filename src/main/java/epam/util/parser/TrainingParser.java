@@ -14,8 +14,8 @@ public class TrainingParser implements EntityParser<Training> {
 
     @Override
     public List<Training> parse(List<Map<String, String>> trainings) {
-        return trainings.stream().map(data -> new Training.TrainingBuilder()
-                .trainingId(UUID.randomUUID())
+        return trainings.stream().map(data -> Training.builder()
+                .trainingId(UUID.fromString(data.get("trainingId")))
                 .traineeId(data.get("traineeId"))
                 .trainerId(data.get("trainerId"))
                 .trainingName(data.get("trainingName"))

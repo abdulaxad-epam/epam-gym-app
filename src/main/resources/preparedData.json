@@ -86,7 +86,7 @@
       "trainingName": "Strength Training",
       "trainingDate": "2025-02-20",
       "trainingType": "STRENGTH_TRAINING",
-      "trainingDuration": "1 hour"
+      "trainingDuration": "1 days"
     },
     {
       "trainingId": "770e8401-e29b-41d4-a716-446655440001",
@@ -95,7 +95,7 @@
       "trainingName": "Cardio Session",
       "trainingDate": "2025-02-21",
       "trainingType": "HYPERTROPHY_TRAINING",
-      "trainingDuration": "45 minutes"
+      "trainingDuration": "45 days"
     },
     {
       "trainingId": "770e8402-e29b-41d4-a716-446655440002",
@@ -113,7 +113,7 @@
       "trainingName": "Weightlifting Basics",
       "trainingDate": "2025-02-23",
       "trainingType": "FUNCTIONAL_TRAINING",
-      "trainingDuration": "90 minutes"
+      "trainingDuration": "90 days"
     },
     {
       "trainingId": "770e8404-e29b-41d4-a716-446655440004",
@@ -122,7 +122,7 @@
       "trainingName": "High-Intensity Cardio",
       "trainingDate": "2025-02-24",
       "trainingType": "STRENGTH_TRAINING",
-      "trainingDuration": "30 minutes"
+      "trainingDuration": "30 days"
     }
   ]
 }

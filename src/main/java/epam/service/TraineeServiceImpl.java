@@ -3,9 +3,9 @@ package epam.service;
 import epam.dao.TraineeDAO;
 import epam.domain.Trainee;
 import epam.exception.TraineeNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,15 +14,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class TraineeServiceImpl implements TraineeService {
 
     private static final Log log = LogFactory.getLog(TraineeServiceImpl.class);
-    private TraineeDAO traineeDAO;
-
-    @Autowired
-    public void TraineeServiceImpl(TraineeDAO traineeDAO) {
-        this.traineeDAO = traineeDAO;
-    }
+    private final TraineeDAO traineeDAO;
 
     @Override
     public Trainee createTrainee(UUID id, Trainee trainee) {
