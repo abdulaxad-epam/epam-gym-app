@@ -13,7 +13,7 @@ public interface TrainerService {
 
     TrainerResponseDTO updateTrainer(UUID id, Trainer trainer);
 
-    void deleteTrainer(UUID id);
+    void deleteTrainer(String username);
 
     TrainerResponseDTO getTrainerByUsername(String username);
 

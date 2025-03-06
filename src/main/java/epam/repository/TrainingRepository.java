@@ -1,6 +1,5 @@
-package epam.repositories;
+package epam.repository;
 
-import epam.entity.Trainer;
 import epam.entity.Training;
 
 import java.util.List;

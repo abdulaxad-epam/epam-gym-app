@@ -1,4 +1,4 @@
-package epam.repositories;
+package epam.repository;
 
 import epam.entity.Trainer;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,8 +12,6 @@ public interface TrainerRepository {
 
     Trainer update(UUID id, Trainer trainer);
 
-    void delete(UUID id);
-
     Optional<Trainer> findByUsername(String username);
 
     @Transactional(readOnly = true)
@@ -23,4 +21,6 @@ public interface TrainerRepository {
     List<Trainer> findAll();
 
     boolean existsById(UUID id);
+
+    void deleteTrainerByUsername(String username);
 }

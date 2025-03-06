@@ -1,13 +1,12 @@
-package epam.repositories_impl;
+package epam.repository_impl;
 
 
-import epam.entity.Trainee;
 import epam.entity.Trainer;
 import epam.entity.User;
 import epam.exception.EntityManagerInsertException;
 import epam.exception.TrainerNotFoundException;
-import epam.repositories.TrainerRepository;
-import epam.repositories.TrainingUserRepository;
+import epam.repository.TrainerRepository;
+import epam.repository.TrainingUserRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
@@ -81,21 +80,6 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
     }
 
     @Override
-    public void delete(UUID id) {
-        try {
-            entityManager.getTransaction().begin();
-            if (entityManager.find(Trainer.class, id) != null) {
-                entityManager.remove(entityManager.find(Trainer.class, id));
-            } else {
-                throw new TrainerNotFoundException("Trainer with id " + id + " not found");
-            }
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    @Override
     public Optional<Trainer> findByUsername(String username) {
         Trainer trainer = null;
         try {
@@ -128,7 +112,6 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
 
     @Override
     public boolean existsById(UUID id) {
-        EntityManager entityManager = getEntityManager();
         return entityManager.createQuery(
                         """
                                 SELECT CASE WHEN EXISTS
@@ -141,4 +124,20 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
                 .setParameter("id", id)
                 .getSingleResult();
     }
+
+    @Override
+    public void deleteTrainerByUsername(String username) {
+        try {
+            entityManager.getTransaction().begin();
+
+            entityManager.createQuery("DELETE FROM Trainer t WHERE t.user.username = :username ")
+                    .setParameter("username", username)
+                    .executeUpdate();
+
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+    }
+
 }

@@ -3,9 +3,10 @@ package epam.service_impl;
 import epam.entity.Trainee;
 import epam.exception.TraineeNotFoundException;
 import epam.mapper.TraineeMapper;
-import epam.repositories.TraineeRepository;
+import epam.repository.TraineeRepository;
 import epam.response_dto.TraineeResponseDTO;
 import epam.service.TraineeService;
+import epam.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,8 @@ public class TraineeServiceImpl implements TraineeService {
     private final TraineeRepository traineeRepository;
 
     private final TraineeMapper traineeMapper;
+
+    private final UserService userService;
 
     @Override
     public TraineeResponseDTO createTrainee(UUID id, Trainee trainee) {
@@ -42,9 +45,9 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public void deleteTrainee(UUID id) {
-        if (traineeRepository.existsById(id)) {
-            traineeRepository.delete(id);
+    public void deleteTrainee(String username) {
+        if (userService.existsByUsername(username)) {
+            traineeRepository.deleteTraineeByUsername(username);
         } else
             throw new TraineeNotFoundException("Trainee not found");
     }

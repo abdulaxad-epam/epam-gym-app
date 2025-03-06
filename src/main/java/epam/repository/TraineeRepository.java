@@ -1,7 +1,6 @@
-package epam.repositories;
+package epam.repository;
 
 import epam.entity.Trainee;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,8 +12,6 @@ public interface TraineeRepository {
 
     Trainee update(UUID id, Trainee trainee);
 
-    void delete(UUID id);
-
     Optional<Trainee> findById(UUID id);
 
     Optional<Trainee> findByUsername(String username);
@@ -23,4 +20,6 @@ public interface TraineeRepository {
     List<Trainee> findAll();
 
     boolean existsById(UUID id);
+
+    void deleteTraineeByUsername(String username);
 }

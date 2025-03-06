@@ -1,9 +1,9 @@
-package epam.repositories_impl;
+package epam.repository_impl;
 
 
 import epam.entity.Training;
 import epam.exception.TrainingNotFoundException;
-import epam.repositories.TrainingRepository;
+import epam.repository.TrainingRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

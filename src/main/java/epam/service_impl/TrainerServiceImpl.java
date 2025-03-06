@@ -3,9 +3,10 @@ package epam.service_impl;
 import epam.entity.Trainer;
 import epam.exception.TrainerNotFoundException;
 import epam.mapper.TrainerMapper;
-import epam.repositories.TrainerRepository;
+import epam.repository.TrainerRepository;
 import epam.response_dto.TrainerResponseDTO;
 import epam.service.TrainerService;
+import epam.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,10 @@ import java.util.UUID;
 public class TrainerServiceImpl implements TrainerService {
 
     private final TrainerRepository trainerRepository;
+
     private final TrainerMapper trainerMapper;
+
+    private final UserService userService;
 
     @Override
     public TrainerResponseDTO createTrainer(UUID id, Trainer trainer) {
@@ -36,9 +40,9 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public void deleteTrainer(UUID id) {
-        if (trainerRepository.existsById(id)) {
-            trainerRepository.delete(id);
+    public void deleteTrainer(String username) {
+        if (userService.existsByUsername(username)) {
+            trainerRepository.deleteTrainerByUsername(username);
         } else throw new TrainerNotFoundException("Trainer not found");
     }
 

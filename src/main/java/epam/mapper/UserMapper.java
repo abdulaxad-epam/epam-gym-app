@@ -1,6 +1,7 @@
 package epam.mapper;
 
 import epam.entity.User;
+import epam.request_dto.UserRequestDTO;
 import epam.response_dto.UserResponseDTO;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,15 @@ public class UserMapper {
                 .isActive(user.getIsActive())
                 .password(user.getPassword())
                 .username(user.getUsername())
+                .build();
+    }
+
+    public User toUser(UserRequestDTO userRequestDTO) {
+        return User.builder()
+                .firstname(userRequestDTO.getFirstName())
+                .lastname(userRequestDTO.getLastName())
+                .isActive(userRequestDTO.getIsActive())
+                .password(userRequestDTO.getPassword())
                 .build();
     }
 }

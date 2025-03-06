@@ -1,4 +1,4 @@
-package epam.repositories;
+package epam.repository;
 
 import epam.entity.User;
 import jakarta.persistence.EntityManager;

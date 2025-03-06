@@ -3,7 +3,7 @@ package epam.service_impl;
 import epam.entity.Training;
 import epam.exception.TrainingNotFoundException;
 import epam.mapper.TrainingMapper;
-import epam.repositories.TrainingRepository;
+import epam.repository.TrainingRepository;
 import epam.response_dto.TrainingResponseDTO;
 import epam.service.TrainingService;
 import lombok.RequiredArgsConstructor;

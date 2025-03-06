@@ -12,7 +12,7 @@ public interface TraineeService {
 
     TraineeResponseDTO updateTrainee(UUID id, Trainee trainee);
 
-    void deleteTrainee(UUID id);
+    void deleteTrainee(String username);
 
     TraineeResponseDTO getTraineeByUsername(String username);
 

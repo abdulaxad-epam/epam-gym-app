@@ -1,12 +1,12 @@
-package epam.repositories_impl;
+package epam.repository_impl;
 
 
 import epam.entity.Trainee;
 import epam.entity.User;
 import epam.exception.EntityManagerInsertException;
 import epam.exception.TraineeNotFoundException;
-import epam.repositories.TraineeRepository;
-import epam.repositories.TrainingUserRepository;
+import epam.repository.TraineeRepository;
+import epam.repository.TrainingUserRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
@@ -79,21 +79,6 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
         return trainee;
     }
 
-    @Override
-    public void delete(UUID id) {
-        try {
-            entityManager.getTransaction().begin();
-            if (entityManager.find(Trainee.class, id) != null) {
-                entityManager.remove(entityManager.find(Trainee.class, id));
-            } else {
-                throw new TraineeNotFoundException("Trainee with id " + id + " not found");
-            }
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-    }
-
     @Transactional(readOnly = true)
     @Override
     public Optional<Trainee> findById(UUID id) {
@@ -141,6 +126,21 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
                         Boolean.class)
                 .setParameter("id", id)
                 .getSingleResult();
+    }
+
+    @Override
+    public void deleteTraineeByUsername(String username) {
+        try {
+            entityManager.getTransaction().begin();
+
+            entityManager.createQuery("DELETE FROM Trainee t WHERE t.user.username = :username ")
+                    .setParameter("username", username)
+                    .executeUpdate();
+
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
     }
 
 }
