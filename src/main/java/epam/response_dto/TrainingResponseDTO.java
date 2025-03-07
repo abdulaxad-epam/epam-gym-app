@@ -6,19 +6,24 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Getter
 @Setter
 @Builder
 @ToString
 public class TrainingResponseDTO {
 
-    private String traineeId;
+    private TraineeResponseDTO trainee;
 
-    private String trainerId;
+    private TrainerResponseDTO trainer;
 
     private String trainingName;
 
-    private String trainingDate;
+    private LocalDateTime trainingDate;
 
     private String trainingType;
+
+    private LocalDateTime trainingDuration;
 }

@@ -1,6 +1,7 @@
 package epam.repository_impl;
 
 
+import epam.entity.Trainee;
 import epam.entity.Trainer;
 import epam.entity.User;
 import epam.exception.EntityManagerInsertException;
@@ -32,18 +33,18 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
     }
 
     @Override
-    public Trainer insert(UUID id, Trainer trainer) {
+    public Trainer insert(Trainer trainer) {
         try {
             entityManager.getTransaction().begin();
 
             User user = updateUsername(trainer.getUser());
             String username = user.getUsername();
             long serialUsername = serialUsernames(username);
-            user.setUsername(username + serialUsername + 1);
+            trainer.getUser().setUsername(username + serialUsername + 1);
             entityManager.persist(trainer);
 
             entityManager.getTransaction().commit();
-            log.info("Trainer '" + id + "' inserted with final username '" + username + "'");
+            log.info("Trainer '" + trainer.getTrainerId() + "' inserted with final username '" + username + "'");
             return trainer;
 
         } catch (Exception e) {
@@ -85,7 +86,9 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
         try {
             trainer = entityManager.createQuery("""
                     SELECT t FROM Trainer t WHERE t.user.username = :username
-                    """, Trainer.class).getSingleResult();
+                    """, Trainer.class)
+                    .setParameter("username", username)
+                    .getSingleResult();
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -126,6 +129,14 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
     }
 
     @Override
+    public Optional<UUID> getIdByUsername(String username) {
+        UUID singleResult = entityManager.createQuery("""
+                SELECT id FROM Trainer t WHERE t.user.username = :username
+                """, UUID.class).getSingleResult();
+        return Optional.of(singleResult);
+    }
+
+    @Override
     public void deleteTrainerByUsername(String username) {
         try {
             entityManager.getTransaction().begin();
@@ -140,4 +151,53 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
         }
     }
 
+    @Override
+    public List<Trainer> findTrainersByTrainee(String currentUsername) {
+        return entityManager.createQuery(
+                        """
+                                SELECT DISTINCT t FROM Trainer t
+                                JOIN TraineeTrainer tt ON t.trainerId = tt.trainer.trainerId
+                                JOIN Trainee tr ON tt.trainee.traineeId = tr.traineeId
+                                JOIN User u ON tr.user.userId = u.userId
+                                WHERE u.username = :username
+                                """, Trainer.class)
+                .setParameter("username", currentUsername)
+                .getResultList();
+    }
+
+    @Override
+    public void addTrainerToTrainee(Trainee trainee, Trainer trainer) {
+        entityManager.createQuery("""
+                        INSERT INTO TraineeTrainer (trainee, trainer) VALUES (:trainer, :trainee)
+                        """).setParameter("trainee", trainee)
+                .setParameter("trainer", trainer);
+    }
+
+    @Override
+    public Boolean trainerHasTrainee(UUID trainerId, UUID traineeId) {
+        return entityManager.createQuery("""
+                        SELECT CASE WHEN EXISTS
+                        (
+                            SELECT 1 FROM TraineeTrainer t
+                            WHERE t.trainer.trainerId = :trainerId
+                            and t.trainee.traineeId = :traineeId
+                            )
+                        THEN TRUE ELSE FALSE END
+                        """, Boolean.class)
+                .setParameter("trainerId", trainerId)
+                .setParameter("traineeId", traineeId)
+                .getSingleResult();
+    }
+
+    @Override
+    public void removeTraineeOfTrainer(Trainee trainee, Trainer trainer) {
+        entityManager.createQuery("""
+                DELETE FROM TraineeTrainer t WHERE
+                t.trainer.trainerId = :trainerId
+                AND t.trainee.traineeId = :traineeId
+                """)
+                .setParameter("trainerId", trainer.getTrainerId())
+                .setParameter("traineeId", trainee.getTraineeId())
+                .executeUpdate();
+    }
 }

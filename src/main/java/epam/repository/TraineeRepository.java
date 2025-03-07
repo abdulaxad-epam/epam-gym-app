@@ -8,7 +8,7 @@ import java.util.UUID;
 
 
 public interface TraineeRepository {
-    Trainee insert(UUID id, Trainee trainee);
+    Trainee insert(Trainee trainee);
 
     Trainee update(UUID id, Trainee trainee);
 
@@ -16,10 +16,15 @@ public interface TraineeRepository {
 
     Optional<Trainee> findByUsername(String username);
 
-
     List<Trainee> findAll();
 
     boolean existsById(UUID id);
 
+    boolean existsByUsername(String username);
+
+    Optional<UUID> getIdByUsername(String username);
+
     void deleteTraineeByUsername(String username);
+
+    List<Trainee> findTraineeByTrainer(String currentUsername);
 }

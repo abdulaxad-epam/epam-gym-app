@@ -1,5 +1,6 @@
 package epam.repository;
 
+import epam.entity.Trainee;
 import epam.entity.Trainer;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,7 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface TrainerRepository {
-    Trainer insert(UUID id, Trainer trainer);
+    Trainer insert(Trainer trainer);
 
     Trainer update(UUID id, Trainer trainer);
 
@@ -22,5 +23,15 @@ public interface TrainerRepository {
 
     boolean existsById(UUID id);
 
+    Optional<UUID> getIdByUsername(String username);
+
     void deleteTrainerByUsername(String username);
+
+    List<Trainer> findTrainersByTrainee(String currentUsername);
+
+    void addTrainerToTrainee(Trainee trainee, Trainer trainer);
+
+    Boolean trainerHasTrainee(UUID trainerId, UUID traineeId);
+
+    void removeTraineeOfTrainer(Trainee trainee, Trainer trainer);
 }

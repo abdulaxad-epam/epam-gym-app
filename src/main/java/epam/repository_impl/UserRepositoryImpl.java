@@ -33,14 +33,15 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean existsByUsernameAndPassword(String username, String password) {
-        return entityManager.createQuery("""
-                SELECT CASE WHEN EXISTS
-                (SELECT 1 FROM Trainer t WHERE t.user.username = :username AND t.user.password = :password)
-                THEN TRUE
-                ELSE
-                FALSE END
-                """, Boolean.class).getSingleResult();
+        Long count = entityManager.createQuery("""
+                SELECT COUNT(u) FROM User u WHERE u.username = :username AND u.password = :password
+            """, Long.class)
+                .setParameter("username", username)
+                .setParameter("password", password)
+                .getSingleResult();
+        return count > 0;
     }
+
 
     @Override
     public Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) {

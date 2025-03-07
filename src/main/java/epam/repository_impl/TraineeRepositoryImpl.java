@@ -2,6 +2,7 @@ package epam.repository_impl;
 
 
 import epam.entity.Trainee;
+import epam.entity.Trainer;
 import epam.entity.User;
 import epam.exception.EntityManagerInsertException;
 import epam.exception.TraineeNotFoundException;
@@ -32,21 +33,22 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
     }
 
     @Override
-    public Trainee insert(UUID id, Trainee trainee) {
-        EntityManager entityManager = getEntityManager();
+    public Trainee insert(Trainee trainee) {
         try {
             entityManager.getTransaction().begin();
 
             User user = updateUsername(trainee.getUser());
             String username = user.getUsername();
             long serialUsername = serialUsernames(username);
-            user.setUsername(username + serialUsername + 1);
-            entityManager.persist(trainee);
+            if (serialUsername == 0L)
+                trainee.getUser().setUsername(username);
+            else
+                trainee.getUser().setUsername(username + serialUsername);
 
             entityManager.persist(trainee);
 
             entityManager.getTransaction().commit();
-            log.info("User '" + id + "' inserted with final username '" + username + "'");
+            log.info("Trainee '" + trainee.getTraineeId() + "' inserted with final username '" + trainee.getUser().getUsername() + "'");
             return trainee;
 
         } catch (Exception e) {
@@ -129,6 +131,28 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
     }
 
     @Override
+    public boolean existsByUsername(String username) {
+        return entityManager.createQuery(
+                        """
+                                SELECT CASE WHEN EXISTS
+                                (SELECT 1 FROM Trainee t WHERE t.user.username = :username)
+                                THEN TRUE ELSE
+                                FALSE END
+                                """,
+                        Boolean.class)
+                .setParameter("username", username)
+                .getSingleResult();
+    }
+
+    @Override
+    public Optional<UUID> getIdByUsername(String username) {
+        UUID singleResult = entityManager.createQuery("""
+                SELECT id FROM Trainee t WHERE t.user.username = :username
+                """, UUID.class).getSingleResult();
+        return Optional.of(singleResult);
+    }
+
+    @Override
     public void deleteTraineeByUsername(String username) {
         try {
             entityManager.getTransaction().begin();
@@ -141,6 +165,19 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+    }
+
+    @Override
+    public List<Trainee> findTraineeByTrainer(String currentUsername) {
+        return entityManager.createQuery("""
+                        SELECT DISTINCT t FROM Trainee t
+                        JOIN TraineeTrainer tt ON t.traineeId = tt.trainee.traineeId
+                        JOIN Trainee tr ON tt.trainer.trainerId = tr.traineeId
+                        JOIN User u ON tr.user.userId = u.userId
+                        WHERE u.username = :username
+                        """, Trainee.class)
+                .setParameter("username", currentUsername)
+                .getResultList();
     }
 
 }

@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Data
@@ -22,24 +24,26 @@ public class Training {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID trainingId;
 
-    @Column(nullable = false)
-    private String traineeId;
+    @JoinColumn(name = "trainee_id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = Trainee.class)
+    private Trainee trainee;
 
-    @Column(nullable = false)
-    private String trainerId;
+    @JoinColumn(name = "trainer_id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = Trainer.class)
+    private Trainer trainer;
 
     @Column(nullable = false)
     private String trainingName;
 
     @Column(nullable = false)
     @CreationTimestamp
-    private String trainingDate;
+    private LocalDateTime trainingDate;
 
     @JoinColumn(name = "trainingType_id")
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private TrainingType trainingType;
 
     @Column(nullable = false)
-    private String trainingDuration;
+    private LocalDateTime trainingDuration;
 
 }

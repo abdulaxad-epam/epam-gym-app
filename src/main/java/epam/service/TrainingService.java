@@ -9,13 +9,15 @@ import java.util.UUID;
 
 public interface TrainingService {
 
-    TrainingResponseDTO createTraining(UUID id, Training training);
+    TrainingResponseDTO createTraining(Training training);
 
-    TrainingResponseDTO updateTraining(UUID id, Training training);
+    TrainingResponseDTO updateTraining(String username, Training training);
 
-    TrainingResponseDTO getTrainingById(UUID id);
+    TrainingResponseDTO getTrainingByUsername(String username);
 
     List<TrainingResponseDTO> getAllTrainings();
 
-    void deleteTraining(UUID id);
+    void deleteTraining(String username);
+
+    List<TrainingResponseDTO> getTrainingsByTraineeUsername(String username);
 }

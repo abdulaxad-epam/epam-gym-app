@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -19,25 +20,30 @@ public class TrainingServiceImpl implements TrainingService {
     private final TrainingRepository trainingRepository;
     private final TrainingMapper trainingMapper;
 
-
     @Override
-    public TrainingResponseDTO createTraining(UUID id, Training training) {
-        Training inserted = trainingRepository.insert(id, training);
+    public TrainingResponseDTO createTraining(Training training) {
+        Training inserted = trainingRepository.insert(training);
         return trainingMapper.toTrainingResponseDTO(inserted);
     }
 
     @Override
-    public TrainingResponseDTO updateTraining(UUID id, Training training) {
-        if (trainingRepository.existsById(id)) {
-            Training update = trainingRepository.update(id, training);
+    public TrainingResponseDTO updateTraining(String username, Training training) {
+        Optional<UUID> id = trainingRepository.getIdByUsername(username);
+        if (id.isPresent()) {
+            Training update = trainingRepository.update(id.get(), training);
             return trainingMapper.toTrainingResponseDTO(update);
-        } else throw new TrainingNotFoundException("Training with id " + id + " not found");
+        }
+        throw new TrainingNotFoundException("Training with id " + id + " not found");
     }
 
     @Override
-    public TrainingResponseDTO getTrainingById(UUID id) {
-        Training trainer = trainingRepository.findById(id);
-        return trainingMapper.toTrainingResponseDTO(trainer);
+    public TrainingResponseDTO getTrainingByUsername(String username) {
+        Optional<UUID> id = trainingRepository.getIdByUsername(username);
+        if (id.isPresent()) {
+            Training trainer = trainingRepository.findById(id.get());
+            return trainingMapper.toTrainingResponseDTO(trainer);
+        }
+        throw new TrainingNotFoundException("Training with id " + id + " not found");
     }
 
     @Override
@@ -47,8 +53,14 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public void deleteTraining(UUID id) {
-        if (id != null)
-            trainingRepository.delete(id);
+    public void deleteTraining(String username) {
+        Optional<UUID> id = trainingRepository.getIdByUsername(username);
+        id.ifPresent(trainingRepository::delete);
+    }
+
+    @Override
+    public List<TrainingResponseDTO> getTrainingsByTraineeUsername(String username) {
+        List<Training> trainings = trainingRepository.findTrainingsByTrainee(username);
+        return trainings.stream().map(trainingMapper::toTrainingResponseDTO).toList();
     }
 }

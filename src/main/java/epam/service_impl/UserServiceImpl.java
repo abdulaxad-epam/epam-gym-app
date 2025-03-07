@@ -12,10 +12,6 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    @Override
-    public Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) {
-       return userRepository.changePassword(changePasswordRequestDTO);
-    }
 
     @Override
     public Boolean existsByUsernameAndPassword(String username, String password) {
@@ -25,5 +21,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
+    }
+
+    @Override
+    public Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) {
+        if (changePasswordRequestDTO.getUsername() != null
+                && changePasswordRequestDTO.getOldPassword() != null
+                && changePasswordRequestDTO.getNewPassword() != null
+        )
+            return userRepository.changePassword(changePasswordRequestDTO);
+        return false;
     }
 }

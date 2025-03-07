@@ -4,6 +4,7 @@ import epam.entity.Trainee;
 import epam.exception.TraineeNotFoundException;
 import epam.mapper.TraineeMapper;
 import epam.repository.TraineeRepository;
+import epam.request_dto.TraineeRequestDTO;
 import epam.response_dto.TraineeResponseDTO;
 import epam.service.TraineeService;
 import epam.service.UserService;
@@ -26,17 +27,25 @@ public class TraineeServiceImpl implements TraineeService {
     private final UserService userService;
 
     @Override
-    public TraineeResponseDTO createTrainee(UUID id, Trainee trainee) {
-        Trainee inserted = traineeRepository.insert(id, trainee);
+    public TraineeResponseDTO createTrainee(TraineeRequestDTO traineeRequestDTO) {
+
+        Trainee trainee = traineeMapper.toTrainee(traineeRequestDTO);
+
+        Trainee inserted = traineeRepository.insert(trainee);
+
         return traineeMapper.toTraineeResponseDTO(inserted);
     }
 
     @Override
-    public TraineeResponseDTO updateTrainee(UUID id, Trainee trainee) {
+    public TraineeResponseDTO updateTrainee(String username, TraineeRequestDTO traineeRequestDTO) {
 
-        if (traineeRepository.existsById(id)) {
+        Trainee trainee = traineeMapper.toTrainee(traineeRequestDTO);
 
-            Trainee update = traineeRepository.update(id, trainee);
+        Optional<UUID> idByUsername = traineeRepository.getIdByUsername(username);
+
+        if (idByUsername.isPresent()) {
+
+            Trainee update = traineeRepository.update(idByUsername.get(), trainee);
 
             return traineeMapper.toTraineeResponseDTO(update);
 
@@ -67,5 +76,11 @@ public class TraineeServiceImpl implements TraineeService {
 
         return trainees.stream().map(traineeMapper::toTraineeResponseDTO).toList();
 
+    }
+
+    @Override
+    public List<TraineeResponseDTO> getTraineesByTrainer(String currentUsername) {
+        List<Trainee> trainees = traineeRepository.findTraineeByTrainer(currentUsername);
+        return trainees.stream().map(traineeMapper::toTraineeResponseDTO).toList();
     }
 }

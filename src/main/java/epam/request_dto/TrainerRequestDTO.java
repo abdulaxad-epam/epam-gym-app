@@ -1,22 +1,17 @@
 package epam.request_dto;
 
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
-
-@Getter
-@Setter
 @Builder
+@Setter
+@Getter
 @ToString
-public class RegisterTraineeRequestDTO {
-
-    private LocalDateTime dateOfBirth;
-
-    private String address;
+public class TrainerRequestDTO {
+    private String specialization;
 
     private UserRequestDTO user;
-
 }

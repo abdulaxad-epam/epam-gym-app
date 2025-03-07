@@ -1,6 +1,5 @@
 package epam.repository_impl;
 
-
 import epam.entity.Training;
 import epam.exception.TrainingNotFoundException;
 import epam.repository.TrainingRepository;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -19,8 +19,7 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     private final EntityManager entityManager;
 
     @Override
-    @Transactional
-    public Training insert(UUID id, Training training) {
+    public Training insert(Training training) {
         try {
             entityManager.getTransaction().begin();
             entityManager.persist(training);
@@ -33,7 +32,6 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     }
 
     @Override
-    @Transactional
     public Training update(UUID id, Training training) {
         try {
             entityManager.getTransaction().begin();
@@ -51,7 +49,6 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     }
 
     @Override
-    @Transactional
     public void delete(UUID id) {
         try {
             entityManager.getTransaction().begin();
@@ -95,5 +92,25 @@ public class TrainingRepositoryImpl implements TrainingRepository {
                         Boolean.class)
                 .setParameter("id", id)
                 .getSingleResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<UUID> getIdByUsername(String username) {
+        UUID singleResult = entityManager.createQuery("""
+                SELECT id FROM Training t WHERE t.trainee.user.username = :username
+                """, UUID.class).getSingleResult();
+        return Optional.of(singleResult);
+    }
+
+    @Override
+    public List<Training> findTrainingsByTrainee(String username) {
+        return entityManager.createQuery("""
+                        SELECT DISTINCT t FROM Training t
+                        JOIN FETCH t.trainee trainee
+                        JOIN FETCH trainee.user user
+                        WHERE user.username = :username
+                        """, Training.class)
+                .getResultList();
     }
 }

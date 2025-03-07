@@ -1,9 +1,11 @@
 package epam.service_impl;
 
+import epam.entity.Trainee;
 import epam.entity.Trainer;
 import epam.exception.TrainerNotFoundException;
 import epam.mapper.TrainerMapper;
 import epam.repository.TrainerRepository;
+import epam.request_dto.TrainerRequestDTO;
 import epam.response_dto.TrainerResponseDTO;
 import epam.service.TrainerService;
 import epam.service.UserService;
@@ -25,16 +27,22 @@ public class TrainerServiceImpl implements TrainerService {
     private final UserService userService;
 
     @Override
-    public TrainerResponseDTO createTrainer(UUID id, Trainer trainer) {
-        Trainer inserted = trainerRepository.insert(id, trainer);
+    public TrainerResponseDTO createTrainer(TrainerRequestDTO trainerRequestDTO) {
+        Trainer trainer = trainerMapper.toTrainer(trainerRequestDTO);
+        Trainer inserted = trainerRepository.insert(trainer);
 
         return trainerMapper.toTrainerResponseDTO(inserted);
     }
 
     @Override
-    public TrainerResponseDTO updateTrainer(UUID id, Trainer trainer) {
-        if (trainerRepository.existsById(id)) {
-            Trainer updated = trainerRepository.update(id, trainer);
+    public TrainerResponseDTO updateTrainer(String username, TrainerRequestDTO trainerRequestDTO) {
+
+        Optional<UUID> id = trainerRepository.getIdByUsername(username);
+
+        if (id.isPresent()) {
+            Trainer trainer = trainerMapper.toTrainer(trainerRequestDTO);
+
+            Trainer updated = trainerRepository.update(id.get(),trainer);
             return trainerMapper.toTrainerResponseDTO(updated);
         } else throw new TrainerNotFoundException("Trainer not found");
     }
@@ -57,6 +65,12 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public List<TrainerResponseDTO> getAllTrainers() {
         List<Trainer> trainers = trainerRepository.findAll();
+        return trainers.stream().map(trainerMapper::toTrainerResponseDTO).toList();
+    }
+
+    @Override
+    public List<TrainerResponseDTO> getTrainersByTrainee(String currentUsername) {
+        List<Trainer> trainers = trainerRepository.findTrainersByTrainee(currentUsername);
         return trainers.stream().map(trainerMapper::toTrainerResponseDTO).toList();
     }
 }

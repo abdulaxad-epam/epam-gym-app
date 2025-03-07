@@ -1,48 +1,30 @@
 package epam.facade;
 
-import epam.entity.Trainee;
-import epam.entity.Trainer;
 import epam.entity.Training;
 import epam.request_dto.AuthenticateRequestDTO;
 import epam.request_dto.ChangePasswordRequestDTO;
 import epam.request_dto.RegisterTraineeRequestDTO;
 import epam.request_dto.RegisterTrainerRequestDTO;
+import epam.request_dto.TraineeRequestDTO;
+import epam.request_dto.TrainerRequestDTO;
 import epam.response_dto.TraineeResponseDTO;
 import epam.response_dto.TrainerResponseDTO;
 import epam.response_dto.TrainingResponseDTO;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface TrainingFacade {
+    Boolean register(RegisterTraineeRequestDTO userRequestDTO);
+
+    Boolean register(RegisterTrainerRequestDTO userRequestDTO);
+
+    Boolean authenticate(AuthenticateRequestDTO authenticateRequestDTO);
 
     Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO);
 
-    Boolean existsByUsernameAndPassword(String username, String password);
+    TraineeResponseDTO createTrainee(TraineeRequestDTO trainee);
 
-    boolean existsByUsername(String username);
-
-    TrainingResponseDTO createTraining(UUID id, Training training);
-
-    TrainingResponseDTO updateTraining(UUID id, Training training);
-
-    TrainingResponseDTO getTrainingById(UUID id);
-
-    List<TrainingResponseDTO> getAllTrainings();
-
-    TrainerResponseDTO createTrainer(UUID id, Trainer training);
-
-    TrainerResponseDTO updateTrainer(UUID id, Trainer trainer);
-
-    void deleteTrainer(String username);
-
-    TrainerResponseDTO getTrainerByUsername(String username);
-
-    List<TrainerResponseDTO> getAllTrainers();
-
-    TraineeResponseDTO createTrainee(UUID id, Trainee trainee);
-
-    TraineeResponseDTO updateTrainee(UUID id, Trainee trainee);
+    TraineeResponseDTO updateTrainee(String username, TraineeRequestDTO trainee);
 
     void deleteTrainee(String username);
 
@@ -50,10 +32,37 @@ public interface TrainingFacade {
 
     List<TraineeResponseDTO> getAllTrainees();
 
-    Boolean register(RegisterTraineeRequestDTO userRequestDTO);
+    TrainerResponseDTO createTrainer(TrainerRequestDTO training);
 
-    Boolean register(RegisterTrainerRequestDTO userRequestDTO);
+    TrainerResponseDTO updateTrainer(String username, TrainerRequestDTO trainer);
 
-    Boolean authenticate(AuthenticateRequestDTO authenticateRequestDTO);
+    void deleteTrainer(String username);
 
+    TrainerResponseDTO getTrainerByUsername(String username);
+
+    List<TrainerResponseDTO> getAllTrainers();
+
+    TrainingResponseDTO createTraining(Training training);
+
+    TrainingResponseDTO updateTraining(String username, Training training);
+
+    TrainingResponseDTO getTrainingByUsername(String username);
+
+    List<TrainingResponseDTO> getAllTrainings();
+
+    void deleteTraining(String username);
+
+    Boolean existsByUsernameAndPassword(String username, String password);
+
+    boolean existsByUsername(String username);
+
+    List<TrainerResponseDTO> getTrainersByTraineeUsername(String currentUsername);
+
+    Boolean addTrainerToTrainee(String currentUsername, String trainerUsername);
+
+    Boolean removeTrainerFromTrainee(String currentUsername, String trainerUsername);
+
+    List<TraineeResponseDTO> getTraineesByTrainerUsername(String currentUsername);
+
+    List<TrainingResponseDTO> getTrainingsByTraineeUsername(String username);
 }

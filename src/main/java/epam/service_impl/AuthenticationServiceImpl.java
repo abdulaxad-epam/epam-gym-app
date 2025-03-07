@@ -1,17 +1,16 @@
 package epam.service_impl;
 
-import epam.entity.Trainee;
-import epam.entity.Trainer;
-import epam.entity.User;
+import epam.mapper.TraineeMapper;
 import epam.mapper.UserMapper;
-import epam.repository.TraineeRepository;
-import epam.repository.TrainerRepository;
-import epam.repository.UserRepository;
 import epam.request_dto.AuthenticateRequestDTO;
-import epam.request_dto.ChangePasswordRequestDTO;
 import epam.request_dto.RegisterTraineeRequestDTO;
 import epam.request_dto.RegisterTrainerRequestDTO;
+import epam.request_dto.TraineeRequestDTO;
+import epam.request_dto.TrainerRequestDTO;
 import epam.service.AuthenticationService;
+import epam.service.TraineeService;
+import epam.service.TrainerService;
+import epam.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,37 +18,31 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final TrainerRepository trainerRepository;
-
-    private final UserMapper userMapper;
-
-    private final TraineeRepository traineeRepository;
-
-    private final UserRepository userRepository;
+    private final UserService userRepository;
+    private final TrainerService trainerService;
+    private final TraineeService traineeService;
 
     @Override
     public Boolean register(RegisterTraineeRequestDTO userRequestDTO) {
-        User connectedUser = userMapper.toUser(userRequestDTO.getUser());
 
-        Trainee trainee = Trainee.builder()
-                .address(userRequestDTO.getAddress())
+        TraineeRequestDTO trainee = TraineeRequestDTO.builder()
                 .dateOfBirth(userRequestDTO.getDateOfBirth())
-                .user(connectedUser)
+                .address(userRequestDTO.getAddress())
+                .user(userRequestDTO.getUser())
                 .build();
 
-        return traineeRepository.insert(trainee.getTraineeId(), trainee) != null;
+        return traineeService.createTrainee(trainee) != null;
     }
 
     @Override
     public Boolean register(RegisterTrainerRequestDTO userRequestDTO) {
-        User connectedUser = userMapper.toUser(userRequestDTO.getUser());
 
-        Trainer trainer = Trainer.builder()
+        TrainerRequestDTO trainer = TrainerRequestDTO.builder()
                 .specialization(userRequestDTO.getSpecialization())
-                .user(connectedUser)
+                .user(userRequestDTO.getUser())
                 .build();
 
-        return trainerRepository.insert(trainer.getTrainerId(), trainer) != null;
+        return trainerService.createTrainer(trainer) != null;
     }
 
     @Override
@@ -58,13 +51,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return userRepository.existsByUsernameAndPassword(
                     authenticateRequestDTO.getUsername(), authenticateRequestDTO.getPassword()
             );
-        return false;
-    }
-
-    @Override
-    public Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) {
-        if (changePasswordRequestDTO.getUsername() != null && changePasswordRequestDTO.getOldPassword() != null && changePasswordRequestDTO.getNewPassword() != null)
-            return userRepository.changePassword(changePasswordRequestDTO);
         return false;
     }
 

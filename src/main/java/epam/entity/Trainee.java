@@ -16,6 +16,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -24,6 +25,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "trainees")
+
 public class Trainee {
 
     @Id
@@ -31,7 +33,7 @@ public class Trainee {
     private UUID traineeId;
 
     @Column(name = "date_of_birth")
-    private String dateOfBirth;
+    private LocalDateTime dateOfBirth;
 
     @Column
     private String address;
