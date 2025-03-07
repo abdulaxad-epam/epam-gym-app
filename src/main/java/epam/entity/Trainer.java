@@ -26,7 +26,7 @@ public class Trainer {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private TrainingType specialization;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 }

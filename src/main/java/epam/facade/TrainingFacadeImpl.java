@@ -8,6 +8,7 @@ import epam.request_dto.RegisterTraineeRequestDTO;
 import epam.request_dto.RegisterTrainerRequestDTO;
 import epam.request_dto.TraineeRequestDTO;
 import epam.request_dto.TrainerRequestDTO;
+import epam.request_dto.TrainingRequestDTO;
 import epam.response_dto.TraineeResponseDTO;
 import epam.response_dto.TrainerResponseDTO;
 import epam.response_dto.TrainingResponseDTO;
@@ -109,12 +110,12 @@ public class TrainingFacadeImpl implements TrainingFacade {
     }
 
     @Override
-    public TrainingResponseDTO createTraining(Training training) {
+    public TrainingResponseDTO createTraining(TrainingRequestDTO training) {
         return trainingService.createTraining(training);
     }
 
     @Override
-    public TrainingResponseDTO updateTraining(String username, Training training) {
+    public TrainingResponseDTO updateTraining(String username, TrainingRequestDTO training) {
         return trainingService.updateTraining(username, training);
     }
 
@@ -166,5 +167,10 @@ public class TrainingFacadeImpl implements TrainingFacade {
     @Override
     public List<TrainingResponseDTO> getTrainingsByTraineeUsername(String username) {
         return trainingService.getTrainingsByTraineeUsername(username);
+    }
+
+    @Override
+    public Boolean toggleStatus(String username) {
+        return userService.toggleStatus(username);
     }
 }

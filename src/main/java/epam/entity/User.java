@@ -1,8 +1,11 @@
 package epam.entity;
 
 
+import epam.util.GeneratePassword;
+import epam.util.PasswordGeneratorListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,6 +24,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "USERS")
+@EntityListeners(PasswordGeneratorListener.class)
 public class User {
 
     @Id
@@ -36,6 +40,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @GeneratePassword
     @Column(nullable = false)
     private String password;
 

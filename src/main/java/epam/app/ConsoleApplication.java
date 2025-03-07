@@ -3,12 +3,18 @@ package epam.app;
 import epam.entity.Training;
 import epam.entity.User;
 import epam.facade.TrainingFacade;
+import epam.mapper.TraineeMapper;
+import epam.mapper.TrainingMapper;
+import epam.mapper.TrainingTypeMapper;
+import epam.mapper.UserMapper;
 import epam.request_dto.*;
 import epam.response_dto.TraineeResponseDTO;
 import epam.response_dto.TrainerResponseDTO;
 import epam.response_dto.TrainingResponseDTO;
 import epam.response_dto.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -22,7 +28,10 @@ import java.util.Scanner;
 @RequiredArgsConstructor
 public class ConsoleApplication {
 
+    private static final Log log = LogFactory.getLog(ConsoleApplication.class);
+
     private final TrainingFacade trainingFacade;
+
     private final Scanner scanner = new Scanner(System.in);
 
     // Session management
@@ -95,7 +104,7 @@ public class ConsoleApplication {
         try {
             return Integer.parseInt(scanner.nextLine());
         } catch (NumberFormatException e) {
-            return -1; // Invalid input
+            return -1;
         }
     }
 
@@ -137,7 +146,7 @@ public class ConsoleApplication {
                 break;
             case 3:
                 if (currentUserRole == UserRole.TRAINEE) {
-                    handleViewTrainings();
+                    handleTrainingManagement();
                 } else {
 //                    handleManageTrainings();
                 }
@@ -264,13 +273,11 @@ public class ConsoleApplication {
     private UserRequestDTO createUserDTO() {
         String firstname = getStringInput("Enter first name: ");
         String lastname = getStringInput("Enter last name: ");
-        String password = getStringInput("Enter password: ");
 
         return UserRequestDTO.builder()
                 .firstName(firstname)
                 .lastName(lastname)
                 .isActive(true)
-                .password(password)
                 .build();
     }
 
@@ -427,7 +434,7 @@ public class ConsoleApplication {
                 .build();
 
         try {
-            // Note: This method call might need adjustment based on your actual implementation
+
             Boolean changed = trainingFacade.changePassword(changePasswordRequest);
 
             if (Boolean.TRUE.equals(changed)) {
@@ -442,54 +449,24 @@ public class ConsoleApplication {
 
     private void toggleActiveStatus() {
         try {
-            boolean currentStatus = getUserActiveStatus();
+            boolean oldStatus = getUserActiveStatus();
 
-            if (currentUserRole == UserRole.TRAINEE) {
-                TraineeResponseDTO trainee = trainingFacade.getTraineeByUsername(currentUsername);
+            if (trainingFacade.toggleStatus(currentUsername)) {
+                boolean newStatus = !oldStatus;
+                System.out.println("Active status: " + newStatus);
+                System.out.println("Account " + (newStatus ? "activated" : "deactivated") + " successfully!");
 
-                UserRequestDTO userDTO = UserRequestDTO.builder()
-                        .firstName(trainee.getUser().getFirstName())
-                        .lastName(trainee.getUser().getLastName())
-                        .password(trainee.getUser().getPassword())
-                        .isActive(!currentStatus)
-                        .build();
-
-                TraineeRequestDTO traineeDTO = TraineeRequestDTO.builder()
-                        .address(trainee.getAddress())
-                        .dateOfBirth(trainee.getTraineeDateOfBirth())
-                        .user(userDTO)
-                        .build();
-
-                trainingFacade.updateTrainee(currentUsername, traineeDTO);
+                if (!newStatus) {
+                    handleLogout();
+                }
             } else {
-                TrainerResponseDTO trainer = trainingFacade.getTrainerByUsername(currentUsername);
-
-                UserRequestDTO userDTO = UserRequestDTO.builder()
-                        .firstName(trainer.getUser().getFirstName())
-                        .lastName(trainer.getUser().getLastName())
-                        .password(trainer.getUser().getPassword())
-                        .isActive(!currentStatus)
-                        .build();
-
-                TrainerRequestDTO trainerDTO = TrainerRequestDTO.builder()
-                        .specialization(trainer.getTrainerSpecialization())
-                        .user(userDTO)
-                        .build();
-
-                trainingFacade.updateTrainer(currentUsername, trainerDTO);
-            }
-
-            System.out.println("Account " + (currentStatus ? "deactivated" : "activated") + " successfully!");
-
-            if (currentStatus) {
-                // If user deactivated their account, log them out
-                handleLogout();
-                return;
+                log.warn("User " + currentUsername + " is not active.");
             }
         } catch (Exception e) {
             System.out.println("Error toggling active status: " + e.getMessage());
         }
     }
+
 
     private boolean deleteAccount() {
         System.out.println("\nWARNING: This will permanently delete your account.");
@@ -502,6 +479,7 @@ public class ConsoleApplication {
 
         try {
             if (currentUserRole == UserRole.TRAINEE) {
+                System.out.println(currentUsername);
                 trainingFacade.deleteTrainee(currentUsername);
             } else {
                 trainingFacade.deleteTrainer(currentUsername);
@@ -753,56 +731,7 @@ public class ConsoleApplication {
         }
     }
 
-    private void handleViewTrainings() {
-        try {
-            // Get trainings for current trainee
-            List<TrainingResponseDTO> trainings = trainingFacade.getTrainingsByTraineeUsername(currentUsername);
-
-            if (trainings.isEmpty()) {
-                System.out.println("You don't have any trainings yet.");
-                return;
-            }
-
-            System.out.println("\n--- My Trainings ---");
-            for (int i = 0; i < trainings.size(); i++) {
-                TrainingResponseDTO training = trainings.get(i);
-                System.out.println((i + 1) + ". " + training.getTrainingName() +
-                        " with " + training.getTrainer().getUser().getFirstName() + " " +
-                        training.getTrainer().getUser().getLastName() +
-                        " (" + training.getTrainingDate() + ", Duration: " + training.getTrainingDuration() + ")");
-            }
-
-            // Ask if user wants to see more details
-            String viewMore = getStringInput("\nEnter training number to view details (or press Enter to go back): ");
-
-            if (!viewMore.isEmpty()) {
-                try {
-                    int trainingIndex = Integer.parseInt(viewMore) - 1;
-
-                    if (trainingIndex >= 0 && trainingIndex < trainings.size()) {
-                        TrainingResponseDTO selectedTraining = trainings.get(trainingIndex);
-
-                        System.out.println("\n--- Training Details ---");
-                        System.out.println("Name: " + selectedTraining.getTrainingName());
-                        System.out.println("Type: " + selectedTraining.getTrainingType());
-                        System.out.println("Date: " + selectedTraining.getTrainingDate());
-                        System.out.println("Duration: " + selectedTraining.getTrainingDuration());
-                        System.out.println("Trainer: " + selectedTraining.getTrainer().getUser().getFirstName() +
-                                " " + selectedTraining.getTrainer().getUser().getLastName());
-                        System.out.println("Trainer Specialization: " + selectedTraining.getTrainer().getTrainerSpecialization());
-                    } else {
-                        System.out.println("Invalid selection.");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input.");
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Error retrieving trainings: " + e.getMessage());
-        }
-    }
-
-                    private void handleTrainingManagement() {
+    private void handleTrainingManagement() {
         boolean back = false;
 
         while (!back) {
@@ -810,7 +739,7 @@ public class ConsoleApplication {
             System.out.println("1. Create Training");
             System.out.println("2. Update Training");
             System.out.println("3. Delete Training");
-            System.out.println("4. Get Training by Username");
+            System.out.println("4. Get Training by ID");
             System.out.println("5. Get All Trainings");
             System.out.println("0. Back to Main Menu");
             System.out.print("Please select an option: ");
@@ -828,7 +757,7 @@ public class ConsoleApplication {
                     deleteTraining();
                     break;
                 case 4:
-                    getTrainingByUsername();
+                    getTrainingById();
                     break;
                 case 5:
                     getAllTrainings();
@@ -844,13 +773,52 @@ public class ConsoleApplication {
 
     private void createTraining() {
         System.out.println("\n--- Create Training ---");
+        String trainingName = getStringInput("Enter training name: ");
 
-        Training training = new Training();
-        // Set properties based on user input
+        String traineeUsername = getStringInput("Enter trainee username: ");
+        if (!trainingFacade.existsByUsername(traineeUsername)){
+            log.warn("Trainee with username " + traineeUsername + " does not exist.");
+            createTraining();
+        }
+
+        String trainerUsername = currentUsername;
+
+        System.out.println("Select training type:");
+        System.out.println("1. Strength\n2. Cardio\n3. Flexibility\n4. Balance\n5. Other");
+        int typeChoice = getIntInput();
+        String trainingType = switch (typeChoice) {
+            case 1 -> "Strength";
+            case 2 -> "Cardio";
+            case 3 -> "Flexibility";
+            case 4 -> "Balance";
+            case 5 -> getStringInput("Enter custom training type: ");
+            default -> "Other";
+        };
+
+        String dateString = getStringInput("Enter training date (yyyy-MM-dd HH:mm): ");
+        LocalDateTime trainingDate;
+        try {
+            trainingDate = LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        } catch (DateTimeParseException e) {
+            System.out.println("Invalid date format. Using current date and time.");
+            trainingDate = LocalDateTime.now();
+        }
+
+        System.out.println("Enter duration in minutes: ");
+        int duration = getIntInput();
+
+        TrainingRequestDTO trainingDTO = TrainingRequestDTO.builder()
+                .trainingName(trainingName)
+                .trainingType(trainingType)
+                .trainingDate(trainingDate)
+                .trainingDuration(duration)
+                .traineeUsername(traineeUsername)
+                .trainerUsername(trainerUsername)
+                .build();
 
         try {
-            TrainingResponseDTO response = trainingFacade.createTraining(training);
-            System.out.println("Training created successfully with ID: " + response.getTrainingName());
+            TrainingResponseDTO response = trainingFacade.createTraining(trainingDTO);
+            System.out.println("Training created successfully with name: " + response.getTrainingName());
         } catch (Exception e) {
             System.out.println("Error creating training: " + e.getMessage());
         }
@@ -858,14 +826,34 @@ public class ConsoleApplication {
 
     private void updateTraining() {
         System.out.println("\n--- Update Training ---");
-        String username = getStringInput("Enter username associated with training to update: ");
+        String username = getStringInput("Enter training username to update: ");
 
-        Training training = new Training();
-        // Set properties based on user input
+        String newName = getStringInput("Enter new training name (leave empty to keep current): ");
+        String newType = getStringInput("Enter new training type (leave empty to keep current): ");
+        String newDateStr = getStringInput("Enter new training date (yyyy-MM-dd HH:mm) or leave empty: ");
+        String newDurationStr = getStringInput("Enter new duration in minutes (leave empty to keep current): ");
+
+        LocalDateTime newDate = null;
+        if (!newDateStr.isEmpty()) {
+            try {
+                newDate = LocalDateTime.parse(newDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Keeping current date.");
+            }
+        }
+
+        Integer newDuration = newDurationStr.isEmpty() ? null : Integer.parseInt(newDurationStr);
+
+        TrainingRequestDTO updatedTraining = TrainingRequestDTO.builder()
+                .trainingName(newName.isEmpty() ? null : newName)
+                .trainingType(newType.isEmpty() ? null : newType)
+                .trainingDate(newDate)
+                .trainingDuration(newDuration)
+                .build();
 
         try {
-            TrainingResponseDTO response = trainingFacade.updateTraining(username, training);
-            System.out.println("Training updated successfully with ID: " + response.getTrainingName());
+            TrainingResponseDTO response = trainingFacade.updateTraining(username, updatedTraining);
+            System.out.println("Training updated successfully: " + response.getTrainingName());
         } catch (Exception e) {
             System.out.println("Error updating training: " + e.getMessage());
         }
@@ -873,22 +861,22 @@ public class ConsoleApplication {
 
     private void deleteTraining() {
         System.out.println("\n--- Delete Training ---");
-        String username = getStringInput("Enter username associated with training to delete: ");
+        String trainingUsername = getStringInput("Enter training username to delete: ");
 
         try {
-            trainingFacade.deleteTraining(username);
+            trainingFacade.deleteTraining(trainingUsername);
             System.out.println("Training deleted successfully.");
         } catch (Exception e) {
             System.out.println("Error deleting training: " + e.getMessage());
         }
     }
 
-    private void getTrainingByUsername() {
-        System.out.println("\n--- Get Training by Username ---");
-        String username = getStringInput("Enter username: ");
+    private void getTrainingById() {
+        System.out.println("\n--- Get Training by ID ---");
+        String trainingUsername = getStringInput("Enter training Username: ");
 
         try {
-            TrainingResponseDTO response = trainingFacade.getTrainingByUsername(username);
+            TrainingResponseDTO response = trainingFacade.getTrainingByUsername(trainingUsername);
             displayTrainingInfo(response);
         } catch (Exception e) {
             System.out.println("Error retrieving training: " + e.getMessage());
@@ -916,12 +904,12 @@ public class ConsoleApplication {
     }
 
     private void displayTrainingInfo(TrainingResponseDTO training) {
-        System.out.println("Training ID: " + training.getClass());
         System.out.println("Training Name: " + training.getTrainingName());
-        System.out.println("Trainee: " + training.getTrainee());
-        System.out.println("Trainer: " + training.getTrainer());
+        System.out.println("Trainee: " + training.getTrainee().getUser().getFirstName() + " " + training.getTrainee().getUser().getLastName());
+        System.out.println("Trainer: " + training.getTrainer().getUser().getFirstName() + " " + training.getTrainer().getUser().getLastName());
         System.out.println("Type: " + training.getTrainingType());
         System.out.println("Date: " + training.getTrainingDate());
         System.out.println("Duration: " + training.getTrainingDuration());
     }
+
 }

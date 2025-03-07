@@ -44,6 +44,6 @@ public class Training {
     private TrainingType trainingType;
 
     @Column(nullable = false)
-    private LocalDateTime trainingDuration;
+    private Integer trainingDuration;
 
 }

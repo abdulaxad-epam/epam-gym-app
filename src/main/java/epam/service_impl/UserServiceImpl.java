@@ -1,9 +1,12 @@
 package epam.service_impl;
 
+import epam.entity.User;
 import epam.repository.UserRepository;
 import epam.request_dto.ChangePasswordRequestDTO;
 import epam.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    private static final Log log = LogFactory.getLog(UserServiceImpl.class);
     private final UserRepository userRepository;
 
     @Override
@@ -32,4 +36,21 @@ public class UserServiceImpl implements UserService {
             return userRepository.changePassword(changePasswordRequestDTO);
         return false;
     }
+
+    @Override
+    public Boolean toggleStatus(String username) {
+        if (userRepository.existsByUsername(username)) {
+            User user = userRepository.getByUsername(username);
+
+            boolean newStatus = !user.getIsActive();
+            user.setIsActive(newStatus);
+
+            System.out.println("Toggling isActive for user " + username + " to: " + newStatus);
+
+            return userRepository.toggleActiveStatus(user);
+        }
+        return false;
+    }
+
+
 }

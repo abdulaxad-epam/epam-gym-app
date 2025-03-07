@@ -5,19 +5,23 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
 @ToString
 public class TrainingRequestDTO {
 
-    private TrainerRequestDTO trainer;
+    private String trainerUsername;
 
-    private TrainingRequestDTO training;
+    private String traineeUsername;
 
     private String trainingName;
 
-    private String trainingDate;
+    private LocalDateTime trainingDate;
 
     private String trainingType;
+
+    private Integer trainingDuration;
 }

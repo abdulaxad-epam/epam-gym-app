@@ -11,5 +11,4 @@ public interface AuthenticationService {
     Boolean register(RegisterTrainerRequestDTO userRequestDTO);
 
     Boolean authenticate(AuthenticateRequestDTO authenticateRequestDTO);
-
 }

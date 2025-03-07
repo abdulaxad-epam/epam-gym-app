@@ -38,13 +38,14 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
             entityManager.getTransaction().begin();
 
             User user = updateUsername(trainer.getUser());
-            String username = user.getUsername();
-            long serialUsername = serialUsernames(username);
-            trainer.getUser().setUsername(username + serialUsername + 1);
+
+            trainer.setUser(user);
+
             entityManager.persist(trainer);
 
             entityManager.getTransaction().commit();
-            log.info("Trainer '" + trainer.getTrainerId() + "' inserted with final username '" + username + "'");
+            log.info("Trainer '" + trainer.getTrainerId() + "' inserted with final username '"
+                    + user.getUsername() + " and password " + user.getPassword() + "'");
             return trainer;
 
         } catch (Exception e) {
@@ -82,18 +83,20 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
 
     @Override
     public Optional<Trainer> findByUsername(String username) {
-        Trainer trainer = null;
         try {
-            trainer = entityManager.createQuery("""
-                    SELECT t FROM Trainer t WHERE t.user.username = :username
-                    """, Trainer.class)
+            List<Trainer> trainers = entityManager.createQuery("""
+                            SELECT t FROM Trainer t WHERE t.user.username = :username
+                            """, Trainer.class)
                     .setParameter("username", username)
-                    .getSingleResult();
+                    .getResultList();
+
+            return trainers.isEmpty() ? Optional.empty() : Optional.of(trainers.get(0));
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error finding trainer by username: " + e.getMessage(), e);
         }
-        return Optional.ofNullable(trainer);
+        return Optional.empty();
     }
+
 
     @Transactional(readOnly = true)
     @Override
@@ -131,8 +134,10 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
     @Override
     public Optional<UUID> getIdByUsername(String username) {
         UUID singleResult = entityManager.createQuery("""
-                SELECT id FROM Trainer t WHERE t.user.username = :username
-                """, UUID.class).getSingleResult();
+                        SELECT id FROM Trainer t WHERE t.user.username = :username
+                        """, UUID.class)
+                .setParameter("username", username)
+                .getSingleResult();
         return Optional.of(singleResult);
     }
 
@@ -169,7 +174,8 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
     public void addTrainerToTrainee(Trainee trainee, Trainer trainer) {
         entityManager.createQuery("""
                         INSERT INTO TraineeTrainer (trainee, trainer) VALUES (:trainer, :trainee)
-                        """).setParameter("trainee", trainee)
+                        """)
+                .setParameter("trainee", trainee)
                 .setParameter("trainer", trainer);
     }
 
@@ -192,10 +198,10 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
     @Override
     public void removeTraineeOfTrainer(Trainee trainee, Trainer trainer) {
         entityManager.createQuery("""
-                DELETE FROM TraineeTrainer t WHERE
-                t.trainer.trainerId = :trainerId
-                AND t.trainee.traineeId = :traineeId
-                """)
+                        DELETE FROM TraineeTrainer t WHERE
+                        t.trainer.trainerId = :trainerId
+                        AND t.trainee.traineeId = :traineeId
+                        """)
                 .setParameter("trainerId", trainer.getTrainerId())
                 .setParameter("traineeId", trainee.getTraineeId())
                 .executeUpdate();

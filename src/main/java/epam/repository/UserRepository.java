@@ -1,5 +1,6 @@
 package epam.repository;
 
+import epam.entity.User;
 import epam.request_dto.ChangePasswordRequestDTO;
 
 public interface UserRepository {
@@ -9,4 +10,8 @@ public interface UserRepository {
     boolean existsByUsernameAndPassword(String username, String password);
 
     Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO);
+
+    Boolean toggleActiveStatus(User username);
+
+    User getByUsername(String username);
 }

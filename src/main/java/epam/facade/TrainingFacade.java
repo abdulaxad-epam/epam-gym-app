@@ -7,6 +7,7 @@ import epam.request_dto.RegisterTraineeRequestDTO;
 import epam.request_dto.RegisterTrainerRequestDTO;
 import epam.request_dto.TraineeRequestDTO;
 import epam.request_dto.TrainerRequestDTO;
+import epam.request_dto.TrainingRequestDTO;
 import epam.response_dto.TraineeResponseDTO;
 import epam.response_dto.TrainerResponseDTO;
 import epam.response_dto.TrainingResponseDTO;
@@ -42,9 +43,9 @@ public interface TrainingFacade {
 
     List<TrainerResponseDTO> getAllTrainers();
 
-    TrainingResponseDTO createTraining(Training training);
+    TrainingResponseDTO createTraining(TrainingRequestDTO training);
 
-    TrainingResponseDTO updateTraining(String username, Training training);
+    TrainingResponseDTO updateTraining(String username, TrainingRequestDTO training);
 
     TrainingResponseDTO getTrainingByUsername(String username);
 
@@ -65,4 +66,7 @@ public interface TrainingFacade {
     List<TraineeResponseDTO> getTraineesByTrainerUsername(String currentUsername);
 
     List<TrainingResponseDTO> getTrainingsByTraineeUsername(String username);
+
+    Boolean toggleStatus(String username);
+
 }

@@ -2,7 +2,6 @@ package epam.repository_impl;
 
 
 import epam.entity.Trainee;
-import epam.entity.Trainer;
 import epam.entity.User;
 import epam.exception.EntityManagerInsertException;
 import epam.exception.TraineeNotFoundException;
@@ -38,17 +37,14 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
             entityManager.getTransaction().begin();
 
             User user = updateUsername(trainee.getUser());
-            String username = user.getUsername();
-            long serialUsername = serialUsernames(username);
-            if (serialUsername == 0L)
-                trainee.getUser().setUsername(username);
-            else
-                trainee.getUser().setUsername(username + serialUsername);
+
+            trainee.setUser(user);
 
             entityManager.persist(trainee);
-
             entityManager.getTransaction().commit();
-            log.info("Trainee '" + trainee.getTraineeId() + "' inserted with final username '" + trainee.getUser().getUsername() + "'");
+
+            log.info("Trainee '" + trainee.getTraineeId() + "' inserted with username '" +
+                    trainee.getUser().getUsername() + " and password "+ trainee.getUser().getPassword() + "'");
             return trainee;
 
         } catch (Exception e) {
@@ -58,6 +54,7 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
         }
     }
 
+
     @Override
     public Trainee update(UUID id, Trainee trainee) {
         try {
@@ -65,7 +62,6 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
 
             if (entityManager.find(Trainee.class, id) != null) {
                 trainee = entityManager.merge(trainee);
-
                 entityManager.flush();
 
                 entityManager.refresh(trainee);
@@ -80,6 +76,7 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
         }
         return trainee;
     }
+
 
     @Transactional(readOnly = true)
     @Override
@@ -97,15 +94,18 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
     @Override
     @Transactional(readOnly = true)
     public Optional<Trainee> findByUsername(String username) {
-        Trainee trainee = null;
+        List<Trainee> trainee = null;
         try {
             trainee = entityManager.createQuery("""
-                    SELECT t FROM Trainee t WHERE t.user.username = :username
-                    """, Trainee.class).getSingleResult();
+                    SELECT t FROM Trainee t WHERE user.username = :username
+                    """, Trainee.class)
+                    .setParameter("username", username)
+                    .getResultList();
         } catch (Exception e) {
             log.error(e.getMessage());
         }
-        return Optional.ofNullable(trainee);
+        assert trainee != null;
+        return Optional.ofNullable(trainee.get(0));
     }
 
     @Override
@@ -117,6 +117,7 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean existsById(UUID id) {
         return entityManager.createQuery(
                         """
@@ -131,6 +132,7 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean existsByUsername(String username) {
         return entityManager.createQuery(
                         """
@@ -145,10 +147,13 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<UUID> getIdByUsername(String username) {
         UUID singleResult = entityManager.createQuery("""
                 SELECT id FROM Trainee t WHERE t.user.username = :username
-                """, UUID.class).getSingleResult();
+                """, UUID.class)
+                .setParameter("username", username)
+                .getSingleResult();
         return Optional.of(singleResult);
     }
 
@@ -168,6 +173,7 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Trainee> findTraineeByTrainer(String currentUsername) {
         return entityManager.createQuery("""
                         SELECT DISTINCT t FROM Trainee t

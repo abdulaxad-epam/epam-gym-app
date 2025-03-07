@@ -1,7 +1,5 @@
 package epam.service_impl;
 
-import epam.mapper.TraineeMapper;
-import epam.mapper.UserMapper;
 import epam.request_dto.AuthenticateRequestDTO;
 import epam.request_dto.RegisterTraineeRequestDTO;
 import epam.request_dto.RegisterTrainerRequestDTO;
@@ -18,7 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final UserService userRepository;
+    private final UserService userService;
     private final TrainerService trainerService;
     private final TraineeService traineeService;
 
@@ -48,10 +46,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public Boolean authenticate(AuthenticateRequestDTO authenticateRequestDTO) {
         if (authenticateRequestDTO.getUsername() != null && authenticateRequestDTO.getPassword() != null)
-            return userRepository.existsByUsernameAndPassword(
+            return userService.existsByUsernameAndPassword(
                     authenticateRequestDTO.getUsername(), authenticateRequestDTO.getPassword()
             );
         return false;
     }
-
 }

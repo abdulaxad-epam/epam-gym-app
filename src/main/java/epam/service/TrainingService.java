@@ -2,6 +2,7 @@ package epam.service;
 
 
 import epam.entity.Training;
+import epam.request_dto.TrainingRequestDTO;
 import epam.response_dto.TrainingResponseDTO;
 
 import java.util.List;
@@ -9,9 +10,9 @@ import java.util.UUID;
 
 public interface TrainingService {
 
-    TrainingResponseDTO createTraining(Training training);
+    TrainingResponseDTO createTraining(TrainingRequestDTO training);
 
-    TrainingResponseDTO updateTraining(String username, Training training);
+    TrainingResponseDTO updateTraining(String username, TrainingRequestDTO training);
 
     TrainingResponseDTO getTrainingByUsername(String username);
 

@@ -7,6 +7,7 @@ import epam.repository.TraineeRepository;
 import epam.request_dto.TraineeRequestDTO;
 import epam.response_dto.TraineeResponseDTO;
 import epam.service.TraineeService;
+import epam.service.TrainingService;
 import epam.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,8 @@ public class TraineeServiceImpl implements TraineeService {
 
     private final TraineeMapper traineeMapper;
 
+    private final TrainingService trainingService;
+
     private final UserService userService;
 
     @Override
@@ -39,14 +42,13 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public TraineeResponseDTO updateTrainee(String username, TraineeRequestDTO traineeRequestDTO) {
 
-        Trainee trainee = traineeMapper.toTrainee(traineeRequestDTO);
-
         Optional<UUID> idByUsername = traineeRepository.getIdByUsername(username);
 
         if (idByUsername.isPresent()) {
-
+            Trainee trainee = traineeRepository.findById(idByUsername.get()).get();
+            trainee.setAddress(traineeRequestDTO.getAddress());
+            trainee.setDateOfBirth(traineeRequestDTO.getDateOfBirth());
             Trainee update = traineeRepository.update(idByUsername.get(), trainee);
-
             return traineeMapper.toTraineeResponseDTO(update);
 
         } else
@@ -55,7 +57,11 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public void deleteTrainee(String username) {
+        System.out.println(username);
         if (userService.existsByUsername(username)) {
+
+            trainingService.deleteTraining(username);
+
             traineeRepository.deleteTraineeByUsername(username);
         } else
             throw new TraineeNotFoundException("Trainee not found");

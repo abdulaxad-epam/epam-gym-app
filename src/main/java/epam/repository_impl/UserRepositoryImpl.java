@@ -1,5 +1,6 @@
 package epam.repository_impl;
 
+import epam.entity.User;
 import epam.repository.UserRepository;
 import epam.request_dto.ChangePasswordRequestDTO;
 import jakarta.persistence.EntityManager;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class UserRepositoryImpl implements UserRepository {
         return entityManager.createQuery(
                         """
                                 SELECT CASE WHEN EXISTS
-                                (SELECT 1 FROM Trainer t WHERE t.user.username = :username)
+                                (SELECT 1 FROM User u WHERE u.username = :username)
                                 THEN TRUE
                                 ELSE
                                 FALSE END
@@ -53,11 +55,13 @@ public class UserRepositoryImpl implements UserRepository {
                 entityManager.createQuery(
                                 """
                                         UPDATE User u
-                                        SET u.password = :password
-                                        WHERE u.username = :username AND u.password = :password
+                                        SET u.password = :newPassword
+                                        WHERE u.username = :username AND u.password = :oldPassword
                                         """)
                         .setParameter("username", changePasswordRequestDTO.getUsername())
-                        .setParameter("password", changePasswordRequestDTO.getNewPassword());
+                        .setParameter("oldPassword", changePasswordRequestDTO.getOldPassword())
+                        .setParameter("newPassword", changePasswordRequestDTO.getNewPassword())
+                        .executeUpdate();
 
                 entityManager.getTransaction().commit();
                 return true;
@@ -68,4 +72,31 @@ public class UserRepositoryImpl implements UserRepository {
         }
         return false;
     }
+
+    @Override
+    public Boolean toggleActiveStatus(User user) {
+        try {
+            entityManager.getTransaction().begin();
+
+            user.setIsActive(!user.getIsActive());
+            entityManager.merge(user);
+            entityManager.flush();
+            entityManager.refresh(user);
+
+            entityManager.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            log.error("Error toggling active status: " + e.getMessage(), e);
+            return false;
+        }
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public User getByUsername(String username) {
+       return entityManager.find(User.class, username);
+    }
+
 }
