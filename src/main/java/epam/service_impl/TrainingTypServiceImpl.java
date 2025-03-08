@@ -7,6 +7,8 @@ import epam.service.TrainingTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TrainingTypServiceImpl implements TrainingTypeService {
@@ -17,4 +19,10 @@ public class TrainingTypServiceImpl implements TrainingTypeService {
     public TrainingType getTrainingByTrainingName(String trainingName) {
        return trainingRepository.findTrainingByTrainingName(trainingName);
     }
+
+    @Override
+    public List<String> findAll() {
+        return trainingRepository.findAll();
+    }
+
 }

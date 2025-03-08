@@ -1,17 +1,18 @@
 package epam.app;
 
-import epam.entity.Training;
-import epam.entity.User;
+import epam.entity.TrainingType;
 import epam.facade.TrainingFacade;
-import epam.mapper.TraineeMapper;
-import epam.mapper.TrainingMapper;
-import epam.mapper.TrainingTypeMapper;
-import epam.mapper.UserMapper;
-import epam.request_dto.*;
+import epam.request_dto.AuthenticateRequestDTO;
+import epam.request_dto.ChangePasswordRequestDTO;
+import epam.request_dto.RegisterTraineeRequestDTO;
+import epam.request_dto.RegisterTrainerRequestDTO;
+import epam.request_dto.TraineeRequestDTO;
+import epam.request_dto.TrainerRequestDTO;
+import epam.request_dto.TrainingRequestDTO;
+import epam.request_dto.UserRequestDTO;
 import epam.response_dto.TraineeResponseDTO;
 import epam.response_dto.TrainerResponseDTO;
 import epam.response_dto.TrainingResponseDTO;
-import epam.response_dto.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,8 +22,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -125,7 +128,7 @@ public class ConsoleApplication {
                 registerTrainer();
                 break;
             case 0:
-                return true; // Exit
+                return true;
             default:
                 System.out.println("Invalid option. Please try again.");
         }
@@ -203,6 +206,7 @@ public class ConsoleApplication {
         currentUsername = null;
         currentUserRole = null;
         System.out.println("Logged out successfully.");
+        run();
     }
 
     private void registerTrainee() {
@@ -252,7 +256,16 @@ public class ConsoleApplication {
         System.out.println("\n--- Trainer Registration ---");
 
         UserRequestDTO userDTO = createUserDTO();
-        String specialization = getStringInput("Enter specialization: ");
+
+        List<String> trainingTypes = trainingFacade.findAllTrainingTypes();
+        String training = Arrays.asList(trainingTypes.toArray()).toString();
+        String specialization = "";
+        while (!trainingTypes.contains(specialization)) {
+            specialization = getStringInput("Enter specialization: " + training + ":  ");
+            if (!training.contains(specialization)) {
+                System.out.println("Invalid specialization. Please enter a valid specialization.");
+            }
+        }
 
         RegisterTrainerRequestDTO trainerRequest = RegisterTrainerRequestDTO.builder()
                 .specialization(specialization)
@@ -328,9 +341,9 @@ public class ConsoleApplication {
         try {
             if (currentUserRole == UserRole.TRAINEE) {
                 return trainingFacade.getTraineeByUsername(currentUsername).getUser().getIsActive();
-            } else {
+            } else if (currentUserRole == UserRole.TRAINER) {
                 return trainingFacade.getTrainerByUsername(currentUsername).getUser().getIsActive();
-            }
+            } else throw new Exception();
         } catch (Exception e) {
             System.out.println("Error retrieving user status: " + e.getMessage());
             return false;
@@ -386,15 +399,21 @@ public class ConsoleApplication {
                         .build();
 
                 TraineeResponseDTO response = trainingFacade.updateTrainee(currentUsername, traineeDTO);
+                log.info("Trainee updated successfully" + response);
                 System.out.println("Profile updated successfully!");
             } else {
                 // Get current trainer information
                 TrainerResponseDTO currentTrainer = trainingFacade.getTrainerByUsername(currentUsername);
 
                 // Prepare update DTO
-                String newSpecialization = getStringInput("Enter new specialization (leave empty to keep current): ");
-                if (newSpecialization.isEmpty()) {
-                    newSpecialization = currentTrainer.getTrainerSpecialization();
+                List<String> trainingTypes = trainingFacade.findAllTrainingTypes();
+                String trainingType = Arrays.asList(trainingTypes.toArray()).toString();
+                String newSpecialization = "";
+                while (!trainingTypes.contains(newSpecialization)) {
+                    newSpecialization =  getStringInput("Enter new specialization : " + trainingType + ":   ");
+                    if (!trainingTypes.contains(newSpecialization)) {
+                        System.out.println("Invalid specialization. Please enter a valid specialization.");
+                    }
                 }
 
                 UserRequestDTO userDTO = UserRequestDTO.builder()
@@ -776,7 +795,7 @@ public class ConsoleApplication {
         String trainingName = getStringInput("Enter training name: ");
 
         String traineeUsername = getStringInput("Enter trainee username: ");
-        if (!trainingFacade.existsByUsername(traineeUsername)){
+        if (!trainingFacade.existsByUsername(traineeUsername)) {
             log.warn("Trainee with username " + traineeUsername + " does not exist.");
             createTraining();
         }

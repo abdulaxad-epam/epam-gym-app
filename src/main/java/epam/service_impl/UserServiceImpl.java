@@ -39,18 +39,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean toggleStatus(String username) {
+
         if (userRepository.existsByUsername(username)) {
+
             User user = userRepository.getByUsername(username);
 
             boolean newStatus = !user.getIsActive();
+            System.out.println("newStatus: " + newStatus);
+
             user.setIsActive(newStatus);
+            System.out.println("user: " + user);
 
             System.out.println("Toggling isActive for user " + username + " to: " + newStatus);
 
             return userRepository.toggleActiveStatus(user);
         }
+
         return false;
     }
-
-
 }

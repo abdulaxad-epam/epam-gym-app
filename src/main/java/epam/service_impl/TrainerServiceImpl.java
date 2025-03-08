@@ -1,13 +1,14 @@
 package epam.service_impl;
 
-import epam.entity.Trainee;
 import epam.entity.Trainer;
+import epam.entity.TrainingType;
 import epam.exception.TrainerNotFoundException;
 import epam.mapper.TrainerMapper;
 import epam.repository.TrainerRepository;
 import epam.request_dto.TrainerRequestDTO;
 import epam.response_dto.TrainerResponseDTO;
 import epam.service.TrainerService;
+import epam.service.TrainingTypeService;
 import epam.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,8 @@ import java.util.UUID;
 public class TrainerServiceImpl implements TrainerService {
 
     private final TrainerRepository trainerRepository;
+
+    private final TrainingTypeService trainingTypeService;
 
     private final TrainerMapper trainerMapper;
 
@@ -39,8 +42,11 @@ public class TrainerServiceImpl implements TrainerService {
 
         Optional<UUID> id = trainerRepository.getIdByUsername(username);
 
+        TrainingType trainingType = trainingTypeService.getTrainingByTrainingName(trainerRequestDTO.getSpecialization());
+
         if (id.isPresent()) {
-            Trainer trainer = trainerMapper.toTrainer(trainerRequestDTO);
+            Trainer trainer = trainerRepository.findById(id.get()).get();
+            trainer.setSpecialization(trainingType);
 
             Trainer updated = trainerRepository.update(id.get(),trainer);
             return trainerMapper.toTrainerResponseDTO(updated);

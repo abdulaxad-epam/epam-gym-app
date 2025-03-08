@@ -13,7 +13,7 @@ public interface TrainingUserRepository {
         try {
             return entityManager.createQuery(
                             "SELECT COUNT(u) FROM User u WHERE u.username LIKE :username", Long.class)
-                    .setParameter("username", username + "%") // Match existing usernames
+                    .setParameter("username", username + "%")
                     .getSingleResult();
         } catch (Exception e) {
             System.err.println("Error checking existing usernames: " + e.getMessage());

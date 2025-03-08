@@ -17,6 +17,7 @@ import epam.service.TraineeService;
 import epam.service.TraineeTrainerService;
 import epam.service.TrainerService;
 import epam.service.TrainingService;
+import epam.service.TrainingTypeService;
 import epam.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,8 @@ public class TrainingFacadeImpl implements TrainingFacade {
     private final TrainingService trainingService;
 
     private final TrainerService trainerService;
+
+    private final TrainingTypeService trainingTypeService;
 
     private final UserService userService;
 
@@ -172,5 +175,10 @@ public class TrainingFacadeImpl implements TrainingFacade {
     @Override
     public Boolean toggleStatus(String username) {
         return userService.toggleStatus(username);
+    }
+
+    @Override
+    public List<String> findAllTrainingTypes() {
+        return trainingTypeService.findAll();
     }
 }

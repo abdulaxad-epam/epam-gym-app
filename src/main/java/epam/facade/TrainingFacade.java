@@ -69,4 +69,5 @@ public interface TrainingFacade {
 
     Boolean toggleStatus(String username);
 
+    List<String> findAllTrainingTypes();
 }
