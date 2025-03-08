@@ -13,20 +13,25 @@ public class TrainerMapper {
 
     private final UserMapper userMapper;
 
-    private final TrainingTypeMapper trainingTypeMapper;
-
-
     public TrainerResponseDTO toTrainerResponseDTO(Trainer trainer) {
+        if (trainer == null) {
+            return null;
+        }
+
         return TrainerResponseDTO.builder()
-                .trainerSpecialization(trainer.getSpecialization().getDescription())
+                .trainerSpecialization(trainer.getSpecialization() != null ? trainer.getSpecialization().getDescription() : null)
                 .user(userMapper.toUserResponseDTO(trainer.getUser()))
                 .build();
     }
 
     public Trainer toTrainer(TrainerRequestDTO trainerRequestDTO, TrainingType trainingType) {
+        if (trainerRequestDTO == null) {
+            return null;
+        }
+
         return Trainer.builder()
                 .specialization(trainingType)
-                .user(userMapper.toUser(trainerRequestDTO.getUser()))
+                .user(trainerRequestDTO.getUser() != null ? userMapper.toUser(trainerRequestDTO.getUser()) : null)
                 .build();
     }
 }

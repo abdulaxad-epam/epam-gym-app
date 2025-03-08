@@ -5,11 +5,14 @@ import epam.request_dto.UserRequestDTO;
 import epam.response_dto.UserResponseDTO;
 import org.springframework.stereotype.Component;
 
-
 @Component
 public class UserMapper {
 
     public UserResponseDTO toUserResponseDTO(User user) {
+        if (user == null) {
+            return null;
+        }
+
         return UserResponseDTO.builder()
                 .firstName(user.getFirstname())
                 .lastName(user.getLastname())
@@ -20,6 +23,10 @@ public class UserMapper {
     }
 
     public User toUser(UserRequestDTO userRequestDTO) {
+        if (userRequestDTO == null) {
+            return null;
+        }
+
         return User.builder()
                 .firstname(userRequestDTO.getFirstName())
                 .lastname(userRequestDTO.getLastName())

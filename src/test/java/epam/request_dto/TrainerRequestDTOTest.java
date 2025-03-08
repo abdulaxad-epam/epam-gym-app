@@ -3,17 +3,17 @@ package epam.request_dto;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-class RegisterTrainerRequestDTOTest {
+class TrainerRequestDTOTest {
 
     @Test
     void testBuilderAndGetters() {
         UserRequestDTO user = UserRequestDTO.builder()
                 .firstName("Alice")
-                .lastName("Smith")
+                .lastName("Johnson")
                 .isActive(true)
                 .build();
 
-        RegisterTrainerRequestDTO dto = RegisterTrainerRequestDTO.builder()
+        TrainerRequestDTO dto = TrainerRequestDTO.builder()
                 .specialization("Fitness Coach")
                 .user(user)
                 .build();
@@ -24,10 +24,10 @@ class RegisterTrainerRequestDTOTest {
 
     @Test
     void testSetters() {
-        RegisterTrainerRequestDTO dto = RegisterTrainerRequestDTO.builder().build();
+        TrainerRequestDTO dto = TrainerRequestDTO.builder().build();
         UserRequestDTO user = UserRequestDTO.builder()
                 .firstName("Bob")
-                .lastName("Brown")
+                .lastName("Smith")
                 .isActive(false)
                 .build();
 
@@ -46,12 +46,12 @@ class RegisterTrainerRequestDTOTest {
                 .isActive(true)
                 .build();
 
-        RegisterTrainerRequestDTO dto = RegisterTrainerRequestDTO.builder()
+        TrainerRequestDTO dto = TrainerRequestDTO.builder()
                 .specialization("Personal Trainer")
                 .user(user)
                 .build();
 
-        String expected = "RegisterTrainerRequestDTO(specialization=Personal Trainer, user=" + user + ")";
+        String expected = "TrainerRequestDTO(specialization=Personal Trainer, user=" + user + ")";
         assertEquals(expected, dto.toString());
     }
 }

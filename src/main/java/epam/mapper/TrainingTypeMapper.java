@@ -11,12 +11,18 @@ import org.springframework.stereotype.Component;
 public class TrainingTypeMapper {
 
     public TrainingType toTrainingType(RegisterTrainerRequestDTO userRequestDTO) {
+        if (userRequestDTO == null || userRequestDTO.getSpecialization() == null) {
+            return null;
+        }
         return TrainingType.builder()
                 .description(userRequestDTO.getSpecialization())
                 .build();
     }
 
     public TrainingType toTrainingType(String specialization) {
+        if (specialization == null) {
+            return null;
+        }
         return TrainingType.builder()
                 .description(specialization)
                 .build();

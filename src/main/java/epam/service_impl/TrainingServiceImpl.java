@@ -5,6 +5,7 @@ import epam.entity.Trainer;
 import epam.entity.Training;
 import epam.entity.TrainingType;
 import epam.exception.TraineeNotFoundException;
+import epam.exception.TrainerNotFoundException;
 import epam.exception.TrainingNotFoundException;
 import epam.mapper.TrainingMapper;
 import epam.repository.TraineeRepository;
@@ -37,21 +38,13 @@ public class TrainingServiceImpl implements TrainingService {
         TrainingType trainingType =
                 trainingTypeService.getTrainingByTrainingName(trainingRequestDTO.getTrainingType());
 
-        System.out.println(trainingType);
+        Trainer trainer = trainerRepository.findByUsername(trainingRequestDTO.getTrainerUsername())
+                .orElseThrow(() -> new TrainerNotFoundException("Trainer with username " + trainingRequestDTO.getTrainerUsername() + " not found"));
 
-        Trainer trainer = trainerRepository.findByUsername(
-                trainingRequestDTO.getTraineeUsername()).orElseThrow(() -> new TraineeNotFoundException("Username not found"));
-
-        System.out.println(trainer);
-
-        Trainee trainee = traineeRepository.findByUsername(
-                trainingRequestDTO.getTraineeUsername()).orElseThrow(() -> new TraineeNotFoundException("Username not found"));
-
-        System.out.println(trainee);
+        Trainee trainee = traineeRepository.findByUsername(trainingRequestDTO.getTraineeUsername())
+                .orElseThrow(() -> new TraineeNotFoundException("Trainee with username " + trainingRequestDTO.getTraineeUsername() + " not found"));
 
         Training training = trainingMapper.toTraining(trainingRequestDTO, trainingType, trainer, trainee);
-
-        System.out.println(training);
 
         Training inserted = trainingRepository.insert(training);
 
@@ -61,66 +54,53 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     public TrainingResponseDTO updateTraining(String username, TrainingRequestDTO trainingRequestDTO) {
 
-        Optional<UUID> id = trainingRepository.getIdByUsername(username);
+        UUID trainingId = trainingRepository.getIdByUsername(username)
+                .orElseThrow(() -> new TrainingNotFoundException("Training with username " + username + " not found"));
 
-        TrainingType trainingType =
-                trainingTypeService.getTrainingByTrainingName(trainingRequestDTO.getTrainingType());
+        TrainingType trainingType = trainingTypeService.getTrainingByTrainingName(trainingRequestDTO.getTrainingType());
 
-        Trainer trainer = trainerRepository.findByUsername(
-                trainingRequestDTO.getTraineeUsername()).orElseThrow(() -> new TraineeNotFoundException("Username not found"));
+        Trainer trainer = trainerRepository.findByUsername(trainingRequestDTO.getTrainerUsername())
+                .orElseThrow(() -> new TrainerNotFoundException("Trainer with username " + trainingRequestDTO.getTrainerUsername() + " not found"));
 
-        Trainee trainee = traineeRepository.findByUsername(
-                trainingRequestDTO.getTraineeUsername()).orElseThrow(() -> new TraineeNotFoundException("Username not found"));
+        Trainee trainee = traineeRepository.findByUsername(trainingRequestDTO.getTraineeUsername())
+                .orElseThrow(() -> new TraineeNotFoundException("Trainee with username " + trainingRequestDTO.getTraineeUsername() + " not found"));
 
+        Training updatedTraining = trainingMapper.toTraining(trainingRequestDTO, trainingType, trainer, trainee);
 
-        if (id.isPresent()) {
+        Training updated = trainingRepository.update(trainingId, updatedTraining);
 
-            Training training = trainingMapper.toTraining(trainingRequestDTO, trainingType, trainer, trainee);
-
-            Training update = trainingRepository.update(id.get(), training);
-
-            return trainingMapper.toTrainingResponseDTO(update);
-
-        }
-        throw new TrainingNotFoundException("Training with id " + id + " not found");
+        return trainingMapper.toTrainingResponseDTO(updated);
     }
 
     @Override
     public TrainingResponseDTO getTrainingByUsername(String username) {
 
-        Optional<UUID> id = trainingRepository.getIdByUsername(username);
+        UUID trainingId = trainingRepository.getIdByUsername(username)
+                .orElseThrow(() -> new TrainingNotFoundException("Training with username " + username + " not found"));
 
-        if (id.isPresent()) {
+        Training training = trainingRepository.findById(trainingId);
 
-            Training trainer = trainingRepository.findById(id.get());
-
-            return trainingMapper.toTrainingResponseDTO(trainer);
-
-        }
-        throw new TrainingNotFoundException("Training with id " + id + " not found");
+        return trainingMapper.toTrainingResponseDTO(training);
     }
 
     @Override
     public List<TrainingResponseDTO> getAllTrainings() {
-
-        List<Training> trainers = trainingRepository.findAll();
-
-        return trainers.stream().map(trainingMapper::toTrainingResponseDTO).toList();
+        List<Training> trainings = trainingRepository.findAll();
+        return trainings.stream().map(trainingMapper::toTrainingResponseDTO).toList();
     }
 
     @Override
     public void deleteTraining(String username) {
 
-        Optional<UUID> id = trainingRepository.getIdByUsername(username);
+        UUID trainingId = trainingRepository.getIdByUsername(username)
+                .orElseThrow(() -> new TrainingNotFoundException("Training with username " + username + " not found"));
 
-        id.ifPresent(trainingRepository::delete);
+        trainingRepository.delete(trainingId);
     }
 
     @Override
     public List<TrainingResponseDTO> getTrainingsByTraineeUsername(String username) {
-
         List<Training> trainings = trainingRepository.findTrainingsByTrainee(username);
-
         return trainings.stream().map(trainingMapper::toTrainingResponseDTO).toList();
     }
 }

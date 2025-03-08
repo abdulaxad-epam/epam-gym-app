@@ -1,68 +1,66 @@
 package epam.request_dto;
 
 import org.junit.jupiter.api.Test;
-
 import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-class RegisterTraineeRequestDTOTest {
+class TraineeRequestDTOTest {
 
     @Test
     void testBuilderAndGetters() {
-        LocalDateTime dob = LocalDateTime.of(2000, 1, 1, 0, 0);
+        LocalDateTime dob = LocalDateTime.of(2000, 5, 15, 0, 0);
         UserRequestDTO user = UserRequestDTO.builder()
-                .firstName("John")
-                .lastName("Doe")
+                .firstName("Alice")
+                .lastName("Johnson")
                 .isActive(true)
                 .build();
 
-        RegisterTraineeRequestDTO dto = RegisterTraineeRequestDTO.builder()
+        TraineeRequestDTO dto = TraineeRequestDTO.builder()
                 .dateOfBirth(dob)
-                .address("123 Main St")
+                .address("123 Main St, City")
                 .user(user)
                 .build();
 
         assertEquals(dob, dto.getDateOfBirth());
-        assertEquals("123 Main St", dto.getAddress());
+        assertEquals("123 Main St, City", dto.getAddress());
         assertEquals(user, dto.getUser());
     }
 
     @Test
     void testSetters() {
-        RegisterTraineeRequestDTO dto = RegisterTraineeRequestDTO.builder().build();
-        LocalDateTime dob = LocalDateTime.of(1995, 5, 15, 10, 30);
+        TraineeRequestDTO dto = TraineeRequestDTO.builder().build();
+        LocalDateTime dob = LocalDateTime.of(1998, 10, 20, 0, 0);
         UserRequestDTO user = UserRequestDTO.builder()
-                .firstName("Jane")
-                .lastName("Doe")
+                .firstName("Bob")
+                .lastName("Smith")
                 .isActive(false)
                 .build();
 
         dto.setDateOfBirth(dob);
-        dto.setAddress("456 Another St");
+        dto.setAddress("456 Elm St, Town");
         dto.setUser(user);
 
         assertEquals(dob, dto.getDateOfBirth());
-        assertEquals("456 Another St", dto.getAddress());
+        assertEquals("456 Elm St, Town", dto.getAddress());
         assertEquals(user, dto.getUser());
     }
 
     @Test
     void testToString() {
-        LocalDateTime dob = LocalDateTime.of(1998, 12, 25, 12, 0);
+        LocalDateTime dob = LocalDateTime.of(1995, 8, 10, 0, 0);
         UserRequestDTO user = UserRequestDTO.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .isActive(true)
                 .build();
 
-        RegisterTraineeRequestDTO dto = RegisterTraineeRequestDTO.builder()
+        TraineeRequestDTO dto = TraineeRequestDTO.builder()
                 .dateOfBirth(dob)
-                .address("789 Some Rd")
+                .address("789 Pine St, Village")
                 .user(user)
                 .build();
 
-        String expected = "RegisterTraineeRequestDTO(dateOfBirth=" + dob + ", address=789 Some Rd, user=" + user + ")";
+        String expected = "TraineeRequestDTO(dateOfBirth=" + dob + ", address=789 Pine St, Village, user=" + user + ")";
         assertEquals(expected, dto.toString());
     }
 }

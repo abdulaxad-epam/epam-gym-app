@@ -1,55 +1,51 @@
-package epam.response_dto;
+package epam.request_dto;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-class UserResponseDTOTest {
+class UserRequestDTOTest {
 
     @Test
     void testBuilderAndGetters() {
-        UserResponseDTO dto = UserResponseDTO.builder()
+        UserRequestDTO dto = UserRequestDTO.builder()
                 .firstName("John")
                 .lastName("Doe")
-                .username("johndoe")
                 .password("securePass123")
                 .isActive(true)
                 .build();
 
         assertEquals("John", dto.getFirstName());
         assertEquals("Doe", dto.getLastName());
-        assertEquals("johndoe", dto.getUsername());
         assertEquals("securePass123", dto.getPassword());
         assertTrue(dto.getIsActive());
     }
 
     @Test
     void testSetters() {
-        UserResponseDTO dto = UserResponseDTO.builder().build();
+        UserRequestDTO dto = UserRequestDTO.builder().build();
 
         dto.setFirstName("Alice");
         dto.setLastName("Smith");
-        dto.setUsername("alice123");
-        dto.setPassword("pass456");
+        dto.setPassword("newPass456");
         dto.setIsActive(false);
 
         assertEquals("Alice", dto.getFirstName());
         assertEquals("Smith", dto.getLastName());
-        assertEquals("alice123", dto.getUsername());
-        assertEquals("pass456", dto.getPassword());
+        assertEquals("newPass456", dto.getPassword());
         assertFalse(dto.getIsActive());
     }
 
     @Test
     void testToString() {
-        UserResponseDTO dto = UserResponseDTO.builder()
-                .firstName("Charlie")
+        UserRequestDTO dto = UserRequestDTO.builder()
+                .firstName("Bob")
                 .lastName("Brown")
-                .username("charlie_b")
-                .password("mypassword")
+                .password("hiddenPass")
                 .isActive(true)
                 .build();
 
-        String expected = "UserResponseDTO(firstName=Charlie, lastName=Brown, username=charlie_b, password=mypassword, isActive=true)";
+        String expected = "UserRequestDTO(firstName=Bob, lastName=Brown, password=hiddenPass, isActive=true)";
         assertEquals(expected, dto.toString());
     }
 }

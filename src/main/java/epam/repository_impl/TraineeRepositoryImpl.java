@@ -44,7 +44,7 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
             entityManager.getTransaction().commit();
 
             log.info("Trainee '" + trainee.getTraineeId() + "' inserted with username '" +
-                    trainee.getUser().getUsername() + " and password "+ trainee.getUser().getPassword() + "'");
+                    trainee.getUser().getUsername() + " and password " + trainee.getUser().getPassword() + "'");
             return trainee;
 
         } catch (Exception e) {
@@ -63,16 +63,18 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
             if (entityManager.find(Trainee.class, id) != null) {
                 trainee = entityManager.merge(trainee);
                 entityManager.flush();
-
                 entityManager.refresh(trainee);
-
                 entityManager.getTransaction().commit();
             } else
                 throw new TraineeNotFoundException("Trainee with id " + id + " not found");
 
+        } catch (TraineeNotFoundException e) {
+            entityManager.getTransaction().rollback();
+            throw e;
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
             log.error(e.getMessage());
+            throw e;
         }
         return trainee;
     }
@@ -94,19 +96,18 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
     @Override
     @Transactional(readOnly = true)
     public Optional<Trainee> findByUsername(String username) {
-        List<Trainee> trainee = null;
-        try {
-            trainee = entityManager.createQuery("""
-                    SELECT t FROM Trainee t WHERE user.username = :username
-                    """, Trainee.class)
-                    .setParameter("username", username)
-                    .getResultList();
-        } catch (Exception e) {
-            log.error(e.getMessage());
+        List<Trainee> traineeList = entityManager.createQuery("""
+                        SELECT t FROM Trainee t WHERE user.username = :username
+                        """, Trainee.class)
+                .setParameter("username", username)
+                .getResultList();
+
+        if (traineeList.isEmpty()) {
+            return Optional.empty();
         }
-        assert trainee != null;
-        return Optional.ofNullable(trainee.get(0));
+        return Optional.of(traineeList.get(0));
     }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -150,8 +151,8 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
     @Transactional(readOnly = true)
     public Optional<UUID> getIdByUsername(String username) {
         UUID singleResult = entityManager.createQuery("""
-                SELECT id FROM Trainee t WHERE t.user.username = :username
-                """, UUID.class)
+                        SELECT id FROM Trainee t WHERE t.user.username = :username
+                        """, UUID.class)
                 .setParameter("username", username)
                 .getSingleResult();
         return Optional.of(singleResult);

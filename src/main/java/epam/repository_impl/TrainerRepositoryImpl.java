@@ -34,6 +34,9 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
 
     @Override
     public Trainer insert(Trainer trainer) {
+        if (trainer == null)
+            throw new IllegalArgumentException("Trainer cannot be null");
+
         try {
             entityManager.getTransaction().begin();
 
@@ -58,6 +61,9 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
 
     @Override
     public Trainer update(UUID id, Trainer trainer) {
+        if (trainer == null)
+            throw new IllegalArgumentException("Trainer cannot be null");
+
         try {
             entityManager.getTransaction().begin();
 
@@ -74,9 +80,13 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
             } else
                 throw new TrainerNotFoundException("Trainer with id " + id + " not found");
 
+        } catch (TrainerNotFoundException e) {
+            entityManager.getTransaction().rollback();
+            throw e;
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
             log.error(e.getMessage());
+            throw new TrainerNotFoundException(e.getMessage());
         }
         return trainer;
     }
