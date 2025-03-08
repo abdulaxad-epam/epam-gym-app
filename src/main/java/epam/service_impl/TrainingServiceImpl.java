@@ -37,13 +37,21 @@ public class TrainingServiceImpl implements TrainingService {
         TrainingType trainingType =
                 trainingTypeService.getTrainingByTrainingName(trainingRequestDTO.getTrainingType());
 
+        System.out.println(trainingType);
+
         Trainer trainer = trainerRepository.findByUsername(
                 trainingRequestDTO.getTraineeUsername()).orElseThrow(() -> new TraineeNotFoundException("Username not found"));
+
+        System.out.println(trainer);
 
         Trainee trainee = traineeRepository.findByUsername(
                 trainingRequestDTO.getTraineeUsername()).orElseThrow(() -> new TraineeNotFoundException("Username not found"));
 
+        System.out.println(trainee);
+
         Training training = trainingMapper.toTraining(trainingRequestDTO, trainingType, trainer, trainee);
+
+        System.out.println(training);
 
         Training inserted = trainingRepository.insert(training);
 

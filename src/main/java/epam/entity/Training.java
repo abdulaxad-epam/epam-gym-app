@@ -40,7 +40,7 @@ public class Training {
     private LocalDateTime trainingDate;
 
     @JoinColumn(name = "trainingType_id")
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private TrainingType trainingType;
 
     @Column(nullable = false)

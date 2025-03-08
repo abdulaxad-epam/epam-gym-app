@@ -1,6 +1,5 @@
 package epam.service;
 
-import epam.entity.Training;
 import epam.entity.TrainingType;
 
 import java.util.List;

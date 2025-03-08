@@ -1,6 +1,5 @@
 package epam.service;
 
-import epam.entity.Trainer;
 import epam.request_dto.TrainerRequestDTO;
 import epam.response_dto.TrainerResponseDTO;
 

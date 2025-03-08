@@ -1,12 +1,10 @@
 package epam.service;
 
 
-import epam.entity.Training;
 import epam.request_dto.TrainingRequestDTO;
 import epam.response_dto.TrainingResponseDTO;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface TrainingService {
 

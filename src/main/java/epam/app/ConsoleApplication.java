@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Component
 @RequiredArgsConstructor
@@ -148,10 +149,8 @@ public class ConsoleApplication {
                 }
                 break;
             case 3:
-                if (currentUserRole == UserRole.TRAINEE) {
+                if (currentUserRole == UserRole.TRAINER) {
                     handleTrainingManagement();
-                } else {
-//                    handleManageTrainings();
                 }
                 break;
             case 4:
@@ -410,7 +409,7 @@ public class ConsoleApplication {
                 String trainingType = Arrays.asList(trainingTypes.toArray()).toString();
                 String newSpecialization = "";
                 while (!trainingTypes.contains(newSpecialization)) {
-                    newSpecialization =  getStringInput("Enter new specialization : " + trainingType + ":   ");
+                    newSpecialization = getStringInput("Enter new specialization : " + trainingType + ":   ");
                     if (!trainingTypes.contains(newSpecialization)) {
                         System.out.println("Invalid specialization. Please enter a valid specialization.");
                     }
@@ -756,10 +755,8 @@ public class ConsoleApplication {
         while (!back) {
             System.out.println("\n--- Training Management ---");
             System.out.println("1. Create Training");
-            System.out.println("2. Update Training");
-            System.out.println("3. Delete Training");
-            System.out.println("4. Get Training by ID");
-            System.out.println("5. Get All Trainings");
+            System.out.println("2. Delete Training");
+            System.out.println("3. Get All Trainings");
             System.out.println("0. Back to Main Menu");
             System.out.print("Please select an option: ");
 
@@ -768,17 +765,10 @@ public class ConsoleApplication {
             switch (choice) {
                 case 1:
                     createTraining();
-                    break;
                 case 2:
-                    updateTraining();
-                    break;
-                case 3:
                     deleteTraining();
                     break;
-                case 4:
-                    getTrainingById();
-                    break;
-                case 5:
+                case 3:
                     getAllTrainings();
                     break;
                 case 0:
@@ -803,24 +793,48 @@ public class ConsoleApplication {
         String trainerUsername = currentUsername;
 
         System.out.println("Select training type:");
-        System.out.println("1. Strength\n2. Cardio\n3. Flexibility\n4. Balance\n5. Other");
+        List<String> trainingTypes = trainingFacade.findAllTrainingTypes();
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("[ ").append("\n");
+        for (int i = 0; i < trainingTypes.size(); i++) {
+            stringBuilder.append(i + 1).append(") ").append(trainingTypes.get(i)).append(", \n");
+        }
+        stringBuilder.append(" ]");
+
+        System.out.println(stringBuilder);
         int typeChoice = getIntInput();
-        String trainingType = switch (typeChoice) {
-            case 1 -> "Strength";
-            case 2 -> "Cardio";
-            case 3 -> "Flexibility";
-            case 4 -> "Balance";
-            case 5 -> getStringInput("Enter custom training type: ");
-            default -> "Other";
+        String trainingType = switch (String.valueOf(typeChoice)) {
+            case "1","STRENGTH_TRAINING"  -> trainingTypes.get(0);
+            case "2","CARDIOVASCULAR_TRAINING" -> trainingTypes.get(1);
+            case "3","HYPERTROPHY_TRAINING" -> trainingTypes.get(2);
+            case "4","FUNCTIONAL_TRAINING" -> trainingTypes.get(3);
+            case "5","FLEXIBILITY" -> trainingTypes.get(4);
+            default -> null;
         };
 
-        String dateString = getStringInput("Enter training date (yyyy-MM-dd HH:mm): ");
-        LocalDateTime trainingDate;
-        try {
-            trainingDate = LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        } catch (DateTimeParseException e) {
-            System.out.println("Invalid date format. Using current date and time.");
-            trainingDate = LocalDateTime.now();
+        if (trainingType == null) {
+            System.out.println("Invalid selection. Please try again.");
+            createTraining();
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime trainingDate = null;
+
+        boolean validDate = false;
+        while (!validDate) {
+            String dobString = getStringInput("Enter training date (yyyy-MM-dd): ");
+            if (dobString.isEmpty()) {
+                validDate = true;
+            } else {
+                try {
+                    trainingDate = LocalDate.parse(dobString, formatter).atStartOfDay();
+                    validDate = true;
+                } catch (DateTimeParseException e) {
+                    System.out.println("Invalid date format or values. Please use YYYY-MM-DD format with valid month/day values.");
+                } catch (Exception e) {
+                    System.out.println("Invalid date format.");
+                }
+            }
         }
 
         System.out.println("Enter duration in minutes: ");
@@ -836,6 +850,7 @@ public class ConsoleApplication {
                 .build();
 
         try {
+            System.out.println(trainingDTO);
             TrainingResponseDTO response = trainingFacade.createTraining(trainingDTO);
             System.out.println("Training created successfully with name: " + response.getTrainingName());
         } catch (Exception e) {

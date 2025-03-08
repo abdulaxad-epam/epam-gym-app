@@ -17,7 +17,11 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
 
     @Override
     public TrainingType findTrainingByTrainingName(String trainingName) {
-        return entityManager.find(TrainingType.class, trainingName);
+        return entityManager.createQuery("""
+                SELECT t FROM TrainingType t WHERE t.description = :trainingName
+                """, TrainingType.class)
+                .setParameter("trainingName", trainingName)
+                .getSingleResult();
     }
 
     @Override

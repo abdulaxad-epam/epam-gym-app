@@ -21,8 +21,10 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     @Override
     public Training insert(Training training) {
         try {
+            System.out.println(training);
             entityManager.getTransaction().begin();
             entityManager.persist(training);
+            System.out.println(training);
             entityManager.getTransaction().commit();
             return training;
         } catch (Exception e) {
@@ -99,7 +101,9 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     public Optional<UUID> getIdByUsername(String username) {
         UUID singleResult = entityManager.createQuery("""
                 SELECT id FROM Training t WHERE t.trainee.user.username = :username
-                """, UUID.class).getSingleResult();
+                """, UUID.class)
+                .setParameter("username", username)
+                .getSingleResult();
         return Optional.of(singleResult);
     }
 

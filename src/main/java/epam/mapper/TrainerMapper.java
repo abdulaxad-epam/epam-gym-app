@@ -1,6 +1,7 @@
 package epam.mapper;
 
 import epam.entity.Trainer;
+import epam.entity.TrainingType;
 import epam.request_dto.TrainerRequestDTO;
 import epam.response_dto.TrainerResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +23,9 @@ public class TrainerMapper {
                 .build();
     }
 
-    public Trainer toTrainer(TrainerRequestDTO trainerRequestDTO) {
+    public Trainer toTrainer(TrainerRequestDTO trainerRequestDTO, TrainingType trainingType) {
         return Trainer.builder()
-                .specialization(trainingTypeMapper.toTrainingType(trainerRequestDTO.getSpecialization()))
+                .specialization(trainingType)
                 .user(userMapper.toUser(trainerRequestDTO.getUser()))
                 .build();
     }

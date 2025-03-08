@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -18,8 +19,8 @@ import java.util.Objects;
 public class ApplicationConfig {
 
     private static final Log log = LogFactory.getLog(ApplicationConfig.class);
-
     private final JdbcTemplate jdbcTemplate;
+    private InputStream sqlScriptStream;
 
     @PostConstruct
     public void trainingTypes() {
@@ -28,8 +29,7 @@ public class ApplicationConfig {
 
     public void executeScript() {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                Objects.requireNonNull(getClass().getResourceAsStream("/database_initializer/training_types.sql")),
-                StandardCharsets.UTF_8))) {
+                getSqlScriptStream(), StandardCharsets.UTF_8))) {
 
             StringBuilder sql = new StringBuilder();
             String line;
@@ -48,5 +48,17 @@ public class ApplicationConfig {
         } catch (Exception e) {
             log.error("Error executing script /database_initializer/training_types.sql: " + e.getMessage(), e);
         }
+    }
+
+    public InputStream getSqlScriptStream() {
+        if (sqlScriptStream != null) {
+            return sqlScriptStream;
+        }
+        return Objects.requireNonNull(getClass().getResourceAsStream("/database_initializer/training_types.sql"));
+    }
+
+
+    public void setSqlScriptStream(InputStream sqlScriptStream) {
+        this.sqlScriptStream = sqlScriptStream;
     }
 }

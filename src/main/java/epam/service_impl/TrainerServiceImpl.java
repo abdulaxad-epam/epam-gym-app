@@ -31,7 +31,11 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public TrainerResponseDTO createTrainer(TrainerRequestDTO trainerRequestDTO) {
-        Trainer trainer = trainerMapper.toTrainer(trainerRequestDTO);
+
+        TrainingType trainingType = trainingTypeService.getTrainingByTrainingName(trainerRequestDTO.getSpecialization());
+
+        Trainer trainer = trainerMapper.toTrainer(trainerRequestDTO, trainingType);
+
         Trainer inserted = trainerRepository.insert(trainer);
 
         return trainerMapper.toTrainerResponseDTO(inserted);
