@@ -3,35 +3,34 @@ package epam.mapper;
 import epam.entity.User;
 import epam.request_dto.UserRequestDTO;
 import epam.response_dto.UserResponseDTO;
+import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 
-@Component
-public class UserMapper {
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.factory.Mappers;
 
-    public UserResponseDTO toUserResponseDTO(User user) {
-        if (user == null) {
-            return null;
-        }
+@Mapper(componentModel = "spring")
+public interface UserMapper {
+    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-        return UserResponseDTO.builder()
-                .firstName(user.getFirstname())
-                .lastName(user.getLastname())
-                .isActive(user.getIsActive())
-                .password(user.getPassword())
-                .username(user.getUsername())
-                .build();
-    }
+    @Named("toUserResponseDTO")
+    @Mappings({
+            @Mapping(source = "firstname", target = "firstName"),
+            @Mapping(source = "lastname", target = "lastName"),
+            @Mapping(source = "isActive", target = "isActive"),
+            @Mapping(source = "password", target = "password"),
+            @Mapping(source = "username", target = "username")
+    })
+    UserResponseDTO toUserResponseDTO(User user);
 
-    public User toUser(UserRequestDTO userRequestDTO) {
-        if (userRequestDTO == null) {
-            return null;
-        }
-
-        return User.builder()
-                .firstname(userRequestDTO.getFirstName())
-                .lastname(userRequestDTO.getLastName())
-                .isActive(userRequestDTO.getIsActive())
-                .password(userRequestDTO.getPassword())
-                .build();
-    }
+    @Named("toUser")
+    @Mappings({
+            @Mapping(source = "userRequestDTO.firstName", target = "firstname"),
+            @Mapping(source = "userRequestDTO.lastName", target = "lastname"),
+            @Mapping(source = "userRequestDTO.isActive", target = "isActive"),
+            @Mapping(source = "userRequestDTO.password", target = "password")
+    })
+    User toUser(UserRequestDTO userRequestDTO);
 }

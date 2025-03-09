@@ -1,4 +1,4 @@
-package epam.service_impl;
+package epam.service.service_impl;
 
 import epam.entity.Trainer;
 import epam.entity.TrainingType;
@@ -12,6 +12,7 @@ import epam.service.TrainingTypeService;
 import epam.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,21 +42,25 @@ public class TrainerServiceImpl implements TrainerService {
         return trainerMapper.toTrainerResponseDTO(inserted);
     }
 
+    @Transactional
     @Override
     public TrainerResponseDTO updateTrainer(String username, TrainerRequestDTO trainerRequestDTO) {
 
         Optional<UUID> id = trainerRepository.getIdByUsername(username);
-
         TrainingType trainingType = trainingTypeService.getTrainingByTrainingName(trainerRequestDTO.getSpecialization());
 
         if (id.isPresent()) {
-            Trainer trainer = trainerRepository.findById(id.get()).get();
+            Trainer trainer = trainerRepository.findById(id.get())
+                    .orElseThrow(() -> new TrainerNotFoundException("Trainer not found"));
+
             trainer.setSpecialization(trainingType);
 
-            Trainer updated = trainerRepository.update(id.get(),trainer);
-            return trainerMapper.toTrainerResponseDTO(updated);
-        } else throw new TrainerNotFoundException("Trainer not found");
+            return trainerMapper.toTrainerResponseDTO(trainer);
+        }
+
+        throw new TrainerNotFoundException("Trainer not found");
     }
+
 
     @Override
     public void deleteTrainer(String username) {

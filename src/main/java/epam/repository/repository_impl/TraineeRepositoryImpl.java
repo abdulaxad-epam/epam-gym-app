@@ -1,4 +1,4 @@
-package epam.repository_impl;
+package epam.repository.repository_impl;
 
 
 import epam.entity.Trainee;
@@ -53,32 +53,6 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
             throw new EntityManagerInsertException(e.getMessage());
         }
     }
-
-
-    @Override
-    public Trainee update(UUID id, Trainee trainee) {
-        try {
-            entityManager.getTransaction().begin();
-
-            if (entityManager.find(Trainee.class, id) != null) {
-                trainee = entityManager.merge(trainee);
-                entityManager.flush();
-                entityManager.refresh(trainee);
-                entityManager.getTransaction().commit();
-            } else
-                throw new TraineeNotFoundException("Trainee with id " + id + " not found");
-
-        } catch (TraineeNotFoundException e) {
-            entityManager.getTransaction().rollback();
-            throw e;
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            log.error(e.getMessage());
-            throw e;
-        }
-        return trainee;
-    }
-
 
     @Transactional(readOnly = true)
     @Override

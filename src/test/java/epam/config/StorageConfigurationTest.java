@@ -7,7 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+
+import javax.sql.DataSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -15,32 +20,41 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class StorageConfigurationTest {
 
+    @InjectMocks
+    private StorageConfiguration storageConfiguration;
+
     @Mock
     private EntityManagerFactory entityManagerFactory;
 
     @Mock
-    private EntityManager entityManager1;
+    private EntityManager entityManager;
 
     @Mock
-    private EntityManager entityManager2;
-
-    @InjectMocks
-    private StorageConfiguration storageConfiguration;
+    private DataSource dataSource;
 
     @BeforeEach
     void setUp() {
-        when(entityManagerFactory.createEntityManager()).thenReturn(entityManager1, entityManager2);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void shouldCreateNewEntityManagerEachTime() {
-        EntityManager em1 = storageConfiguration.entityManager();
-        EntityManager em2 = storageConfiguration.entityManager();
+    void entityManagerFactory_ShouldReturnNotNull() {
+        EntityManagerFactory factory = storageConfiguration.entityManagerFactory();
+        assertThat(factory).isNotNull();
+    }
 
-        assertThat(em1).isNotNull();
-        assertThat(em2).isNotNull();
-        assertThat(em1).isNotSameAs(em2);
+    @Test
+    void entityManager_ShouldReturnEntityManagerInstance() {
+        when(entityManagerFactory.createEntityManager()).thenReturn(entityManager);
+        EntityManager em = storageConfiguration.entityManager(entityManagerFactory);
+        assertThat(em).isNotNull();
+        verify(entityManagerFactory, times(1)).createEntityManager();
+    }
 
-        verify(entityManagerFactory, times(2)).createEntityManager();
+    @Test
+    void jdbcTemplate_ShouldReturnJdbcTemplateInstance() {
+        JdbcTemplate jdbcTemplate = storageConfiguration.jdbcTemplate(dataSource);
+        assertThat(jdbcTemplate).isNotNull();
+        verifyNoInteractions(entityManagerFactory);
     }
 }

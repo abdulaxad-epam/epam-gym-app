@@ -8,6 +8,7 @@ import epam.request_dto.TraineeRequestDTO;
 import epam.response_dto.TraineeResponseDTO;
 import epam.service.TrainingService;
 import epam.service.UserService;
+import epam.service.service_impl.TraineeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,8 +16,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class TraineeServiceImplTest {
 
@@ -67,7 +75,6 @@ class TraineeServiceImplTest {
 
         when(traineeRepository.getIdByUsername(username)).thenReturn(Optional.of(traineeId));
         when(traineeRepository.findById(traineeId)).thenReturn(Optional.of(trainee));
-        when(traineeRepository.update(eq(traineeId), any(Trainee.class))).thenReturn(updatedTrainee);
         when(traineeMapper.toTraineeResponseDTO(updatedTrainee)).thenReturn(TraineeResponseDTO.builder().address("New Address").build());
 
         TraineeResponseDTO result = traineeService.updateTrainee(username, updateRequest);

@@ -3,6 +3,7 @@ package epam.service_impl;
 import epam.entity.User;
 import epam.repository.UserRepository;
 import epam.request_dto.ChangePasswordRequestDTO;
+import epam.service.service_impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

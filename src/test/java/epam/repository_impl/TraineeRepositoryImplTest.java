@@ -4,21 +4,33 @@ import epam.entity.Trainee;
 import epam.entity.User;
 import epam.exception.EntityManagerInsertException;
 import epam.exception.TraineeNotFoundException;
+import epam.repository.repository_impl.TraineeRepositoryImpl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TraineeRepositoryImplTest {
@@ -69,31 +81,6 @@ class TraineeRepositoryImplTest {
 
         verify(entityManager.getTransaction()).rollback();
     }
-
-    @Test
-    void testUpdate_Success() {
-        when(entityManager.getTransaction()).thenReturn(mock(EntityTransaction.class));
-        when(entityManager.find(Trainee.class, traineeId)).thenReturn(trainee);
-        when(entityManager.merge(trainee)).thenReturn(trainee);
-
-        Trainee updatedTrainee = traineeRepository.update(traineeId, trainee);
-        assertNotNull(updatedTrainee);
-        verify(entityManager).merge(trainee);
-        verify(entityManager.getTransaction()).commit();
-    }
-
-    @Test
-    void testUpdate_NotFound() {
-        EntityTransaction transaction = mock(EntityTransaction.class);
-        when(entityManager.getTransaction()).thenReturn(transaction);
-
-        when(entityManager.find(Trainee.class, traineeId)).thenReturn(null);
-
-        assertThrows(TraineeNotFoundException.class, () -> traineeRepository.update(traineeId, trainee));
-
-        verify(transaction, never()).commit();
-    }
-
 
     @Test
     void testFindById_Success() {

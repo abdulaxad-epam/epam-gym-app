@@ -1,10 +1,9 @@
-package epam.repository_impl;
+package epam.repository.repository_impl;
 
 import epam.entity.Training;
 import epam.exception.TrainingNotFoundException;
 import epam.repository.TrainingRepository;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

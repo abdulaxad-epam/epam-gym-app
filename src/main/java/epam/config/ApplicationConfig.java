@@ -11,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 
 @Component
@@ -23,7 +22,7 @@ public class ApplicationConfig {
     private InputStream sqlScriptStream;
 
     @PostConstruct
-    public void trainingTypes() {
+    public void init(){
         executeScript();
     }
 
@@ -51,12 +50,8 @@ public class ApplicationConfig {
     }
 
     public InputStream getSqlScriptStream() {
-        if (sqlScriptStream != null) {
-            return sqlScriptStream;
-        }
-        return Objects.requireNonNull(getClass().getResourceAsStream("/database_initializer/training_types.sql"));
+        return getClass().getResourceAsStream("/database_initializer/training_types.sql");
     }
-
 
     public void setSqlScriptStream(InputStream sqlScriptStream) {
         this.sqlScriptStream = sqlScriptStream;

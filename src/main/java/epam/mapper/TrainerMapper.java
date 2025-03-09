@@ -5,33 +5,28 @@ import epam.entity.TrainingType;
 import epam.request_dto.TrainerRequestDTO;
 import epam.response_dto.TrainerResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.factory.Mappers;
 
-@Component
-@RequiredArgsConstructor
-public class TrainerMapper {
+@Mapper(componentModel = "spring", uses = {UserMapper.class})
+public interface TrainerMapper {
+    TrainerMapper INSTANCE = Mappers.getMapper(TrainerMapper.class);
 
-    private final UserMapper userMapper;
+    @Named("toTrainerResponseDTO")
+    @Mappings({
+            @Mapping(source = "specialization.description", target = "trainerSpecialization"),
+            @Mapping(source = "user", target = "user", qualifiedByName = "toUserResponseDTO")
+    })
+    TrainerResponseDTO toTrainerResponseDTO(Trainer trainer);
 
-    public TrainerResponseDTO toTrainerResponseDTO(Trainer trainer) {
-        if (trainer == null) {
-            return null;
-        }
-
-        return TrainerResponseDTO.builder()
-                .trainerSpecialization(trainer.getSpecialization() != null ? trainer.getSpecialization().getDescription() : null)
-                .user(userMapper.toUserResponseDTO(trainer.getUser()))
-                .build();
-    }
-
-    public Trainer toTrainer(TrainerRequestDTO trainerRequestDTO, TrainingType trainingType) {
-        if (trainerRequestDTO == null) {
-            return null;
-        }
-
-        return Trainer.builder()
-                .specialization(trainingType)
-                .user(trainerRequestDTO.getUser() != null ? userMapper.toUser(trainerRequestDTO.getUser()) : null)
-                .build();
-    }
+    @Named("toTrainer")
+    @Mappings({
+            @Mapping(source = "trainingType", target = "specialization"),
+            @Mapping(source = "trainerRequestDTO.user", target = "user", qualifiedByName = "toUser")
+    })
+    Trainer toTrainer(TrainerRequestDTO trainerRequestDTO, TrainingType trainingType);
 }

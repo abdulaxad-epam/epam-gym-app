@@ -4,22 +4,22 @@ package epam.mapper;
 import epam.entity.TrainingType;
 import epam.request_dto.RegisterTrainerRequestDTO;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
-public class TrainingTypeMapper {
 
-    public TrainingType toTrainingType(RegisterTrainerRequestDTO userRequestDTO) {
-        if (userRequestDTO == null || userRequestDTO.getSpecialization() == null) {
-            return null;
-        }
-        return TrainingType.builder()
-                .description(userRequestDTO.getSpecialization())
-                .build();
-    }
+@Mapper(componentModel = "spring")
+public interface TrainingTypeMapper {
+    TrainingTypeMapper INSTANCE = Mappers.getMapper(TrainingTypeMapper.class);
 
-    public TrainingType toTrainingType(String specialization) {
+    @Named("toTrainingType")
+    @Mapping(source = "specialization", target = "description")
+    TrainingType toTrainingType(RegisterTrainerRequestDTO userRequestDTO);
+
+    default TrainingType toTrainingType(String specialization) {
         if (specialization == null) {
             return null;
         }

@@ -1,44 +1,42 @@
 package epam.entity;
 
-import epam.config.HibernateConfig;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
-@SpringJUnitConfig
-@ContextConfiguration(classes = HibernateConfig.class)
+@ExtendWith(MockitoExtension.class)
 class TraineeTest {
 
-    @Autowired
+    @Mock
     private EntityManagerFactory entityManagerFactory;
 
+    @Mock
     private EntityManager entityManager;
+
+    @Mock
     private EntityTransaction transaction;
+
+    @InjectMocks
+    private Trainee trainee;
 
     @BeforeEach
     void setUp() {
-        entityManager = entityManagerFactory.createEntityManager();
-        transaction = entityManager.getTransaction();
-        transaction.begin();
+        MockitoAnnotations.openMocks(this);
     }
 
-    @AfterEach
-    void tearDown() {
-        if (transaction.isActive()) {
-            transaction.rollback();
-        }
-        entityManager.close();
-    }
     @Test
     void shouldPersistTraineeWithUser() {
         // Given
@@ -51,23 +49,27 @@ class TraineeTest {
                 .build();
 
         Trainee trainee = Trainee.builder()
+                .traineeId(UUID.randomUUID())
                 .dateOfBirth(LocalDateTime.of(1995, 5, 15, 0, 0))
                 .address("123 Main Street")
                 .user(user)
                 .build();
 
         // When
+        when(entityManager.find(Trainee.class, trainee.getTraineeId())).thenReturn(trainee);
+
         entityManager.persist(user);
         entityManager.persist(trainee);
-        entityManager.flush();
-        entityManager.clear();
 
         // Then
         Trainee foundTrainee = entityManager.find(Trainee.class, trainee.getTraineeId());
         assertThat(foundTrainee).isNotNull();
         assertThat(foundTrainee.getUser()).isNotNull();
         assertThat(foundTrainee.getUser().getUsername()).isEqualTo("username");
+
+        // Verify interactions
+        verify(entityManager, times(1)).persist(user);
+        verify(entityManager, times(1)).persist(trainee);
+        verify(entityManager, times(1)).find(Trainee.class, trainee.getTraineeId());
     }
-
-
 }

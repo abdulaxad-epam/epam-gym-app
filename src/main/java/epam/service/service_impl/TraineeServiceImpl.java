@@ -1,4 +1,4 @@
-package epam.service_impl;
+package epam.service.service_impl;
 
 import epam.entity.Trainee;
 import epam.exception.TraineeNotFoundException;
@@ -9,11 +9,11 @@ import epam.response_dto.TraineeResponseDTO;
 import epam.service.TraineeService;
 import epam.service.TrainingService;
 import epam.service.UserService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,21 +43,22 @@ public class TraineeServiceImpl implements TraineeService {
         return traineeMapper.toTraineeResponseDTO(inserted);
     }
 
+    @Transactional
     @Override
     public TraineeResponseDTO updateTrainee(String username, TraineeRequestDTO traineeRequestDTO) {
-
         Optional<UUID> idByUsername = traineeRepository.getIdByUsername(username);
-
         if (idByUsername.isPresent()) {
-            Trainee trainee = traineeRepository.findById(idByUsername.get()).get();
+            Trainee trainee = traineeRepository.findById(idByUsername.get()).orElseThrow(() ->
+                    new TraineeNotFoundException("Trainee not found"));
+
             trainee.setAddress(traineeRequestDTO.getAddress());
             trainee.setDateOfBirth(traineeRequestDTO.getDateOfBirth());
-            Trainee update = traineeRepository.update(idByUsername.get(), trainee);
-            return traineeMapper.toTraineeResponseDTO(update);
 
-        } else
-            throw new TraineeNotFoundException("Trainee not found");
+            return traineeMapper.toTraineeResponseDTO(trainee);
+        }
+        throw new TraineeNotFoundException("Trainee not found");
     }
+
 
     @Override
     public void deleteTrainee(String username) {

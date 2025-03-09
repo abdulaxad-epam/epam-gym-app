@@ -6,45 +6,32 @@ import epam.entity.Training;
 import epam.entity.TrainingType;
 import epam.request_dto.TrainingRequestDTO;
 import epam.response_dto.TrainingResponseDTO;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.Named;
+import org.mapstruct.factory.Mappers;
 
-import java.time.LocalDateTime;
+@Mapper(componentModel = "spring", uses = {TrainerMapper.class, TraineeMapper.class})
+public interface TrainingMapper {
+    TrainingMapper INSTANCE = Mappers.getMapper(TrainingMapper.class);
 
-@Component
-@RequiredArgsConstructor
-public class TrainingMapper {
+    @Named("toTrainingResponseDTO")
+    @Mappings({
+            @Mapping(source = "trainee", target = "trainee", qualifiedByName = "toTraineeResponseDTO"),
+            @Mapping(source = "trainer", target = "trainer", qualifiedByName = "toTrainerResponseDTO"),
+            @Mapping(source = "trainingType.description", target = "trainingType")
+    })
+    TrainingResponseDTO toTrainingResponseDTO(Training training);
 
-    private final TrainerMapper trainerMapper;
-    private final TraineeMapper traineeMapper;
-
-    public TrainingResponseDTO toTrainingResponseDTO(Training training) {
-        if (training == null) {
-            return null;
-        }
-
-        return TrainingResponseDTO.builder()
-                .trainee(training.getTrainee() != null ? traineeMapper.toTraineeResponseDTO(training.getTrainee()) : null)
-                .trainer(training.getTrainer() != null ? trainerMapper.toTrainerResponseDTO(training.getTrainer()) : null)
-                .trainingType(training.getTrainingType() != null ? training.getTrainingType().getDescription() : null)
-                .trainingDuration(training.getTrainingDuration())
-                .trainingName(training.getTrainingName())
-                .trainingDate(training.getTrainingDate())
-                .build();
-    }
-
-    public Training toTraining(TrainingRequestDTO trainingRequestDTO, TrainingType trainingType, Trainer trainer, Trainee trainee) {
-        if (trainingRequestDTO == null) {
-            return null;
-        }
-
-        return Training.builder()
-                .trainingDate(trainingRequestDTO.getTrainingDate())
-                .trainingDuration(trainingRequestDTO.getTrainingDuration())
-                .trainee(trainee)
-                .trainer(trainer)
-                .trainingName(trainingRequestDTO.getTrainingName())
-                .trainingType(trainingType)
-                .build();
-    }
+    @Named("toTraining")
+    @Mappings({
+            @Mapping(source = "trainingRequestDTO.trainingDate", target = "trainingDate"),
+            @Mapping(source = "trainingRequestDTO.trainingDuration", target = "trainingDuration"),
+            @Mapping(source = "trainingRequestDTO.trainingName", target = "trainingName"),
+            @Mapping(source = "trainingType", target = "trainingType"),
+            @Mapping(source = "trainer", target = "trainer"),
+            @Mapping(source = "trainee", target = "trainee")
+    })
+    Training toTraining(TrainingRequestDTO trainingRequestDTO, TrainingType trainingType, Trainer trainer, Trainee trainee);
 }

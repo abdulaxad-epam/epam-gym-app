@@ -1,15 +1,23 @@
 package epam.service_impl;
 
-import epam.request_dto.*;
+import epam.request_dto.AuthenticateRequestDTO;
+import epam.request_dto.RegisterTraineeRequestDTO;
+import epam.request_dto.RegisterTrainerRequestDTO;
+import epam.request_dto.UserRequestDTO;
 import epam.response_dto.TraineeResponseDTO;
 import epam.response_dto.TrainerResponseDTO;
 import epam.service.TraineeService;
 import epam.service.TrainerService;
 import epam.service.UserService;
+import epam.service.service_impl.AuthenticationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class AuthenticationServiceImplTest {
 

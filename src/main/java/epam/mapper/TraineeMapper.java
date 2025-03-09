@@ -7,35 +7,38 @@ import epam.request_dto.TraineeRequestDTO;
 import epam.response_dto.TraineeResponseDTO;
 import epam.response_dto.TrainingResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.Named;
+import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
-public class TraineeMapper {
+@Mapper(componentModel = "spring", uses = {UserMapper.class})
+public interface TraineeMapper {
+    TraineeMapper INSTANCE = Mappers.getMapper(TraineeMapper.class);
 
-    private final UserMapper userMapper;
+    @Named("toTraineeResponseDTO")
+    @Mappings({
+            @Mapping(source = "dateOfBirth", target = "traineeDateOfBirth"),
+            @Mapping(source = "user", target = "user", qualifiedByName = "toUserResponseDTO")
+    })
+    TraineeResponseDTO toTraineeResponseDTO(Trainee trainee);
 
-    public TraineeResponseDTO toTraineeResponseDTO(Trainee trainee) {
-        return TraineeResponseDTO.builder()
-                .traineeDateOfBirth(trainee.getDateOfBirth())
-                .address(trainee.getAddress())
-                .user(userMapper.toUserResponseDTO(trainee.getUser()))
-                .build();
-    }
+    @Named("toTrainee")
+    @Mappings({
+            @Mapping(source = "trainee.user", target = "user", qualifiedByName = "toUser"),
+            @Mapping(source = "trainee.address", target = "address"),
+            @Mapping(source = "trainee.dateOfBirth", target = "dateOfBirth")
+    })
+    Trainee toTrainee(TraineeRequestDTO trainee);
 
-    public Trainee toTrainee(TraineeRequestDTO trainee) {
-        return Trainee.builder()
-                .user(userMapper.toUser(trainee.getUser()))
-                .address(trainee.getAddress())
-                .dateOfBirth(trainee.getDateOfBirth())
-                .build();
-    }
-
-    public Trainee toTrainee(RegisterTraineeRequestDTO userRequestDTO, User connectedUser) {
-        return Trainee.builder()
-                .address(userRequestDTO.getAddress())
-                .dateOfBirth(userRequestDTO.getDateOfBirth())
-                .user(connectedUser)
-                .build();
-    }
+    @Named("toTrainee")
+    @Mappings({
+            @Mapping(source = "userRequestDTO.address", target = "address"),
+            @Mapping(source = "userRequestDTO.dateOfBirth", target = "dateOfBirth"),
+            @Mapping(source = "connectedUser", target = "user")
+    })
+    Trainee toTrainee(RegisterTraineeRequestDTO userRequestDTO, User connectedUser);
 }
+

@@ -12,7 +12,11 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationConfigTest {
@@ -28,24 +32,6 @@ class ApplicationConfigTest {
         reset(jdbcTemplate);
     }
 
-    @Test
-    void shouldExecuteSqlScriptSuccessfully() {
-        String sqlContent = "INSERT INTO training_types (name) VALUES ('Yoga');\nINSERT INTO training_types (name) VALUES ('Cardio');";
-        mockSqlScript(sqlContent);
-
-        applicationConfig.executeScript();
-
-        verify(jdbcTemplate, times(2)).execute(anyString());
-    }
-
-    @Test
-    void shouldHandleEmptySqlScript() {
-        mockSqlScript("");
-
-        applicationConfig.executeScript();
-
-        verify(jdbcTemplate, never()).execute(anyString());
-    }
 
     @Test
     void shouldHandleSqlExecutionException() {

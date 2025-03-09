@@ -1,10 +1,9 @@
-package epam.repository_impl;
+package epam.repository.repository_impl;
 
 import epam.entity.User;
 import epam.repository.UserRepository;
 import epam.request_dto.ChangePasswordRequestDTO;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;

@@ -4,7 +4,6 @@ import epam.entity.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 
-@FunctionalInterface
 public interface TrainingUserRepository {
     EntityManager getEntityManager();
 

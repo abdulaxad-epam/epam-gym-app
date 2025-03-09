@@ -1,4 +1,4 @@
-package epam.service_impl;
+package epam.service.service_impl;
 
 import epam.entity.TrainingType;
 import epam.repository.TrainingTypeRepository;

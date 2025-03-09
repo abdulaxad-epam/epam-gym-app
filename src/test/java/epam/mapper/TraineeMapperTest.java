@@ -10,11 +10,13 @@ import epam.response_dto.UserResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -25,7 +27,7 @@ public class TraineeMapperTest {
     private UserMapper userMapper;
 
     @InjectMocks
-    private TraineeMapper traineeMapper;
+    private final TraineeMapper traineeMapper = Mappers.getMapper(TraineeMapper.class);
 
     private User user;
     private Trainee trainee;
@@ -46,14 +48,16 @@ public class TraineeMapperTest {
                 .dateOfBirth(LocalDate.of(2000, 1, 1).atStartOfDay())
                 .build();
 
-        traineeRequestDTO = TraineeRequestDTO.builder().build();
-        traineeRequestDTO.setUser(userRequestDTO);
-        traineeRequestDTO.setAddress("Test Address");
-        traineeRequestDTO.setDateOfBirth(LocalDate.of(2000, 1, 1).atStartOfDay());
+        traineeRequestDTO = TraineeRequestDTO.builder()
+                .user(userRequestDTO)
+                .address("Test Address")
+                .dateOfBirth(LocalDate.of(2000, 1, 1).atStartOfDay())
+                .build();
 
-        registerTraineeRequestDTO = RegisterTraineeRequestDTO.builder().build();
-        registerTraineeRequestDTO.setAddress("Test Address");
-        registerTraineeRequestDTO.setDateOfBirth(LocalDate.of(2000, 1, 1).atStartOfDay());
+        registerTraineeRequestDTO = RegisterTraineeRequestDTO.builder()
+                .address("Test Address")
+                .dateOfBirth(LocalDate.of(2000, 1, 1).atStartOfDay())
+                .build();
     }
 
     @Test
@@ -105,5 +109,4 @@ public class TraineeMapperTest {
         assertEquals(LocalDate.of(2000, 1, 1).atStartOfDay(), result.getTraineeDateOfBirth());
         assertNull(result.getUser());
     }
-
 }

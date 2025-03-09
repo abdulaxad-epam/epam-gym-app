@@ -1,4 +1,4 @@
-package epam.repository_impl;
+package epam.repository.repository_impl;
 
 
 import epam.entity.Trainee;

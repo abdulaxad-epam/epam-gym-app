@@ -8,14 +8,20 @@ import epam.exception.TrainerNotFoundException;
 import epam.repository.TraineeRepository;
 import epam.repository.TrainerRepository;
 import epam.service.TraineeTrainerService;
+import epam.service.service_impl.TrainerTraineeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class TrainerTraineeServiceImplTest {
 

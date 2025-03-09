@@ -10,8 +10,6 @@ import java.util.UUID;
 public interface TraineeRepository {
     Trainee insert(Trainee trainee);
 
-    Trainee update(UUID id, Trainee trainee);
-
     Optional<Trainee> findById(UUID id);
 
     Optional<Trainee> findByUsername(String username);

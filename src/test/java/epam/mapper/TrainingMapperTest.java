@@ -8,41 +8,53 @@ import epam.request_dto.TrainingRequestDTO;
 import epam.response_dto.TrainingResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import org.mapstruct.factory.Mappers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import java.time.LocalDateTime;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
 class TrainingMapperTest {
-
-    private TrainingMapper trainingMapper;
-    private TrainerMapper trainerMapper;
+    @Mock
     private TraineeMapper traineeMapper;
+
+    @Mock
+    private TrainerMapper trainerMapper;
+
+    @InjectMocks
+    private TrainingMapper trainingMapper = Mappers.getMapper(TrainingMapper.class);
 
     @BeforeEach
     void setUp() {
-        trainerMapper = mock(TrainerMapper.class);
-        traineeMapper = mock(TraineeMapper.class);
-        trainingMapper = new TrainingMapper(trainerMapper, traineeMapper);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
     void testToTrainingResponseDTO_Success() {
+        // Arrange
         Training training = new Training();
         training.setTrainingName("HYPERTROPHY_TRAINING");
         training.setTrainingDate(LocalDateTime.now());
-
-
 
         TrainingType trainingType = new TrainingType();
         trainingType.setDescription("FUNCTIONAL_TRAINING");
         training.setTrainingType(trainingType);
 
+        // ✅ Ensure correct use of matchers
         when(traineeMapper.toTraineeResponseDTO(any())).thenReturn(null);
         when(trainerMapper.toTrainerResponseDTO(any())).thenReturn(null);
 
+        // Act
         TrainingResponseDTO responseDTO = trainingMapper.toTrainingResponseDTO(training);
 
+        // Assert
         assertNotNull(responseDTO);
         assertEquals("HYPERTROPHY_TRAINING", responseDTO.getTrainingName());
         assertEquals("FUNCTIONAL_TRAINING", responseDTO.getTrainingType());
@@ -56,7 +68,7 @@ class TrainingMapperTest {
     @Test
     void testToTraining_NullRequest() {
         Training result = trainingMapper.toTraining(null, new TrainingType(), new Trainer(), new Trainee());
-        assertNull(result);
+        assertNull(result.getTrainingId());
     }
 
     @Test

@@ -10,21 +10,25 @@ import epam.response_dto.UserResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TrainerMapperTest {
 
     @Mock
-    private UserMapper userMapper;
+    private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     @InjectMocks
-    private TrainerMapper trainerMapper;
+    private TrainerMapper trainerMapper = Mappers.getMapper(TrainerMapper.class);
 
     private User user;
     private TrainingType trainingType;
@@ -82,7 +86,7 @@ class TrainerMapperTest {
 
         TrainerResponseDTO result = trainerMapper.toTrainerResponseDTO(null);
         assertNull(result);
-        assertNull(trainerMapper.toTrainer(null, trainingType));
+        assertNull(trainerMapper.toTrainer(null, trainingType).getTrainerId());
     }
 
     @Test
@@ -97,7 +101,7 @@ class TrainerMapperTest {
     @Test
     void testToTrainer_NullRequestDTO() {
         Trainer result = trainerMapper.toTrainer(null, trainingType);
-        assertNull(result);
+        assertNull(result.getTrainerId());
     }
 
     @Test
