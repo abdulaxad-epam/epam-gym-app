@@ -86,7 +86,7 @@ class TrainingServiceImplTest {
                 .trainingName("Strength Training")
                 .trainingDate(LocalDateTime.now())
                 .trainingType("Strength")
-                .trainingDuration(LocalDateTime.of(0, 1, 1, 1, 0)) // Placeholder for duration
+                .trainingDuration(1) // Placeholder for duration
                 .build();
 
         trainingRepository = mock(TrainingRepository.class);
