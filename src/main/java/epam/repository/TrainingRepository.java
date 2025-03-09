@@ -2,6 +2,7 @@ package epam.repository;
 
 import epam.entity.Training;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,4 +19,6 @@ public interface TrainingRepository {
     Optional<UUID> getIdByUsername(String username);
 
     List<Training> findTrainingsByTrainee(String username);
+
+    List<Training> getByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingType);
 }

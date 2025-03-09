@@ -25,7 +25,7 @@ public class Training {
     private UUID trainingId;
 
     @JoinColumn(name = "trainee_id")
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = Trainee.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Trainee.class)
     private Trainee trainee;
 
     @JoinColumn(name = "trainer_id")

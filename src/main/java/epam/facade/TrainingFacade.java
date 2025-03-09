@@ -12,6 +12,7 @@ import epam.response_dto.TraineeResponseDTO;
 import epam.response_dto.TrainerResponseDTO;
 import epam.response_dto.TrainingResponseDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface TrainingFacade {
@@ -70,4 +71,8 @@ public interface TrainingFacade {
     Boolean toggleStatus(String username);
 
     List<String> findAllTrainingTypes();
+
+    List<TrainingResponseDTO> getTraineeTrainings(String username, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingType);
+
+    List<TrainingResponseDTO> getTrainerTrainings(String currentUsername, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingType);
 }

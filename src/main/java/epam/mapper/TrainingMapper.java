@@ -9,6 +9,8 @@ import epam.response_dto.TrainingResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class TrainingMapper {
@@ -25,6 +27,7 @@ public class TrainingMapper {
                 .trainee(training.getTrainee() != null ? traineeMapper.toTraineeResponseDTO(training.getTrainee()) : null)
                 .trainer(training.getTrainer() != null ? trainerMapper.toTrainerResponseDTO(training.getTrainer()) : null)
                 .trainingType(training.getTrainingType() != null ? training.getTrainingType().getDescription() : null)
+                .trainingDuration(training.getTrainingDuration())
                 .trainingName(training.getTrainingName())
                 .trainingDate(training.getTrainingDate())
                 .build();

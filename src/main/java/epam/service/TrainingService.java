@@ -4,6 +4,7 @@ package epam.service;
 import epam.request_dto.TrainingRequestDTO;
 import epam.response_dto.TrainingResponseDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface TrainingService {
@@ -19,4 +20,6 @@ public interface TrainingService {
     void deleteTraining(String username);
 
     List<TrainingResponseDTO> getTrainingsByTraineeUsername(String username);
+
+    List<TrainingResponseDTO> getTrainingsByUsernameAndCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingType);
 }

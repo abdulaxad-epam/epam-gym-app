@@ -1,6 +1,5 @@
 package epam.app;
 
-import epam.entity.TrainingType;
 import epam.facade.TrainingFacade;
 import epam.request_dto.AuthenticateRequestDTO;
 import epam.request_dto.ChangePasswordRequestDTO;
@@ -25,8 +24,6 @@ import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Component
 @RequiredArgsConstructor
@@ -38,7 +35,6 @@ public class ConsoleApplication {
 
     private final Scanner scanner = new Scanner(System.in);
 
-    // Session management
     private boolean isLoggedIn = false;
     private String currentUsername = null;
     private UserRole currentUserRole = null;
@@ -151,17 +147,43 @@ public class ConsoleApplication {
             case 3:
                 if (currentUserRole == UserRole.TRAINER) {
                     handleTrainingManagement();
+                } else {
+                    handleManageTrainings();
                 }
                 break;
             case 4:
                 handleLogout();
                 break;
             case 0:
-                return true; // Exit
+                return true;
             default:
                 System.out.println("Invalid option. Please try again.");
         }
         return false;
+    }
+
+    private void handleManageTrainings() {
+        System.out.println("\n--- Get Trainee Trainings ---");
+
+        String fromDateInput = getStringInput("Enter from date (yyyy-MM-dd) or leave empty: ");
+        LocalDate fromDate = fromDateInput.isEmpty() ? null : LocalDate.parse(fromDateInput);
+
+        String toDateInput = getStringInput("Enter to date (yyyy-MM-dd) or leave empty: ");
+        LocalDate toDate = toDateInput.isEmpty() ? null : LocalDate.parse(toDateInput);
+
+        String trainerName = getStringInput("Enter trainer name or leave empty: ");
+        String trainingType = getStringInput("Enter training type or leave empty: ");
+
+        List<TrainingResponseDTO> trainings = trainingFacade.getTraineeTrainings(currentUsername, fromDate, toDate, trainerName, trainingType);
+
+        if (trainings.isEmpty()) {
+            System.out.println("No trainings found for the given criteria.");
+        } else {
+            System.out.println("\n--- Trainee Trainings List ---");
+            for (TrainingResponseDTO training : trainings) {
+                System.out.println(training);
+            }
+        }
     }
 
     private void handleLogin() {
@@ -181,7 +203,6 @@ public class ConsoleApplication {
             isLoggedIn = true;
             currentUsername = username;
 
-            // Determine user role (trainee or trainer)
             try {
                 trainingFacade.getTraineeByUsername(username);
                 currentUserRole = UserRole.TRAINEE;
@@ -375,10 +396,10 @@ public class ConsoleApplication {
     private void updateProfile() {
         try {
             if (currentUserRole == UserRole.TRAINEE) {
-                // Get current trainee information
+
                 TraineeResponseDTO currentTrainee = trainingFacade.getTraineeByUsername(currentUsername);
 
-                // Prepare update DTO
+
                 String newAddress = getStringInput("Enter new address (leave empty to keep current): ");
                 if (newAddress.isEmpty()) {
                     newAddress = currentTrainee.getAddress();
@@ -401,10 +422,9 @@ public class ConsoleApplication {
                 log.info("Trainee updated successfully" + response);
                 System.out.println("Profile updated successfully!");
             } else {
-                // Get current trainer information
+
                 TrainerResponseDTO currentTrainer = trainingFacade.getTrainerByUsername(currentUsername);
 
-                // Prepare update DTO
                 List<String> trainingTypes = trainingFacade.findAllTrainingTypes();
                 String trainingType = Arrays.asList(trainingTypes.toArray()).toString();
                 String newSpecialization = "";
@@ -546,7 +566,7 @@ public class ConsoleApplication {
 
     private void viewMyTrainers() {
         try {
-            // This method would need implementation in your TrainingFacade
+
             List<TrainerResponseDTO> trainers = trainingFacade.getTrainersByTraineeUsername(currentUsername);
 
             if (trainers.isEmpty()) {
@@ -568,7 +588,7 @@ public class ConsoleApplication {
 
     private void addTrainer() {
         try {
-            // Get all available trainers
+
             List<TrainerResponseDTO> allTrainers = trainingFacade.getAllTrainers();
 
             if (allTrainers.isEmpty()) {
@@ -576,7 +596,7 @@ public class ConsoleApplication {
                 return;
             }
 
-            // Display available trainers
+
             System.out.println("\n--- Available Trainers ---");
             for (int i = 0; i < allTrainers.size(); i++) {
                 TrainerResponseDTO trainer = allTrainers.get(i);
@@ -593,7 +613,7 @@ public class ConsoleApplication {
 
             String trainerUsername = allTrainers.get(trainerIndex).getUser().getUsername();
 
-            // This method would need implementation in your TrainingFacade
+
             Boolean added = trainingFacade.addTrainerToTrainee(currentUsername, trainerUsername);
 
             if (Boolean.TRUE.equals(added)) {
@@ -608,7 +628,7 @@ public class ConsoleApplication {
 
     private void removeTrainer() {
         try {
-            // Get current trainers
+
             List<TrainerResponseDTO> myTrainers = trainingFacade.getTrainersByTraineeUsername(currentUsername);
 
             if (myTrainers.isEmpty()) {
@@ -616,7 +636,7 @@ public class ConsoleApplication {
                 return;
             }
 
-            // Display trainers
+
             System.out.println("\n--- My Trainers ---");
             for (int i = 0; i < myTrainers.size(); i++) {
                 TrainerResponseDTO trainer = myTrainers.get(i);
@@ -633,7 +653,7 @@ public class ConsoleApplication {
 
             String trainerUsername = myTrainers.get(trainerIndex).getUser().getUsername();
 
-            // This method would need implementation in your TrainingFacade
+
             Boolean removed = trainingFacade.removeTrainerFromTrainee(currentUsername, trainerUsername);
 
             if (Boolean.TRUE.equals(removed)) {
@@ -676,7 +696,7 @@ public class ConsoleApplication {
 
     private void viewMyTrainees() {
         try {
-            // This method would need implementation in your TrainingFacade
+
             List<TraineeResponseDTO> trainees = trainingFacade.getTraineesByTrainerUsername(currentUsername);
 
             if (trainees.isEmpty()) {
@@ -698,7 +718,7 @@ public class ConsoleApplication {
 
     private void viewTraineeDetails() {
         try {
-            // Get current trainees
+
             List<TraineeResponseDTO> myTrainees = trainingFacade.getTraineesByTrainerUsername(currentUsername);
 
             if (myTrainees.isEmpty()) {
@@ -706,7 +726,7 @@ public class ConsoleApplication {
                 return;
             }
 
-            // Display trainees
+
             System.out.println("\n--- My Trainees ---");
             for (int i = 0; i < myTrainees.size(); i++) {
                 TraineeResponseDTO trainee = myTrainees.get(i);
@@ -731,7 +751,7 @@ public class ConsoleApplication {
             System.out.println("Date of Birth: " + selectedTrainee.getTraineeDateOfBirth());
             System.out.println("Status: " + (selectedTrainee.getUser().getIsActive() ? "Active" : "Inactive"));
 
-            // Display trainings for this trainee
+
             List<TrainingResponseDTO> traineeTrainings =
                     trainingFacade.getTrainingsByTraineeUsername(selectedTrainee.getUser().getUsername());
 
@@ -755,8 +775,8 @@ public class ConsoleApplication {
         while (!back) {
             System.out.println("\n--- Training Management ---");
             System.out.println("1. Create Training");
-            System.out.println("2. Delete Training");
-            System.out.println("3. Get All Trainings");
+            System.out.println("2. Get All Trainings");
+            System.out.println("3. Get Trainings");
             System.out.println("0. Back to Main Menu");
             System.out.print("Please select an option: ");
 
@@ -765,12 +785,13 @@ public class ConsoleApplication {
             switch (choice) {
                 case 1:
                     createTraining();
-                case 2:
-                    deleteTraining();
                     break;
-                case 3:
+                case 2:
                     getAllTrainings();
                     break;
+                    case 3:
+                        getTrainingsCriteria();
+                        break;
                 case 0:
                     back = true;
                     break;
@@ -780,65 +801,80 @@ public class ConsoleApplication {
         }
     }
 
+    private void getTrainingsCriteria() {
+        System.out.println("\n--- Get Trainer Trainings ---");
+
+        String fromDateInput = getStringInput("Enter from date (yyyy-MM-dd) or leave empty: ");
+        LocalDate fromDate = fromDateInput.isEmpty() ? null : LocalDate.parse(fromDateInput);
+
+        String toDateInput = getStringInput("Enter to date (yyyy-MM-dd) or leave empty: ");
+        LocalDate toDate = toDateInput.isEmpty() ? null : LocalDate.parse(toDateInput);
+
+        String trainerName = getStringInput("Enter trainee name or leave empty: ");
+        String trainingType = getStringInput("Enter training type or leave empty: ");
+
+        List<TrainingResponseDTO> trainings = trainingFacade.getTrainerTrainings(currentUsername, fromDate, toDate, trainerName, trainingType);
+
+        if (trainings.isEmpty()) {
+            System.out.println("No trainings found for the given criteria.");
+        } else {
+            System.out.println("\n--- Trainee Trainings List ---");
+            for (TrainingResponseDTO training : trainings) {
+                System.out.println(training);
+            }
+        }
+    }
+
     private void createTraining() {
         System.out.println("\n--- Create Training ---");
         String trainingName = getStringInput("Enter training name: ");
 
-        String traineeUsername = getStringInput("Enter trainee username: ");
-        if (!trainingFacade.existsByUsername(traineeUsername)) {
-            log.warn("Trainee with username " + traineeUsername + " does not exist.");
-            createTraining();
+        String traineeUsername;
+        while (true) {
+            traineeUsername = getStringInput("Enter trainee username: ");
+            if (trainingFacade.existsByUsername(traineeUsername)) {
+                break;
+            }
+            log.warn("Trainee with username " + traineeUsername + " does not exist. Try again.");
         }
 
         String trainerUsername = currentUsername;
 
         System.out.println("Select training type:");
         List<String> trainingTypes = trainingFacade.findAllTrainingTypes();
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("[ ").append("\n");
         for (int i = 0; i < trainingTypes.size(); i++) {
-            stringBuilder.append(i + 1).append(") ").append(trainingTypes.get(i)).append(", \n");
+            System.out.println((i + 1) + ") " + trainingTypes.get(i));
         }
-        stringBuilder.append(" ]");
 
-        System.out.println(stringBuilder);
-        int typeChoice = getIntInput();
-        String trainingType = switch (String.valueOf(typeChoice)) {
-            case "1","STRENGTH_TRAINING"  -> trainingTypes.get(0);
-            case "2","CARDIOVASCULAR_TRAINING" -> trainingTypes.get(1);
-            case "3","HYPERTROPHY_TRAINING" -> trainingTypes.get(2);
-            case "4","FUNCTIONAL_TRAINING" -> trainingTypes.get(3);
-            case "5","FLEXIBILITY" -> trainingTypes.get(4);
-            default -> null;
-        };
-
-        if (trainingType == null) {
-            System.out.println("Invalid selection. Please try again.");
-            createTraining();
+        int typeChoice;
+        String trainingType = null;
+        while (trainingType == null) {
+            typeChoice = getIntInput();
+            if (typeChoice >= 1 && typeChoice <= trainingTypes.size()) {
+                trainingType = trainingTypes.get(typeChoice - 1);
+            } else {
+                System.out.println("Invalid selection. Please try again.");
+            }
         }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDateTime trainingDate = null;
-
-        boolean validDate = false;
-        while (!validDate) {
-            String dobString = getStringInput("Enter training date (yyyy-MM-dd): ");
-            if (dobString.isEmpty()) {
-                validDate = true;
-            } else {
-                try {
-                    trainingDate = LocalDate.parse(dobString, formatter).atStartOfDay();
-                    validDate = true;
-                } catch (DateTimeParseException e) {
-                    System.out.println("Invalid date format or values. Please use YYYY-MM-DD format with valid month/day values.");
-                } catch (Exception e) {
-                    System.out.println("Invalid date format.");
-                }
+        while (trainingDate == null) {
+            String dateString = getStringInput("Enter training date (yyyy-MM-dd): ");
+            try {
+                trainingDate = LocalDate.parse(dateString, formatter).atStartOfDay();
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please use YYYY-MM-DD.");
             }
         }
 
-        System.out.println("Enter duration in minutes: ");
-        int duration = getIntInput();
+        int duration;
+        while (true) {
+            System.out.println("Enter duration in minutes: ");
+            duration = getIntInput();
+            if (duration > 0) break;
+            System.out.println("Duration must be positive.");
+        }
 
         TrainingRequestDTO trainingDTO = TrainingRequestDTO.builder()
                 .trainingName(trainingName)
@@ -895,7 +931,7 @@ public class ConsoleApplication {
 
     private void deleteTraining() {
         System.out.println("\n--- Delete Training ---");
-        String trainingUsername = getStringInput("Enter training username to delete: ");
+        String trainingUsername = getStringInput("Enter training name to delete: ");
 
         try {
             trainingFacade.deleteTraining(trainingUsername);

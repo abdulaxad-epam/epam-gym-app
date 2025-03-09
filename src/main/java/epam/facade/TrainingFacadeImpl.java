@@ -22,6 +22,7 @@ import epam.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -180,5 +181,15 @@ public class TrainingFacadeImpl implements TrainingFacade {
     @Override
     public List<String> findAllTrainingTypes() {
         return trainingTypeService.findAll();
+    }
+
+    @Override
+    public List<TrainingResponseDTO> getTraineeTrainings(String username, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingType) {
+        return trainingService.getTrainingsByUsernameAndCriteria(username, fromDate, toDate, trainerName, trainingType);
+    }
+
+    @Override
+    public List<TrainingResponseDTO> getTrainerTrainings(String currentUsername, LocalDate fromDate, LocalDate toDate, String traineeName, String trainingType) {
+        return trainingService.getTrainingsByUsernameAndCriteria(currentUsername, fromDate, toDate, traineeName, trainingType);
     }
 }

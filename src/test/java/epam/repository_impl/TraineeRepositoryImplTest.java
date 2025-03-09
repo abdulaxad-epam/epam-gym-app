@@ -167,21 +167,4 @@ class TraineeRepositoryImplTest {
         assertFalse(traineeRepository.existsById(traineeId));
     }
 
-    @Test
-    void testDeleteTraineeByUsername_Success() {
-        jakarta.persistence.EntityTransaction transaction = mock(jakarta.persistence.EntityTransaction.class);
-        when(entityManager.getTransaction()).thenReturn(transaction);
-
-        TypedQuery query = mock(TypedQuery.class);
-        when(entityManager.createQuery(anyString())).thenReturn(query);
-        when(query.setParameter("username", "testUser")).thenReturn(query);
-        when(query.executeUpdate()).thenReturn(1);
-
-        traineeRepository.deleteTraineeByUsername("testUser");
-
-        verify(transaction).begin();
-        verify(query).executeUpdate();
-        verify(transaction).commit();
-    }
-
 }

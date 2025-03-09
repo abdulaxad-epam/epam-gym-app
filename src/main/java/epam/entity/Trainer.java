@@ -24,6 +24,7 @@ public class Trainer {
 
     @JoinColumn(name = "specialization")
     @ManyToOne(fetch = FetchType.EAGER)
+
     private TrainingType specialization;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)

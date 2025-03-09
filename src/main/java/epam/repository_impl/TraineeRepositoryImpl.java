@@ -161,17 +161,26 @@ public class TraineeRepositoryImpl implements TrainingUserRepository, TraineeRep
     @Override
     public void deleteTraineeByUsername(String username) {
         try {
+            log.info("User " + username + " is deleted");
+
             entityManager.getTransaction().begin();
 
-            entityManager.createQuery("DELETE FROM Trainee t WHERE t.user.username = :username ")
+            Trainee trainee = entityManager.createQuery(
+                            "SELECT t FROM Trainee t WHERE t.user.username = :username", Trainee.class)
                     .setParameter("username", username)
-                    .executeUpdate();
+                    .getSingleResult();
+
+            entityManager.remove(trainee);
+
+            log.info("Trainee '" + trainee.getTraineeId() + "' deleted");
 
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             log.error(e.getMessage());
+            entityManager.getTransaction().rollback();
         }
     }
+
 
     @Override
     @Transactional(readOnly = true)

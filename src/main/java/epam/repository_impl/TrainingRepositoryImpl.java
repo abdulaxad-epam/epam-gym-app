@@ -4,10 +4,14 @@ import epam.entity.Training;
 import epam.exception.TrainingNotFoundException;
 import epam.repository.TrainingRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,22 +20,28 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TrainingRepositoryImpl implements TrainingRepository {
 
+    private static final Log log = LogFactory.getLog(TrainingRepositoryImpl.class);
     private final EntityManager entityManager;
 
     @Override
     public Training insert(Training training) {
         try {
-            System.out.println(training);
             entityManager.getTransaction().begin();
+
+            training.setTrainee(entityManager.merge(training.getTrainee()));
+            training.setTrainer(entityManager.merge(training.getTrainer()));
+            training.setTrainingType(entityManager.merge(training.getTrainingType()));
+
             entityManager.persist(training);
-            System.out.println(training);
             entityManager.getTransaction().commit();
+
             return training;
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
             throw new RuntimeException("Failed to insert training: " + e.getMessage(), e);
         }
     }
+
 
     @Override
     public Training update(UUID id, Training training) {
@@ -54,13 +64,21 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     public void delete(UUID id) {
         try {
             entityManager.getTransaction().begin();
+
             Training training = entityManager.find(Training.class, id);
+            log.info("Deleting training with ID " + id);
+
             if (training != null) {
                 entityManager.remove(training);
+                log.info("Deleted training with ID " + id);
+
             } else {
+                log.info("Training with ID " + id + " not found.");
                 throw new TrainingNotFoundException("Training with ID " + id + " not found.");
             }
+
             entityManager.getTransaction().commit();
+
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
             throw new RuntimeException("Failed to delete training: " + e.getMessage(), e);
@@ -99,12 +117,19 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     @Override
     @Transactional(readOnly = true)
     public Optional<UUID> getIdByUsername(String username) {
+
+        log.info("getIdByUsername: " + username);
+
         UUID singleResult = entityManager.createQuery("""
-                SELECT id FROM Training t WHERE t.trainee.user.username = :username
+                SELECT CASE WHEN EXISTS ( FROM Training t WHERE t.trainee.user.username = :username)
+                THEN (SELECT trainingId FROM Training t WHERE t.trainee.user.username = :username)
+                ELSE NULL END
                 """, UUID.class)
                 .setParameter("username", username)
                 .getSingleResult();
-        return Optional.of(singleResult);
+
+        log.info("getIdByUsername: " + singleResult);
+        return Optional.ofNullable(singleResult);
     }
 
     @Override
@@ -117,4 +142,28 @@ public class TrainingRepositoryImpl implements TrainingRepository {
                         """, Training.class)
                 .getResultList();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Training> getByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingType) {
+       return entityManager.createQuery( """
+            SELECT DISTINCT t FROM Training t
+            JOIN t.trainee trainee
+            JOIN trainee.user user
+            JOIN t.trainer trainer
+            JOIN trainer.user trainerUser
+            JOIN t.trainingType tt
+            WHERE (:username IS NULL OR user.username = :username)
+            AND (:fromDate IS NULL OR t.trainingDate >= :fromDate)
+            AND (:toDate IS NULL OR t.trainingDate <= :toDate)
+            AND (:trainerName IS NULL OR CONCAT(trainerUser.firstname, '.', trainerUser.lastname) = :trainerName)
+            AND (:trainingType IS NULL OR tt.description = :trainingType)
+            """, Training.class)
+       .setParameter("username", username)
+       .setParameter("fromDate", fromDate)
+       .setParameter("toDate", toDate)
+       .setParameter("trainerName", trainerName)
+       .setParameter("trainingType", trainingType).getResultList();
+    }
+
 }

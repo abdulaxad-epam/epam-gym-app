@@ -25,5 +25,5 @@ public class TrainingResponseDTO {
 
     private String trainingType;
 
-    private LocalDateTime trainingDuration;
+    private Integer trainingDuration;
 }

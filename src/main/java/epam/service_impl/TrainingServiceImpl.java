@@ -18,6 +18,7 @@ import epam.service.TrainingTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -92,15 +93,18 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     public void deleteTraining(String username) {
 
-        UUID trainingId = trainingRepository.getIdByUsername(username)
-                .orElseThrow(() -> new TrainingNotFoundException("Training with username " + username + " not found"));
-
-        trainingRepository.delete(trainingId);
+        trainingRepository.getIdByUsername(username).ifPresent(trainingRepository::delete);
     }
 
     @Override
     public List<TrainingResponseDTO> getTrainingsByTraineeUsername(String username) {
         List<Training> trainings = trainingRepository.findTrainingsByTrainee(username);
         return trainings.stream().map(trainingMapper::toTrainingResponseDTO).toList();
+    }
+
+    @Override
+    public List<TrainingResponseDTO> getTrainingsByUsernameAndCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingType) {
+       List<Training> trainings = trainingRepository.getByCriteria(username, fromDate, toDate, trainerName, trainingType);
+       return trainings.stream().map(trainingMapper::toTrainingResponseDTO).toList();
     }
 }

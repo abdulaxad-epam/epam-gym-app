@@ -35,6 +35,7 @@ public class TraineeTrainer {
     private Trainee trainee;
 
     @ManyToOne
+
     @MapsId("trainerId")
     @JoinColumn(name = "trainer_id")
     private Trainer trainer;

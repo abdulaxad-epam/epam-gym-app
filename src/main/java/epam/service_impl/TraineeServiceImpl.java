@@ -9,7 +9,10 @@ import epam.response_dto.TraineeResponseDTO;
 import epam.service.TraineeService;
 import epam.service.TrainingService;
 import epam.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +24,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TraineeServiceImpl implements TraineeService {
 
+    private static final Log log = LogFactory.getLog(TraineeServiceImpl.class);
     private final TraineeRepository traineeRepository;
 
     private final TraineeMapper traineeMapper;
@@ -57,12 +61,16 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public void deleteTrainee(String username) {
-        System.out.println(username);
+        log.info("Deleting trainee " + username);
         if (userService.existsByUsername(username)) {
 
+            log.info("User " + username + " does exist");
             trainingService.deleteTraining(username);
 
+            log.info("User " + username + " is deleted");
             traineeRepository.deleteTraineeByUsername(username);
+
+
         } else
             throw new TraineeNotFoundException("Trainee not found");
     }
