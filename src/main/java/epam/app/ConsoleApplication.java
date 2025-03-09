@@ -1,6 +1,5 @@
 package epam.app;
 
-import epam.config.ApplicationConfig;
 import epam.facade.TrainingFacade;
 import epam.request_dto.AuthenticateRequestDTO;
 import epam.request_dto.ChangePasswordRequestDTO;
