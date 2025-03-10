@@ -55,8 +55,9 @@ public class TraineeServiceImpl implements TraineeService {
             trainee.setDateOfBirth(traineeRequestDTO.getDateOfBirth());
 
             return traineeMapper.toTraineeResponseDTO(trainee);
+        }else {
+            throw new TraineeNotFoundException("Trainee not found");
         }
-        throw new TraineeNotFoundException("Trainee not found");
     }
 
 
@@ -72,17 +73,19 @@ public class TraineeServiceImpl implements TraineeService {
             traineeRepository.deleteTraineeByUsername(username);
 
 
-        } else
+        }else {
             throw new TraineeNotFoundException("Trainee not found");
+        }
     }
 
     @Override
     public TraineeResponseDTO getTraineeByUsername(String username) {
         Optional<Trainee> byId = traineeRepository.findByUsername(username);
-        if (byId.isPresent())
+        if (byId.isPresent()) {
             return traineeMapper.toTraineeResponseDTO(byId.get());
-        else
+        }else {
             throw new TraineeNotFoundException("Trainee not found");
+        }
     }
 
     @Override

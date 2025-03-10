@@ -107,4 +107,6 @@ public class TrainingServiceImpl implements TrainingService {
        List<Training> trainings = trainingRepository.getByCriteria(username, fromDate, toDate, trainerName, trainingType);
        return trainings.stream().map(trainingMapper::toTrainingResponseDTO).toList();
     }
+
+
 }

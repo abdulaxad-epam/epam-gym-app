@@ -66,7 +66,9 @@ public class TrainerServiceImpl implements TrainerService {
     public void deleteTrainer(String username) {
         if (userService.existsByUsername(username)) {
             trainerRepository.deleteTrainerByUsername(username);
-        } else throw new TrainerNotFoundException("Trainer not found");
+        } else {
+            throw new TrainerNotFoundException("Trainer not found");
+        }
     }
 
     @Override
@@ -74,7 +76,9 @@ public class TrainerServiceImpl implements TrainerService {
         Optional<Trainer> byUsername = trainerRepository.findByUsername(username);
         if (byUsername.isPresent()) {
             return trainerMapper.toTrainerResponseDTO(byUsername.get());
-        } else throw new TrainerNotFoundException("Trainer not found");
+        } else {
+            throw new TrainerNotFoundException("Trainer not found");
+        }
     }
 
     @Override
