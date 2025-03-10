@@ -1,6 +1,6 @@
 package epam.service;
 
-import epam.request_dto.ChangePasswordRequestDTO;
+import epam.dto.request_dto.ChangePasswordRequestDTO;
 
 public interface UserService {
 

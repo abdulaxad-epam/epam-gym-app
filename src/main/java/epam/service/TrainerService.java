@@ -1,7 +1,7 @@
 package epam.service;
 
-import epam.request_dto.TrainerRequestDTO;
-import epam.response_dto.TrainerResponseDTO;
+import epam.dto.request_dto.TrainerRequestDTO;
+import epam.dto.response_dto.TrainerResponseDTO;
 
 import java.util.List;
 

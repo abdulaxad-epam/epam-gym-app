@@ -2,11 +2,11 @@ package epam.mapper;
 
 import epam.entity.Trainee;
 import epam.entity.User;
-import epam.request_dto.RegisterTraineeRequestDTO;
-import epam.request_dto.TraineeRequestDTO;
-import epam.request_dto.UserRequestDTO;
-import epam.response_dto.TraineeResponseDTO;
-import epam.response_dto.UserResponseDTO;
+import epam.dto.request_dto.RegisterTraineeRequestDTO;
+import epam.dto.request_dto.TraineeRequestDTO;
+import epam.dto.request_dto.UserRequestDTO;
+import epam.dto.response_dto.TraineeResponseDTO;
+import epam.dto.response_dto.UserResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

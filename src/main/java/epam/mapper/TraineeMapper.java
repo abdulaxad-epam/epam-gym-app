@@ -2,9 +2,9 @@ package epam.mapper;
 
 import epam.entity.Trainee;
 import epam.entity.User;
-import epam.request_dto.RegisterTraineeRequestDTO;
-import epam.request_dto.TraineeRequestDTO;
-import epam.response_dto.TraineeResponseDTO;
+import epam.dto.request_dto.RegisterTraineeRequestDTO;
+import epam.dto.request_dto.TraineeRequestDTO;
+import epam.dto.response_dto.TraineeResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;

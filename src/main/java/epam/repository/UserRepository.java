@@ -1,7 +1,7 @@
 package epam.repository;
 
 import epam.entity.User;
-import epam.request_dto.ChangePasswordRequestDTO;
+import epam.dto.request_dto.ChangePasswordRequestDTO;
 
 public interface UserRepository {
 

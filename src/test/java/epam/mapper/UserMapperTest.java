@@ -1,8 +1,8 @@
 package epam.mapper;
 
 import epam.entity.User;
-import epam.request_dto.UserRequestDTO;
-import epam.response_dto.UserResponseDTO;
+import epam.dto.request_dto.UserRequestDTO;
+import epam.dto.response_dto.UserResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

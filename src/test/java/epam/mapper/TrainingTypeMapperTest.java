@@ -1,7 +1,7 @@
 package epam.mapper;
 
 import epam.entity.TrainingType;
-import epam.request_dto.RegisterTrainerRequestDTO;
+import epam.dto.request_dto.RegisterTrainerRequestDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

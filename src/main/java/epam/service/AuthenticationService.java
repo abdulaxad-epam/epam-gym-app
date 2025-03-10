@@ -1,8 +1,8 @@
 package epam.service;
 
-import epam.request_dto.AuthenticateRequestDTO;
-import epam.request_dto.RegisterTraineeRequestDTO;
-import epam.request_dto.RegisterTrainerRequestDTO;
+import epam.dto.request_dto.AuthenticateRequestDTO;
+import epam.dto.request_dto.RegisterTraineeRequestDTO;
+import epam.dto.request_dto.RegisterTrainerRequestDTO;
 
 
 public interface AuthenticationService {

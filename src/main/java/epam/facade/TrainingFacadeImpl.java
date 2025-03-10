@@ -1,17 +1,16 @@
 package epam.facade;
 
 
-import epam.entity.Training;
-import epam.request_dto.AuthenticateRequestDTO;
-import epam.request_dto.ChangePasswordRequestDTO;
-import epam.request_dto.RegisterTraineeRequestDTO;
-import epam.request_dto.RegisterTrainerRequestDTO;
-import epam.request_dto.TraineeRequestDTO;
-import epam.request_dto.TrainerRequestDTO;
-import epam.request_dto.TrainingRequestDTO;
-import epam.response_dto.TraineeResponseDTO;
-import epam.response_dto.TrainerResponseDTO;
-import epam.response_dto.TrainingResponseDTO;
+import epam.dto.request_dto.AuthenticateRequestDTO;
+import epam.dto.request_dto.ChangePasswordRequestDTO;
+import epam.dto.request_dto.RegisterTraineeRequestDTO;
+import epam.dto.request_dto.RegisterTrainerRequestDTO;
+import epam.dto.request_dto.TraineeRequestDTO;
+import epam.dto.request_dto.TrainerRequestDTO;
+import epam.dto.request_dto.TrainingRequestDTO;
+import epam.dto.response_dto.TraineeResponseDTO;
+import epam.dto.response_dto.TrainerResponseDTO;
+import epam.dto.response_dto.TrainingResponseDTO;
 import epam.service.AuthenticationService;
 import epam.service.TraineeService;
 import epam.service.TraineeTrainerService;

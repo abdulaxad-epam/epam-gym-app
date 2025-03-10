@@ -1,8 +1,8 @@
 package epam.service;
 
 
-import epam.request_dto.TrainingRequestDTO;
-import epam.response_dto.TrainingResponseDTO;
+import epam.dto.request_dto.TrainingRequestDTO;
+import epam.dto.response_dto.TrainingResponseDTO;
 
 import java.time.LocalDate;
 import java.util.List;

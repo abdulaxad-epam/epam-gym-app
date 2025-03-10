@@ -2,8 +2,8 @@ package epam.mapper;
 
 import epam.entity.Trainer;
 import epam.entity.TrainingType;
-import epam.request_dto.TrainerRequestDTO;
-import epam.response_dto.TrainerResponseDTO;
+import epam.dto.request_dto.TrainerRequestDTO;
+import epam.dto.response_dto.TrainerResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
