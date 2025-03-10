@@ -3,12 +3,10 @@ package epam.mapper;
 import epam.entity.User;
 import epam.request_dto.UserRequestDTO;
 import epam.response_dto.UserResponseDTO;
-import org.mapstruct.Named;
-import org.springframework.stereotype.Component;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")

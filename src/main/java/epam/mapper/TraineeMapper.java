@@ -5,14 +5,11 @@ import epam.entity.User;
 import epam.request_dto.RegisterTraineeRequestDTO;
 import epam.request_dto.TraineeRequestDTO;
 import epam.response_dto.TraineeResponseDTO;
-import epam.response_dto.TrainingResponseDTO;
-import lombok.RequiredArgsConstructor;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface TraineeMapper {

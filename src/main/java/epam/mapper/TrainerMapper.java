@@ -4,12 +4,10 @@ import epam.entity.Trainer;
 import epam.entity.TrainingType;
 import epam.request_dto.TrainerRequestDTO;
 import epam.response_dto.TrainerResponseDTO;
-import lombok.RequiredArgsConstructor;
-import org.mapstruct.Named;
-import org.springframework.stereotype.Component;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class})
