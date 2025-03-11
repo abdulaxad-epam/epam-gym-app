@@ -1,6 +1,7 @@
 package epam.service;
 
 import epam.entity.Trainee;
+import epam.entity.TraineeTrainer;
 import epam.entity.Trainer;
 import epam.exception.TraineeHasNotAssignedBeforeException;
 import epam.exception.TraineeNotFoundException;
@@ -45,15 +46,23 @@ public class TrainerTraineeServiceImplTest {
         Trainer trainer = new Trainer();
         trainer.setTrainerId(UUID.randomUUID());
 
+
         when(traineeRepository.findByUsername(traineeUsername)).thenReturn(Optional.of(trainee));
         when(trainerRepository.findByUsername(trainerUsername)).thenReturn(Optional.of(trainer));
-        when(trainerRepository.trainerHasTrainee(trainer.getTrainerId(), trainee.getTraineeId())).thenReturn(true);
-        doNothing().when(trainerRepository).addTrainerToTrainee(trainee, trainer);
+        when(trainerRepository.trainerHasTrainee(trainer.getTrainerId(), trainee.getTraineeId())).thenReturn(false);
+        doNothing().when(trainerRepository).addTrainerToTrainee(TraineeTrainer.builder()
+                .trainee(trainee)
+                .trainer(trainer)
+                .build());
 
         Boolean result = traineeTrainerService.addTrainerToTrainee(traineeUsername, trainerUsername);
 
         assertTrue(result);
-        verify(trainerRepository, times(1)).addTrainerToTrainee(trainee, trainer);
+        verify(trainerRepository, times(1)).addTrainerToTrainee(TraineeTrainer.builder()
+                .id(new TraineeTrainer.TraineeTrainerId(trainee.getTraineeId(), trainer.getTrainerId()))
+                .trainee(trainee)
+                .trainer(trainer)
+                .build());
     }
 
     @Test

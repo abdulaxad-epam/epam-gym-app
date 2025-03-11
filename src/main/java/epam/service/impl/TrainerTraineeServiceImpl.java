@@ -1,6 +1,7 @@
 package epam.service.impl;
 
 import epam.entity.Trainee;
+import epam.entity.TraineeTrainer;
 import epam.entity.Trainer;
 import epam.exception.TraineeHasNotAssignedBeforeException;
 import epam.exception.TraineeNotFoundException;
@@ -27,10 +28,16 @@ public class TrainerTraineeServiceImpl implements TraineeTrainerService {
         Trainer trainer = trainerRepository.findByUsername(trainerUsername)
                 .orElseThrow(() -> new TrainerNotFoundException(trainerUsername));
 
-        if (trainerRepository.trainerHasTrainee(trainer.getTrainerId(), trainee.getTraineeId())) {
-             trainerRepository.addTrainerToTrainee(trainee, trainer);
-             return true;
-        }else throw new TrainerNotFoundException(trainerUsername);
+        if (!trainerRepository.trainerHasTrainee(trainer.getTrainerId(), trainee.getTraineeId())) {
+            TraineeTrainer.TraineeTrainerId traineeTrainerId = new TraineeTrainer.TraineeTrainerId(
+                    trainee.getTraineeId(), trainer.getTrainerId()
+            );
+            TraineeTrainer build = TraineeTrainer.builder().id(traineeTrainerId).trainee(trainee).trainer(trainer).build();
+            trainerRepository.addTrainerToTrainee(build);
+            return true;
+        } else {
+            throw new TrainerNotFoundException(trainerUsername);
+        }
 
     }
 
@@ -44,8 +51,9 @@ public class TrainerTraineeServiceImpl implements TraineeTrainerService {
         if (trainerRepository.trainerHasTrainee(trainer.getTrainerId(), trainee.getTraineeId())) {
             trainerRepository.removeTraineeOfTrainer(trainee, trainer);
             return true;
+        } else {
+            throw new TraineeHasNotAssignedBeforeException(trainerUsername);
         }
-        else throw new TraineeHasNotAssignedBeforeException(trainerUsername);
 
     }
 }

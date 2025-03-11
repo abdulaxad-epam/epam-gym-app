@@ -41,5 +41,6 @@ public class Trainee {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
+
     private User user;
 }

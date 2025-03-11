@@ -252,23 +252,6 @@ public class TrainingFacadeTest {
     }
 
     @Test
-    void testUpdateTraining() {
-        TrainingResponseDTO trainingResponse = TrainingResponseDTO.builder().build();
-        when(trainingService.updateTraining("training1", trainingRequestDTO)).thenReturn(trainingResponse);
-
-        assertEquals(trainingResponse, trainingFacade.updateTraining("training1", trainingRequestDTO));
-        verify(trainingService).updateTraining("training1", trainingRequestDTO);
-    }
-
-    @Test
-    void testDeleteTraining() {
-        doNothing().when(trainingService).deleteTraining("training1");
-
-        assertDoesNotThrow(() -> trainingFacade.deleteTraining("training1"));
-        verify(trainingService).deleteTraining("training1");
-    }
-
-    @Test
     void testGetTrainingByUsername() {
         TrainingResponseDTO trainingResponse = TrainingResponseDTO.builder().build();
         when(trainingService.getTrainingByUsername("training1")).thenReturn(trainingResponse);

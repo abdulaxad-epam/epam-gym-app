@@ -1,6 +1,7 @@
 package epam.repository;
 
 import epam.entity.Trainee;
+import epam.entity.TraineeTrainer;
 import epam.entity.Trainer;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +30,7 @@ public interface TrainerRepository {
 
     List<Trainer> findTrainersByTrainee(String currentUsername);
 
-    void addTrainerToTrainee(Trainee trainee, Trainer trainer);
+    void addTrainerToTrainee(TraineeTrainer trainer);
 
     Boolean trainerHasTrainee(UUID trainerId, UUID traineeId);
 

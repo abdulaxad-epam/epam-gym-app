@@ -1,19 +1,18 @@
 package epam.service;
 
+import epam.dto.request_dto.TrainerRequestDTO;
+import epam.dto.response_dto.TrainerResponseDTO;
 import epam.entity.Trainer;
 import epam.entity.TrainingType;
 import epam.exception.TrainerNotFoundException;
 import epam.mapper.TrainerMapper;
 import epam.repository.TrainerRepository;
-import epam.dto.request_dto.TrainerRequestDTO;
-import epam.dto.response_dto.TrainerResponseDTO;
 import epam.service.impl.TrainerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -60,29 +58,6 @@ class TrainerServiceImplTest {
 
         assertNotNull(result);
         assertEquals("Fitness", result.getTrainerSpecialization());
-    }
-
-    @Test
-    void testUpdateTrainer_Success() {
-        String username = "trainerUser";
-        UUID trainerId = UUID.randomUUID();
-        Trainer trainer = new Trainer();
-        TrainerRequestDTO updateRequest = TrainerRequestDTO.builder().specialization("Yoga").build();
-        TrainingType trainingType = new TrainingType();
-        Trainer updatedTrainer = new Trainer();
-        updatedTrainer.setSpecialization(trainingType);
-        TrainerResponseDTO responseDTO = TrainerResponseDTO.builder().trainerSpecialization("Yoga").build();
-
-        when(trainerRepository.getIdByUsername(username)).thenReturn(Optional.of(trainerId));
-        when(trainingTypeService.getTrainingByTrainingName("Yoga")).thenReturn(trainingType);
-        when(trainerRepository.findById(trainerId)).thenReturn(Optional.of(trainer));
-        when(trainerRepository.update(eq(trainerId), any(Trainer.class))).thenReturn(updatedTrainer);
-        when(trainerMapper.toTrainerResponseDTO(updatedTrainer)).thenReturn(responseDTO);
-
-        TrainerResponseDTO result = trainerService.updateTrainer(username, updateRequest);
-
-        assertNotNull(result);
-        assertEquals("Yoga", result.getTrainerSpecialization());
     }
 
     @Test

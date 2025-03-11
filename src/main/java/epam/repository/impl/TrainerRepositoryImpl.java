@@ -2,6 +2,7 @@ package epam.repository.impl;
 
 
 import epam.entity.Trainee;
+import epam.entity.TraineeTrainer;
 import epam.entity.Trainer;
 import epam.entity.User;
 import epam.exception.EntityManagerInsertException;
@@ -9,6 +10,7 @@ import epam.exception.TrainerNotFoundException;
 import epam.repository.TrainerRepository;
 import epam.repository.TrainingUserRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -171,23 +173,30 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
         return entityManager.createQuery(
                         """
                                 SELECT DISTINCT t FROM Trainer t
-                                JOIN TraineeTrainer tt ON t.trainerId = tt.trainer.trainerId
-                                JOIN Trainee tr ON tt.trainee.traineeId = tr.traineeId
-                                JOIN User u ON tr.user.userId = u.userId
-                                WHERE u.username = :username
+                                          JOIN t.user u
+                                          JOIN TraineeTrainer tt ON t.trainerId = tt.trainer.trainerId
+                                          JOIN tt.trainee tr
+                                          JOIN tr.user tru
+                                          WHERE tru.username = :username
                                 """, Trainer.class)
                 .setParameter("username", currentUsername)
                 .getResultList();
     }
 
+
     @Override
-    public void addTrainerToTrainee(Trainee trainee, Trainer trainer) {
-        entityManager.createQuery("""
-                        INSERT INTO TraineeTrainer (trainee, trainer) VALUES (:trainer, :trainee)
-                        """)
-                .setParameter("trainee", trainee)
-                .setParameter("trainer", trainer);
+    public void addTrainerToTrainee(TraineeTrainer trainer) {
+        try {
+            entityManager.getTransaction().begin();
+            entityManager.merge(trainer);
+            entityManager.flush();
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            log.error(e.getMessage());
+        }
     }
+
 
     @Override
     public Boolean trainerHasTrainee(UUID trainerId, UUID traineeId) {
@@ -207,13 +216,16 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
 
     @Override
     public void removeTraineeOfTrainer(Trainee trainee, Trainer trainer) {
-        entityManager.createQuery("""
-                        DELETE FROM TraineeTrainer t WHERE
-                        t.trainer.trainerId = :trainerId
-                        AND t.trainee.traineeId = :traineeId
-                        """)
-                .setParameter("trainerId", trainer.getTrainerId())
-                .setParameter("traineeId", trainee.getTraineeId())
-                .executeUpdate();
+        TraineeTrainer trainerToRemove = entityManager.find(
+                TraineeTrainer.class,
+                new TraineeTrainer.TraineeTrainerId(trainee.getTraineeId(), trainer.getTrainerId())
+        );
+
+        if (trainerToRemove != null) {
+            entityManager.remove(trainerToRemove);
+            entityManager.flush();
+        } else {
+            throw new EntityNotFoundException("TraineeTrainer relationship not found");
+        }
     }
 }

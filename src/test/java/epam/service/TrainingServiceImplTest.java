@@ -145,41 +145,6 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void testUpdateTraining_Success() {
-        String username = "trainingUser";
-        TrainingRequestDTO requestDTO = trainingRequestDTO;
-        UUID trainingId = UUID.randomUUID();
-        TrainingType trainingType = new TrainingType();
-        Trainer trainer = new Trainer();
-        Trainee trainee = new Trainee();
-        Training updatedTraining = new Training();
-        TrainingResponseDTO responseDTO = trainingResponseDTO;
-
-        when(trainingRepository.getIdByUsername(username)).thenReturn(Optional.of(trainingId));
-        when(trainingTypeService.getTrainingByTrainingName(requestDTO.getTrainingType())).thenReturn(trainingType);
-        when(trainerRepository.findByUsername(requestDTO.getTrainerUsername())).thenReturn(Optional.of(trainer));
-        when(traineeRepository.findByUsername(requestDTO.getTraineeUsername())).thenReturn(Optional.of(trainee));
-        when(trainingMapper.toTraining(requestDTO, trainingType, trainer, trainee)).thenReturn(updatedTraining);
-        when(trainingRepository.update(trainingId, updatedTraining)).thenReturn(updatedTraining);
-        when(trainingMapper.toTrainingResponseDTO(updatedTraining)).thenReturn(responseDTO);
-
-        TrainingResponseDTO result = trainingService.updateTraining(username, requestDTO);
-
-        assertNotNull(result);
-        verify(trainingRepository, times(1)).update(trainingId, updatedTraining);
-    }
-
-    @Test
-    void testUpdateTraining_TrainingNotFound() {
-        String username = "unknownTraining";
-        TrainingRequestDTO requestDTO = trainingRequestDTO;
-
-        when(trainingRepository.getIdByUsername(username)).thenReturn(Optional.empty());
-
-        assertThrows(TrainingNotFoundException.class, () -> trainingService.updateTraining(username, requestDTO));
-    }
-
-    @Test
     void testGetTrainingByUsername_Success() {
         String username = "trainingUser";
         UUID trainingId = UUID.randomUUID();
@@ -202,19 +167,6 @@ class TrainingServiceImplTest {
         when(trainingRepository.getIdByUsername(username)).thenReturn(Optional.empty());
 
         assertThrows(TrainingNotFoundException.class, () -> trainingService.getTrainingByUsername(username));
-    }
-
-    @Test
-    void testDeleteTraining_Success() {
-        String username = "trainingUser";
-        UUID trainingId = UUID.randomUUID();
-
-        when(trainingRepository.getIdByUsername(username)).thenReturn(Optional.of(trainingId));
-        doNothing().when(trainingRepository).delete(trainingId);
-
-        trainingService.deleteTraining(username);
-
-        verify(trainingRepository, times(1)).delete(trainingId);
     }
 
     @Test

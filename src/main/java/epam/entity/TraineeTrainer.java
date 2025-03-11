@@ -43,7 +43,7 @@ public class TraineeTrainer {
     @Embeddable
     @AllArgsConstructor
     @NoArgsConstructor
-    static class TraineeTrainerId implements Serializable {
+    public static class TraineeTrainerId implements Serializable {
 
         @Column(name = "trainee_id")
         private UUID traineeId;

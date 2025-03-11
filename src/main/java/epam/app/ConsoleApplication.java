@@ -622,6 +622,7 @@ public class ConsoleApplication {
                 System.out.println("Failed to add trainer. They might already be assigned to you.");
             }
         } catch (Exception e) {
+            log.error("Error adding trainer: " + e.getMessage() + e);
             System.out.println("Error adding trainer: " + e.getMessage());
         }
     }
