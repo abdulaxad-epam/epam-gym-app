@@ -46,10 +46,9 @@ public class TraineeServiceImpl implements TraineeService {
     @Transactional
     @Override
     public TraineeResponseDTO updateTrainee(String username, TraineeRequestDTO traineeRequestDTO) {
-        Optional<UUID> idByUsername = traineeRepository.getIdByUsername(username);
-        if (idByUsername.isPresent()) {
-            Trainee trainee = traineeRepository.findById(idByUsername.get()).orElseThrow(() ->
-                    new TraineeNotFoundException("Trainee not found"));
+        Optional<Trainee> byUsername = traineeRepository.findByUsername(username);
+        if (byUsername.isPresent()) {
+            Trainee trainee = byUsername.get();
 
             trainee.setAddress(traineeRequestDTO.getAddress());
             trainee.setDateOfBirth(traineeRequestDTO.getDateOfBirth());
@@ -65,9 +64,6 @@ public class TraineeServiceImpl implements TraineeService {
     public void deleteTrainee(String username) {
         log.info("Deleting trainee " + username);
         if (userService.existsByUsername(username)) {
-
-            log.info("User " + username + " does exist");
-            trainingService.deleteTraining(username);
 
             log.info("User " + username + " is deleted");
             traineeRepository.deleteTraineeByUsername(username);

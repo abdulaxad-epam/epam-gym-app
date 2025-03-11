@@ -45,13 +45,9 @@ public interface TrainingFacade {
 
     TrainingResponseDTO createTraining(TrainingRequestDTO training);
 
-    TrainingResponseDTO updateTraining(String username, TrainingRequestDTO training);
-
     TrainingResponseDTO getTrainingByUsername(String username);
 
     List<TrainingResponseDTO> getAllTrainings();
-
-    void deleteTraining(String username);
 
     Boolean existsByUsernameAndPassword(String username, String password);
 

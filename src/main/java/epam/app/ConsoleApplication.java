@@ -894,65 +894,6 @@ public class ConsoleApplication {
         }
     }
 
-    private void updateTraining() {
-        System.out.println("\n--- Update Training ---");
-        String username = getStringInput("Enter training username to update: ");
-
-        String newName = getStringInput("Enter new training name (leave empty to keep current): ");
-        String newType = getStringInput("Enter new training type (leave empty to keep current): ");
-        String newDateStr = getStringInput("Enter new training date (yyyy-MM-dd HH:mm) or leave empty: ");
-        String newDurationStr = getStringInput("Enter new duration in minutes (leave empty to keep current): ");
-
-        LocalDateTime newDate = null;
-        if (!newDateStr.isEmpty()) {
-            try {
-                newDate = LocalDateTime.parse(newDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-            } catch (DateTimeParseException e) {
-                System.out.println("Invalid date format. Keeping current date.");
-            }
-        }
-
-        Integer newDuration = newDurationStr.isEmpty() ? null : Integer.parseInt(newDurationStr);
-
-        TrainingRequestDTO updatedTraining = TrainingRequestDTO.builder()
-                .trainingName(newName.isEmpty() ? null : newName)
-                .trainingType(newType.isEmpty() ? null : newType)
-                .trainingDate(newDate)
-                .trainingDuration(newDuration)
-                .build();
-
-        try {
-            TrainingResponseDTO response = trainingFacade.updateTraining(username, updatedTraining);
-            System.out.println("Training updated successfully: " + response.getTrainingName());
-        } catch (Exception e) {
-            System.out.println("Error updating training: " + e.getMessage());
-        }
-    }
-
-    private void deleteTraining() {
-        System.out.println("\n--- Delete Training ---");
-        String trainingUsername = getStringInput("Enter training name to delete: ");
-
-        try {
-            trainingFacade.deleteTraining(trainingUsername);
-            System.out.println("Training deleted successfully.");
-        } catch (Exception e) {
-            System.out.println("Error deleting training: " + e.getMessage());
-        }
-    }
-
-    private void getTrainingById() {
-        System.out.println("\n--- Get Training by ID ---");
-        String trainingUsername = getStringInput("Enter training Username: ");
-
-        try {
-            TrainingResponseDTO response = trainingFacade.getTrainingByUsername(trainingUsername);
-            displayTrainingInfo(response);
-        } catch (Exception e) {
-            System.out.println("Error retrieving training: " + e.getMessage());
-        }
-    }
-
     private void getAllTrainings() {
         System.out.println("\n--- All Trainings ---");
 

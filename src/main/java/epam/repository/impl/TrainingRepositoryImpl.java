@@ -43,48 +43,6 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
 
     @Override
-    public Training update(UUID id, Training training) {
-        try {
-            entityManager.getTransaction().begin();
-            Training existingTraining = entityManager.find(Training.class, id);
-            if (existingTraining == null) {
-                throw new TrainingNotFoundException("Training with ID " + id + " not found.");
-            }
-            Training updatedTraining = entityManager.merge(training);
-            entityManager.getTransaction().commit();
-            return updatedTraining;
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            throw new RuntimeException("Failed to update training: " + e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void delete(UUID id) {
-        try {
-            entityManager.getTransaction().begin();
-
-            Training training = entityManager.find(Training.class, id);
-            log.info("Deleting training with ID " + id);
-
-            if (training != null) {
-                entityManager.remove(training);
-                log.info("Deleted training with ID " + id);
-
-            } else {
-                log.info("Training with ID " + id + " not found.");
-                throw new TrainingNotFoundException("Training with ID " + id + " not found.");
-            }
-
-            entityManager.getTransaction().commit();
-
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            throw new RuntimeException("Failed to delete training: " + e.getMessage(), e);
-        }
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public Training findById(UUID id) {
         return entityManager.find(Training.class, id);

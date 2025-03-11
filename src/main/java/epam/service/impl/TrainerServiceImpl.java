@@ -46,12 +46,12 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public TrainerResponseDTO updateTrainer(String username, TrainerRequestDTO trainerRequestDTO) {
 
-        Optional<UUID> id = trainerRepository.getIdByUsername(username);
+        Optional<Trainer> byUsername = trainerRepository.findByUsername(username);
+
         TrainingType trainingType = trainingTypeService.getTrainingByTrainingName(trainerRequestDTO.getSpecialization());
 
-        if (id.isPresent()) {
-            Trainer trainer = trainerRepository.findById(id.get())
-                    .orElseThrow(() -> new TrainerNotFoundException("Trainer not found"));
+        if (byUsername.isPresent()) {
+            Trainer trainer = byUsername.get();
 
             trainer.setSpecialization(trainingType);
 

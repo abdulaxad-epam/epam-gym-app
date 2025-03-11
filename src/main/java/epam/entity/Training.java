@@ -16,6 +16,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -33,10 +35,12 @@ public class Training {
     private UUID trainingId;
 
     @JoinColumn(name = "trainee_id")
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Trainee.class)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL, targetEntity = Trainee.class)
     private Trainee trainee;
 
     @JoinColumn(name = "trainer_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = Trainer.class)
     private Trainer trainer;
 

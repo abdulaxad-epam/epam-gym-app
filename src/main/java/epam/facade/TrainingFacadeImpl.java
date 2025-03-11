@@ -118,11 +118,6 @@ public class TrainingFacadeImpl implements TrainingFacade {
     }
 
     @Override
-    public TrainingResponseDTO updateTraining(String username, TrainingRequestDTO training) {
-        return trainingService.updateTraining(username, training);
-    }
-
-    @Override
     public TrainingResponseDTO getTrainingByUsername(String username) {
         return trainingService.getTrainingByUsername(username);
     }
@@ -130,11 +125,6 @@ public class TrainingFacadeImpl implements TrainingFacade {
     @Override
     public List<TrainingResponseDTO> getAllTrainings() {
         return trainingService.getAllTrainings();
-    }
-
-    @Override
-    public void deleteTraining(String username) {
-        trainingService.deleteTraining(username);
     }
 
     @Override

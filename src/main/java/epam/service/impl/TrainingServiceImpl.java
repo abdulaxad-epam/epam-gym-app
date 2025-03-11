@@ -17,6 +17,7 @@ import epam.service.TrainingService;
 import epam.service.TrainingTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -52,27 +53,6 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public TrainingResponseDTO updateTraining(String username, TrainingRequestDTO trainingRequestDTO) {
-
-        UUID trainingId = trainingRepository.getIdByUsername(username)
-                .orElseThrow(() -> new TrainingNotFoundException("Training with username " + username + " not found"));
-
-        TrainingType trainingType = trainingTypeService.getTrainingByTrainingName(trainingRequestDTO.getTrainingType());
-
-        Trainer trainer = trainerRepository.findByUsername(trainingRequestDTO.getTrainerUsername())
-                .orElseThrow(() -> new TrainerNotFoundException("Trainer with username " + trainingRequestDTO.getTrainerUsername() + " not found"));
-
-        Trainee trainee = traineeRepository.findByUsername(trainingRequestDTO.getTraineeUsername())
-                .orElseThrow(() -> new TraineeNotFoundException("Trainee with username " + trainingRequestDTO.getTraineeUsername() + " not found"));
-
-        Training updatedTraining = trainingMapper.toTraining(trainingRequestDTO, trainingType, trainer, trainee);
-
-        Training updated = trainingRepository.update(trainingId, updatedTraining);
-
-        return trainingMapper.toTrainingResponseDTO(updated);
-    }
-
-    @Override
     public TrainingResponseDTO getTrainingByUsername(String username) {
 
         UUID trainingId = trainingRepository.getIdByUsername(username)
@@ -87,12 +67,6 @@ public class TrainingServiceImpl implements TrainingService {
     public List<TrainingResponseDTO> getAllTrainings() {
         List<Training> trainings = trainingRepository.findAll();
         return trainings.stream().map(trainingMapper::toTrainingResponseDTO).toList();
-    }
-
-    @Override
-    public void deleteTraining(String username) {
-
-        trainingRepository.getIdByUsername(username).ifPresent(trainingRepository::delete);
     }
 
     @Override
