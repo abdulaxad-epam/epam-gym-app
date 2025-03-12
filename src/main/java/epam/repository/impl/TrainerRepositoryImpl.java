@@ -216,6 +216,8 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
 
     @Override
     public void removeTraineeOfTrainer(Trainee trainee, Trainer trainer) {
+        try{
+            entityManager.getTransaction().begin();
         TraineeTrainer trainerToRemove = entityManager.find(
                 TraineeTrainer.class,
                 new TraineeTrainer.TraineeTrainerId(trainee.getTraineeId(), trainer.getTrainerId())
@@ -224,8 +226,13 @@ public class TrainerRepositoryImpl implements TrainingUserRepository, TrainerRep
         if (trainerToRemove != null) {
             entityManager.remove(trainerToRemove);
             entityManager.flush();
+            entityManager.getTransaction().commit();
         } else {
             throw new EntityNotFoundException("TraineeTrainer relationship not found");
+        }
+        }catch (Exception e){
+            entityManager.getTransaction().rollback();
+            log.error(e.getMessage());
         }
     }
 }
