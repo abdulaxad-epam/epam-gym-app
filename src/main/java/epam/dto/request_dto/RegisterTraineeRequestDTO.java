@@ -1,19 +1,25 @@
 package epam.dto.request_dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Builder
 @ToString
-public class RegisterTraineeRequestDTO {
+@AllArgsConstructor
+@NoArgsConstructor
+public class RegisterTraineeRequestDTO implements Serializable {
 
-    private LocalDateTime dateOfBirth;
+    private LocalDate dateOfBirth;
 
     private String address;
 
