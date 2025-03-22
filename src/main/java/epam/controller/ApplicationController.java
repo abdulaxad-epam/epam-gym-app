@@ -12,4 +12,9 @@ public class ApplicationController {
     public String index() {
         return "Hello World";
     }
+
+    @GetMapping("/swagger-ui/index.html")
+    public String buy() {
+        return "Buy";
+    }
 }

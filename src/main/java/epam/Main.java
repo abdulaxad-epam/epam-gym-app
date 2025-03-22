@@ -1,18 +1,37 @@
 package epam;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import epam.config.WebConfig;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.startup.Tomcat;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.File;
 
-
+@Slf4j
 @ComponentScan("epam")
 public class Main {
     public static void main(String[] args) {
-        ApplicationContext context = new AnnotationConfigApplicationContext(Main.class);
-        context.getBean(Main.class);
+        AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
+        context.register(WebConfig.class);
+
+        Tomcat tomcat = new Tomcat();
+        tomcat.setPort(8080);
+
+        tomcat.setBaseDir(new File("embedded-tomcat").getAbsolutePath());
+        tomcat.getConnector();
+
+        String webAppDir = new File(".").getAbsolutePath();
+        tomcat.addWebapp("", webAppDir);
+
+        try {
+            tomcat.start();
+        } catch (LifecycleException e) {
+            log.info("Problem occurred with tomcat: " + e.getMessage());
+        }
+
+        tomcat.getServer().await();
     }
 }
