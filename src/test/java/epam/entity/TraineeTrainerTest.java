@@ -1,5 +1,8 @@
 package epam.entity;
 
+import epam.shared.trainee_trainer.entity.TraineeTrainer;
+import epam.trainee.entity.Trainee;
+import epam.trainer.entity.Trainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

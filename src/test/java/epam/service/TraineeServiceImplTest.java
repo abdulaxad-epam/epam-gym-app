@@ -1,12 +1,11 @@
 package epam.service;
 
-import epam.dto.request_dto.TraineeRequestDTO;
-import epam.dto.response_dto.TraineeResponseDTO;
-import epam.entity.Trainee;
-import epam.exception.TraineeNotFoundException;
-import epam.mapper.TraineeMapper;
-import epam.repository.TraineeRepository;
-import epam.service.impl.TraineeServiceImpl;
+import epam.trainee.entity.Trainee;
+import epam.shared.exception.exception.TraineeNotFoundException;
+import epam.trainee.mapper.TraineeMapper;
+import epam.trainee.service.impl.TraineeServiceImpl;
+import epam.training.service.TrainingService;
+import epam.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

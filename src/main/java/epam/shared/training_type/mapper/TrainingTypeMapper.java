@@ -1,0 +1,28 @@
+package epam.shared.training_type.mapper;
+
+
+import epam.shared.security.dto.RegisterTrainerRequestDTO;
+import epam.shared.training_type.entity.TrainingType;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+import org.mapstruct.factory.Mappers;
+
+
+@Mapper(componentModel = "spring")
+public interface TrainingTypeMapper {
+    TrainingTypeMapper INSTANCE = Mappers.getMapper(TrainingTypeMapper.class);
+
+    @Named("toTrainingType")
+    @Mapping(source = "specialization", target = "description")
+    TrainingType toTrainingType(RegisterTrainerRequestDTO userRequestDTO);
+
+    default TrainingType toTrainingType(String specialization) {
+        if (specialization == null) {
+            return null;
+        }
+        return TrainingType.builder()
+                .description(specialization)
+                .build();
+    }
+}

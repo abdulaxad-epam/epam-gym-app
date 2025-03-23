@@ -1,25 +1,28 @@
 package epam.service;
 
-import epam.dto.request_dto.TrainingRequestDTO;
-import epam.dto.response_dto.TraineeResponseDTO;
-import epam.dto.response_dto.TrainerResponseDTO;
-import epam.dto.response_dto.TrainingResponseDTO;
-import epam.dto.response_dto.UserResponseDTO;
-import epam.entity.Trainee;
-import epam.entity.Trainer;
-import epam.entity.Training;
-import epam.entity.TrainingType;
-import epam.exception.TraineeNotFoundException;
-import epam.exception.TrainerNotFoundException;
-import epam.exception.TrainingNotFoundException;
-import epam.mapper.TrainingMapper;
-import epam.repository.TraineeRepository;
-import epam.repository.TrainerRepository;
-import epam.repository.TrainingRepository;
-import epam.service.impl.TrainingServiceImpl;
+import epam.shared.training_type.service.TrainingTypeService;
+import epam.trainee.dto.TraineeResponseDTO;
+import epam.trainee.entity.Trainee;
+import epam.trainee.repository.TraineeRepository;
+import epam.trainer.dto.TrainerResponseDTO;
+import epam.trainer.entity.Trainer;
+import epam.trainer.repository.TrainerRepository;
+import epam.training.dto.TrainingRequestDTO;
+import epam.training.dto.TrainingResponseDTO;
+import epam.training.entity.Training;
+import epam.shared.training_type.entity.TrainingType;
+import epam.shared.exception.exception.TraineeNotFoundException;
+import epam.shared.exception.exception.TrainerNotFoundException;
+import epam.shared.exception.exception.TrainingNotFoundException;
+import epam.training.mapper.TrainingMapper;
+import epam.training.repository.TrainingRepository;
+import epam.training.service.TrainingService;
+import epam.training.service.impl.TrainingServiceImpl;
+import epam.user.dto.UserResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -64,7 +67,7 @@ class TrainingServiceImplTest {
                 .build();
 
         traineeResponseDTO = TraineeResponseDTO.builder()
-                .traineeDateOfBirth(LocalDateTime.of(1995, 5, 20, 0, 0))
+                .traineeDateOfBirth(LocalDate.of(1995, 5, 20).toString())
                 .address("123 Main Street")
                 .user(UserResponseDTO.builder()
                         .firstName("John")

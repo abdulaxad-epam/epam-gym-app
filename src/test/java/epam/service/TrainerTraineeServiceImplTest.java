@@ -1,13 +1,14 @@
 package epam.service;
 
-import epam.entity.Trainee;
-import epam.entity.Trainer;
-import epam.exception.TraineeHasNotAssignedBeforeException;
-import epam.exception.TraineeNotFoundException;
-import epam.exception.TrainerNotFoundException;
-import epam.repository.TraineeRepository;
-import epam.repository.TrainerRepository;
-import epam.service.impl.TrainerTraineeServiceImpl;
+import epam.shared.trainee_trainer.service.TraineeTrainerService;
+import epam.trainee.entity.Trainee;
+import epam.trainee.repository.TraineeRepository;
+import epam.trainer.entity.Trainer;
+import epam.shared.exception.exception.TraineeHasNotAssignedBeforeException;
+import epam.shared.exception.exception.TraineeNotFoundException;
+import epam.shared.exception.exception.TrainerNotFoundException;
+import epam.shared.trainee_trainer.service.impl.TrainerTraineeServiceImpl;
+import epam.trainer.repository.TrainerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

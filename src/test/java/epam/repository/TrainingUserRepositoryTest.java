@@ -1,6 +1,6 @@
 package epam.repository;
 
-import epam.entity.User;
+import epam.user.entity.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.BeforeEach;

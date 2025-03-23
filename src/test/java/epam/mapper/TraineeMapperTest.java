@@ -1,12 +1,14 @@
 package epam.mapper;
 
-import epam.dto.request_dto.RegisterTraineeRequestDTO;
-import epam.dto.request_dto.TraineeRequestDTO;
-import epam.dto.request_dto.UserRequestDTO;
-import epam.dto.response_dto.TraineeResponseDTO;
-import epam.dto.response_dto.UserResponseDTO;
-import epam.entity.Trainee;
-import epam.entity.User;
+import epam.shared.security.dto.RegisterTraineeRequestDTO;
+import epam.trainee.dto.TraineeRequestDTO;
+import epam.trainee.dto.TraineeResponseDTO;
+import epam.trainee.entity.Trainee;
+import epam.trainee.mapper.TraineeMapper;
+import epam.user.dto.UserRequestDTO;
+import epam.user.dto.UserResponseDTO;
+import epam.user.entity.User;
+import epam.user.mapper.UserMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,12 +56,12 @@ public class TraineeMapperTest {
         traineeRequestDTO = TraineeRequestDTO.builder()
                 .user(userRequestDTO)
                 .address("Test Address")
-                .dateOfBirth(LocalDate.of(2000, 1, 1).atStartOfDay())
+                .dateOfBirth(LocalDate.from(LocalDate.of(2000, 1, 1).atStartOfDay()))
                 .build();
 
         registerTraineeRequestDTO = RegisterTraineeRequestDTO.builder()
                 .address("Test Address")
-                .dateOfBirth(LocalDate.of(2000, 1, 1).atStartOfDay())
+                .dateOfBirth(LocalDate.from(LocalDate.of(2000, 1, 1).atStartOfDay()))
                 .build();
     }
 

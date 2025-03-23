@@ -1,5 +1,6 @@
 package epam.entity;
 
+import epam.shared.training_type.entity.TrainingType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

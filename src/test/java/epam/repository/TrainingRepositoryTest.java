@@ -1,7 +1,7 @@
 package epam.repository;
 
-import epam.entity.Training;
-import epam.repository.impl.TrainingRepositoryImpl;
+import epam.training.entity.Training;
+import epam.training.repository.impl.TrainingRepositoryImpl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.Test;

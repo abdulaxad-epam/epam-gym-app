@@ -1,8 +1,8 @@
 package epam.repository;
 
-import epam.entity.Trainer;
-import epam.entity.User;
-import epam.repository.impl.TrainerRepositoryImpl;
+import epam.trainer.entity.Trainer;
+import epam.trainer.repository.impl.TrainerRepositoryImpl;
+import epam.user.entity.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;

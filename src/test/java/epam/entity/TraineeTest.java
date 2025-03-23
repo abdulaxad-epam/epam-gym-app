@@ -1,5 +1,7 @@
 package epam.entity;
 
+import epam.trainee.entity.Trainee;
+import epam.user.entity.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;

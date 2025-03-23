@@ -1,11 +1,14 @@
 package epam.mapper;
 
-import epam.dto.request_dto.TrainingRequestDTO;
-import epam.dto.response_dto.TrainingResponseDTO;
-import epam.entity.Trainee;
-import epam.entity.Trainer;
-import epam.entity.Training;
-import epam.entity.TrainingType;
+import epam.trainee.entity.Trainee;
+import epam.trainee.mapper.TraineeMapper;
+import epam.trainer.entity.Trainer;
+import epam.trainer.mapper.TrainerMapper;
+import epam.training.dto.TrainingRequestDTO;
+import epam.training.dto.TrainingResponseDTO;
+import epam.training.entity.Training;
+import epam.shared.training_type.entity.TrainingType;
+import epam.training.mapper.TrainingMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;

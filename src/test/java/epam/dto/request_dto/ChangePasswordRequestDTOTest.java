@@ -1,5 +1,6 @@
 package epam.dto.request_dto;
 
+import epam.shared.security.dto.ChangePasswordRequestDTO;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

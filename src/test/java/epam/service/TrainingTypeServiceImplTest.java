@@ -1,8 +1,8 @@
 package epam.service;
 
-import epam.entity.TrainingType;
-import epam.repository.TrainingTypeRepository;
-import epam.service.impl.TrainingTypServiceImpl;
+import epam.shared.training_type.entity.TrainingType;
+import epam.shared.training_type.service.TrainingTypeService;
+import epam.shared.training_type.service.impl.TrainingTypServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

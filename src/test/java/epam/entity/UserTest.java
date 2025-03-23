@@ -1,6 +1,7 @@
 package epam.entity;
 
-import epam.util.PasswordGeneratorListener;
+import epam.user.entity.User;
+import epam.shared.util.PasswordGeneratorListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

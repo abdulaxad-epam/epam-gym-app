@@ -1,7 +1,10 @@
 package epam.dto.request_dto;
 
+import epam.trainee.dto.TraineeRequestDTO;
+import epam.user.dto.UserRequestDTO;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,7 +21,7 @@ class TraineeRequestDTOTest {
                 .build();
 
         TraineeRequestDTO dto = TraineeRequestDTO.builder()
-                .dateOfBirth(dob)
+                .dateOfBirth(LocalDate.from(dob))
                 .address("123 Main St, City")
                 .user(user)
                 .build();
@@ -57,7 +60,7 @@ class TraineeRequestDTOTest {
                 .build();
 
         TraineeRequestDTO dto = TraineeRequestDTO.builder()
-                .dateOfBirth(dob)
+                .dateOfBirth(LocalDate.from(dob))
                 .address("789 Pine St, Village")
                 .user(user)
                 .build();

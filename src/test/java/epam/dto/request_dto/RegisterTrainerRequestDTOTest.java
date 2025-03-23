@@ -1,5 +1,7 @@
 package epam.dto.request_dto;
 
+import epam.shared.security.dto.RegisterTrainerRequestDTO;
+import epam.user.dto.UserRequestDTO;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

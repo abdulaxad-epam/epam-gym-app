@@ -1,5 +1,6 @@
 package epam.dto.request_dto;
 
+import epam.shared.security.dto.RegisterTraineeRequestDTO;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

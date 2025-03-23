@@ -1,12 +1,12 @@
 package epam.service;
 
-import epam.dto.request_dto.AuthenticateRequestDTO;
-import epam.dto.request_dto.RegisterTraineeRequestDTO;
-import epam.dto.request_dto.RegisterTrainerRequestDTO;
-import epam.dto.request_dto.UserRequestDTO;
-import epam.dto.response_dto.TraineeResponseDTO;
-import epam.dto.response_dto.TrainerResponseDTO;
-import epam.service.impl.AuthenticationServiceImpl;
+import epam.shared.security.dto.AuthenticateRequestDTO;
+import epam.shared.security.dto.RegisterTraineeRequestDTO;
+import epam.shared.security.dto.RegisterTrainerRequestDTO;
+import epam.shared.security.service.impl.AuthenticationServiceImpl;
+import epam.trainee.service.TraineeService;
+import epam.trainer.service.TrainerService;
+import epam.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

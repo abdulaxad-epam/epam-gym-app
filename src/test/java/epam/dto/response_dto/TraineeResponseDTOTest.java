@@ -1,5 +1,7 @@
 package epam.dto.response_dto;
 
+import epam.trainee.dto.TraineeResponseDTO;
+import epam.user.dto.UserResponseDTO;
 import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
@@ -21,7 +23,7 @@ class TraineeResponseDTOTest {
         LocalDateTime birthDate = LocalDateTime.of(1995, 5, 10, 0, 0);
 
         TraineeResponseDTO dto = TraineeResponseDTO.builder()
-                .traineeDateOfBirth(birthDate)
+                .traineeDateOfBirth(String.valueOf(birthDate))
                 .address("123 Main St")
                 .user(user)
                 .build();
@@ -41,7 +43,7 @@ class TraineeResponseDTOTest {
                 .isActive(false)
                 .build();
 
-        dto.setTraineeDateOfBirth(birthDate);
+        dto.setTraineeDateOfBirth(String.valueOf(birthDate));
         dto.setAddress("456 Elm St");
         dto.setUser(user);
 
@@ -61,7 +63,7 @@ class TraineeResponseDTOTest {
         LocalDateTime birthDate = LocalDateTime.of(1998, 8, 20, 0, 0);
 
         TraineeResponseDTO dto = TraineeResponseDTO.builder()
-                .traineeDateOfBirth(birthDate)
+                .traineeDateOfBirth(String.valueOf(birthDate))
                 .address("789 Oak St")
                 .user(user)
                 .build();

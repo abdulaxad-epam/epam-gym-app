@@ -1,8 +1,9 @@
 package epam.mapper;
 
-import epam.dto.request_dto.UserRequestDTO;
-import epam.dto.response_dto.UserResponseDTO;
-import epam.entity.User;
+import epam.user.dto.UserRequestDTO;
+import epam.user.dto.UserResponseDTO;
+import epam.user.entity.User;
+import epam.user.mapper.UserMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -51,7 +52,6 @@ class UserMapperTest {
         requestDTO.setFirstName("Jane");
         requestDTO.setLastName("Smith");
         requestDTO.setIsActive(false);
-        requestDTO.setPassword("pass456");
 
         User user = userMapper.toUser(requestDTO);
 
@@ -59,7 +59,6 @@ class UserMapperTest {
         assertEquals("Jane", user.getFirstname());
         assertEquals("Smith", user.getLastname());
         assertFalse(user.getIsActive());
-        assertEquals("pass456", user.getPassword());
     }
 
     @Test

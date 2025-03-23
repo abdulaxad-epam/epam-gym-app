@@ -1,10 +1,12 @@
 package epam.dto.request_dto;
 
+import epam.trainer.dto.TrainerRequestDTO;
+import epam.user.dto.UserRequestDTO;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class TrainerRequestDTOTest {
+public class TrainerRequestDTOTest {
 
     @Test
     void testBuilderAndGetters() {

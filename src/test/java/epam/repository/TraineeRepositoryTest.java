@@ -1,9 +1,9 @@
 package epam.repository;
 
-import epam.entity.Trainee;
-import epam.entity.User;
-import epam.exception.EntityManagerInsertException;
-import epam.repository.impl.TraineeRepositoryImpl;
+import epam.trainee.entity.Trainee;
+import epam.trainee.repository.impl.TraineeRepositoryImpl;
+import epam.user.entity.User;
+import epam.shared.exception.exception.EntityManagerInsertException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;

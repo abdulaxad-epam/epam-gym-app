@@ -1,5 +1,6 @@
 package epam.config;
 
+import epam.shared.configuration.StorageConfiguration;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
