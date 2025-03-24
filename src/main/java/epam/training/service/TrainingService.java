@@ -11,8 +11,6 @@ public interface TrainingService {
 
     TrainingResponseDTO createTraining(TrainingRequestDTO training);
 
-    TrainingResponseDTO updateTraining(String username, TrainingRequestDTO training);
-
     TrainingResponseDTO getTrainingByUsername(String username);
 
     List<TrainingResponseDTO> getAllTrainings();

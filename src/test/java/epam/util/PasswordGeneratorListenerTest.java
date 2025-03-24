@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-public class PasswordGeneratorListenerTest {
+class PasswordGeneratorListenerTest {
 
     private PasswordGeneratorListener passwordGeneratorListener;
 
@@ -44,6 +44,7 @@ public class PasswordGeneratorListenerTest {
         assertNotNull(entity.getPassword(), "Password should be generated for empty field");
         assertEquals(10, entity.getPassword().length(), "Generated password should match annotation length");
     }
+
 
     private static class TestEntity {
         @GeneratePassword(length = 10)

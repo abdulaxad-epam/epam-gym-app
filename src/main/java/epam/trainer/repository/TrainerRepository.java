@@ -11,8 +11,6 @@ import java.util.UUID;
 public interface TrainerRepository {
     Trainer insert(Trainer trainer);
 
-    Trainer update(UUID id, Trainer trainer);
-
     Optional<Trainer> findByUsername(String username);
 
     @Transactional(readOnly = true)

@@ -36,69 +36,56 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public TraineeResponseDTO createTrainee(TraineeRequestDTO traineeRequestDTO) {
 
-        Trainee trainee = traineeMapper.toTrainee(traineeRequestDTO);
-
-        Trainee inserted = traineeRepository.insert(trainee);
-
-        return traineeMapper.toTraineeResponseDTO(inserted);
+        return traineeMapper.toTraineeResponseDTO(
+                traineeRepository.insert(
+                        traineeMapper.toTrainee(traineeRequestDTO)
+                )
+        );
     }
 
     @Transactional
     @Override
     public TraineeResponseDTO updateTrainee(String username, TraineeRequestDTO traineeRequestDTO) {
-        Optional<UUID> idByUsername = traineeRepository.getIdByUsername(username);
-        if (idByUsername.isPresent()) {
-            Trainee trainee = traineeRepository.findById(idByUsername.get()).orElseThrow(() ->
-                    new TraineeNotFoundException("Trainee not found"));
 
-            trainee.setAddress(traineeRequestDTO.getAddress());
-            trainee.setDateOfBirth(traineeRequestDTO.getDateOfBirth());
-
-            return traineeMapper.toTraineeResponseDTO(trainee);
-        }else {
-            throw new TraineeNotFoundException("Trainee not found");
-        }
+        return traineeMapper.toTraineeResponseDTO(
+                traineeRepository.findByUsername(username)
+                        .map(trainee -> {
+                            trainee.setAddress(traineeRequestDTO.getAddress());
+                            trainee.setDateOfBirth(traineeRequestDTO.getDateOfBirth());
+                            return trainee;
+                        })
+                        .orElseThrow(
+                                () -> new TraineeNotFoundException(String.format("Trainee not found with username: %s", username))
+                        )
+        );
     }
-
 
     @Override
     public void deleteTrainee(String username) {
         log.info("Deleting trainee " + username);
         if (userService.existsByUsername(username)) {
-
             log.info("User " + username + " does exist");
             trainingService.deleteTraining(username);
 
             log.info("User " + username + " is deleted");
             traineeRepository.deleteTraineeByUsername(username);
-
-
-        }else {
-            throw new TraineeNotFoundException("Trainee not found");
         }
+        throw new TraineeNotFoundException("Trainee not found");
     }
 
     @Override
     public TraineeResponseDTO getTraineeByUsername(String username) {
-        Optional<Trainee> byId = traineeRepository.findByUsername(username);
-        if (byId.isPresent()) {
-            return traineeMapper.toTraineeResponseDTO(byId.get());
-        }else {
-            throw new TraineeNotFoundException("Trainee not found");
-        }
+        return traineeMapper.toTraineeResponseDTO(traineeRepository.findByUsername(username)
+                .orElseThrow(() -> new TraineeNotFoundException("Trainee not found")));
     }
 
     @Override
     public List<TraineeResponseDTO> getAllTrainees() {
-        List<Trainee> trainees = traineeRepository.findAll();
-
-        return trainees.stream().map(traineeMapper::toTraineeResponseDTO).toList();
-
+        return traineeRepository.findAll().stream().map(traineeMapper::toTraineeResponseDTO).toList();
     }
 
     @Override
     public List<TraineeResponseDTO> getTraineesByTrainer(String currentUsername) {
-        List<Trainee> trainees = traineeRepository.findTraineeByTrainer(currentUsername);
-        return trainees.stream().map(traineeMapper::toTraineeResponseDTO).toList();
+        return traineeRepository.findTraineeByTrainer(currentUsername).stream().map(traineeMapper::toTraineeResponseDTO).toList();
     }
 }

@@ -29,7 +29,7 @@ public class Main {
         try {
             tomcat.start();
         } catch (LifecycleException e) {
-            log.info("Problem occurred with tomcat: " + e.getMessage());
+            throw new RuntimeException("Could not start tomcat", e);
         }
 
         tomcat.getServer().await();

@@ -2,11 +2,9 @@ package epam.trainer.repository.impl;
 
 
 import epam.shared.exception.exception.EntityManagerInsertException;
-import epam.shared.exception.exception.TrainerNotFoundException;
 import epam.trainee.entity.Trainee;
 import epam.trainer.entity.Trainer;
 import epam.trainer.repository.TrainerRepository;
-import epam.user.entity.User;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
@@ -46,39 +44,6 @@ public class TrainerRepositoryImpl implements TrainerRepository {
             log.error("Error inserting user: " + e.getMessage());
             throw new EntityManagerInsertException(e.getMessage());
         }
-    }
-
-
-    @Override
-    public Trainer update(UUID id, Trainer trainer) {
-        if (trainer == null)
-            throw new IllegalArgumentException("Trainer cannot be null");
-
-        try {
-            entityManager.getTransaction().begin();
-
-            if (entityManager.find(Trainer.class, id) != null) {
-
-                trainer = entityManager.merge(trainer);
-
-                entityManager.flush();
-
-                entityManager.refresh(trainer);
-
-                entityManager.getTransaction().commit();
-
-            } else
-                throw new TrainerNotFoundException("Trainer with id " + id + " not found");
-
-        } catch (TrainerNotFoundException e) {
-            entityManager.getTransaction().rollback();
-            throw e;
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            log.error(e.getMessage());
-            throw new TrainerNotFoundException(e.getMessage());
-        }
-        return trainer;
     }
 
     @Override

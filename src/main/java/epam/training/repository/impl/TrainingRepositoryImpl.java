@@ -41,24 +41,6 @@ public class TrainingRepositoryImpl implements TrainingRepository {
         }
     }
 
-
-    @Override
-    public Training update(UUID id, Training training) {
-        try {
-            entityManager.getTransaction().begin();
-            Training existingTraining = entityManager.find(Training.class, id);
-            if (existingTraining == null) {
-                throw new TrainingNotFoundException("Training with ID " + id + " not found.");
-            }
-            Training updatedTraining = entityManager.merge(training);
-            entityManager.getTransaction().commit();
-            return updatedTraining;
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            throw new RuntimeException("Failed to update training: " + e.getMessage(), e);
-        }
-    }
-
     @Override
     public void delete(UUID id) {
         try {
@@ -113,8 +95,8 @@ public class TrainingRepositoryImpl implements TrainingRepository {
                 .getSingleResult();
     }
 
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public Optional<UUID> getIdByUsername(String username) {
 
         log.info("getIdByUsername: " + username);
@@ -129,6 +111,11 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
         log.info("getIdByUsername: " + singleResult);
         return Optional.ofNullable(singleResult);
+    }
+
+    @Override
+    public Optional<Training> findByUser_Username(String username) {
+        return Optional.empty();
     }
 
     @Override
