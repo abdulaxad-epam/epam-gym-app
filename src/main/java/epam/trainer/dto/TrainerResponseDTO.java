@@ -1,17 +1,24 @@
 package epam.trainer.dto;
 
 
+import epam.user.dto.UserRequestDTO;
 import epam.user.dto.UserResponseDTO;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
+
+@Builder
 @Getter
 @Setter
 @ToString
-@Builder
-public class TrainerResponseDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+public class TrainerResponseDTO implements Serializable {
 
     private String trainerSpecialization;
 

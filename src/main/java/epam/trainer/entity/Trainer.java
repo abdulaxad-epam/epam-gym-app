@@ -1,7 +1,7 @@
 package epam.trainer.entity;
 
 
-import epam.shared.training_type.entity.TrainingType;
+import epam.training_type.entity.TrainingType;
 import epam.user.entity.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

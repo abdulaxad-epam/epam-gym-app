@@ -10,7 +10,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -127,29 +126,6 @@ public class TrainingRepositoryImpl implements TrainingRepository {
                         WHERE user.username = :username
                         """, Training.class)
                 .getResultList();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Training> getByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingType) {
-       return entityManager.createQuery( """
-            SELECT DISTINCT t FROM Training t
-            JOIN t.trainee trainee
-            JOIN trainee.user user
-            JOIN t.trainer trainer
-            JOIN trainer.user trainerUser
-            JOIN t.trainingType tt
-            WHERE (:username IS NULL OR user.username = :username)
-            AND (:fromDate IS NULL OR t.trainingDate >= :fromDate)
-            AND (:toDate IS NULL OR t.trainingDate <= :toDate)
-            AND (:trainerName IS NULL OR CONCAT(trainerUser.firstname, '.', trainerUser.lastname) = :trainerName)
-            AND (:trainingType IS NULL OR tt.description = :trainingType)
-            """, Training.class)
-       .setParameter("username", username)
-       .setParameter("fromDate", fromDate)
-       .setParameter("toDate", toDate)
-       .setParameter("trainerName", trainerName)
-       .setParameter("trainingType", trainingType).getResultList();
     }
 
 }

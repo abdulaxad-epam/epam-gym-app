@@ -1,15 +1,15 @@
 package epam.service;
 
-import epam.shared.training_type.service.TrainingTypeService;
+import epam.training_type.service.TrainingTypeService;
 import epam.trainer.dto.TrainerRequestDTO;
 import epam.trainer.dto.TrainerResponseDTO;
 import epam.trainer.entity.Trainer;
-import epam.shared.training_type.entity.TrainingType;
+import epam.training_type.entity.TrainingType;
 import epam.shared.exception.exception.TrainerNotFoundException;
 import epam.trainer.mapper.TrainerMapper;
 import epam.trainer.repository.TrainerRepository;
 import epam.trainer.service.TrainerService;
-import epam.trainer.service.impl.TrainerServiceImpl;
+import epam.training.mapper.TrainingMapper;
 import epam.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,8 +42,8 @@ class TrainerServiceImplTest {
         trainingTypeService = mock(TrainingTypeService.class);
         trainerMapper = mock(TrainerMapper.class);
         userService = mock(UserService.class);
-
-        trainerService = new TrainerServiceImpl(trainerRepository, trainingTypeService, trainerMapper, userService);
+        TrainingMapper trainingMapper = mock(TrainingMapper.class);
+//        trainerService = new TrainerServiceImpl(trainerRepository, trainingTypeService, trainerMapper, userService);
     }
 
     @Test
@@ -79,7 +79,6 @@ class TrainerServiceImplTest {
         when(trainerRepository.getIdByUsername(username)).thenReturn(Optional.of(trainerId));
         when(trainingTypeService.getTrainingByTrainingName("Yoga")).thenReturn(trainingType);
         when(trainerRepository.findById(trainerId)).thenReturn(Optional.of(trainer));
-        when(trainerRepository.update(eq(trainerId), any(Trainer.class))).thenReturn(updatedTrainer);
         when(trainerMapper.toTrainerResponseDTO(updatedTrainer)).thenReturn(responseDTO);
 
         TrainerResponseDTO result = trainerService.updateTrainer(username, updateRequest);

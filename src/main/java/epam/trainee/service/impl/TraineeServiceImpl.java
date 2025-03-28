@@ -1,37 +1,38 @@
 package epam.trainee.service.impl;
 
+import epam.shared.exception.exception.DateConversionException;
+import epam.shared.exception.exception.TraineeNotFoundException;
 import epam.trainee.dto.TraineeRequestDTO;
 import epam.trainee.dto.TraineeResponseDTO;
 import epam.trainee.entity.Trainee;
-import epam.shared.exception.exception.TraineeNotFoundException;
 import epam.trainee.mapper.TraineeMapper;
 import epam.trainee.repository.TraineeRepository;
 import epam.trainee.service.TraineeService;
+import epam.training.dto.TrainingResponseDTO;
+import epam.training.entity.Training;
+import epam.training.mapper.TrainingMapper;
 import epam.training.service.TrainingService;
-import epam.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-
+@Log
 @Service
 @RequiredArgsConstructor
 public class TraineeServiceImpl implements TraineeService {
 
-    private static final Log log = LogFactory.getLog(TraineeServiceImpl.class);
     private final TraineeRepository traineeRepository;
 
     private final TraineeMapper traineeMapper;
 
     private final TrainingService trainingService;
 
-    private final UserService userService;
+    private final TrainingMapper trainingMapper;
 
     @Override
     public TraineeResponseDTO createTrainee(TraineeRequestDTO traineeRequestDTO) {
@@ -43,39 +44,45 @@ public class TraineeServiceImpl implements TraineeService {
         );
     }
 
-    @Transactional
     @Override
-    public TraineeResponseDTO updateTrainee(String username, TraineeRequestDTO traineeRequestDTO) {
+    public TraineeResponseDTO updateTrainee(String username, String firstname, String lastname, String dateOfBirth, String address, Boolean isActive) {
+        Optional<Trainee> trainee = traineeRepository.findByUsername(username);
 
-        return traineeMapper.toTraineeResponseDTO(
-                traineeRepository.findByUsername(username)
-                        .map(trainee -> {
-                            trainee.setAddress(traineeRequestDTO.getAddress());
-                            trainee.setDateOfBirth(traineeRequestDTO.getDateOfBirth());
-                            return trainee;
-                        })
-                        .orElseThrow(
-                                () -> new TraineeNotFoundException(String.format("Trainee not found with username: %s", username))
-                        )
-        );
+        trainee.ifPresentOrElse(t -> {
+            try {
+
+                t.getUser().setFirstname(firstname);
+                t.getUser().setLastname(lastname);
+                t.setDateOfBirth(LocalDate.parse(dateOfBirth));
+                t.setAddress(address);
+                t.getUser().setIsActive(isActive);
+
+            } catch (Exception exception) {
+                throw new DateConversionException("Cannot convert dateOfBirth to date");
+            }
+
+        }, () -> {
+            log.info("Trainee not found with username: " + username);
+            throw new TraineeNotFoundException(String.format("Trainee not found with username: %s", username));
+        });
+        return traineeMapper.toTraineeResponseDTO(trainee.get());
     }
 
     @Override
     public void deleteTrainee(String username) {
-        log.info("Deleting trainee " + username);
-        if (userService.existsByUsername(username)) {
-            log.info("User " + username + " does exist");
-            trainingService.deleteTraining(username);
-
-            log.info("User " + username + " is deleted");
-            traineeRepository.deleteTraineeByUsername(username);
+        if (!traineeRepository.existsByUsername(username)) {
+            throw new TraineeNotFoundException(String.format("Trainee not found with username: %s", username));
         }
-        throw new TraineeNotFoundException("Trainee not found");
+        log.info("Deleting trainee " + username);
+        trainingService.deleteTraining(username);
+
+        log.info("User " + username + " is deleted");
+        traineeRepository.deleteTraineeByUsername(username);
     }
 
     @Override
     public TraineeResponseDTO getTraineeByUsername(String username) {
-        return traineeMapper.toTraineeResponseDTO(traineeRepository.findByUsername(username)
+        return traineeMapper.toTraineeResponseDTO(traineeRepository.findByUsername(username.toLowerCase())
                 .orElseThrow(() -> new TraineeNotFoundException("Trainee not found")));
     }
 
@@ -87,5 +94,25 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public List<TraineeResponseDTO> getTraineesByTrainer(String currentUsername) {
         return traineeRepository.findTraineeByTrainer(currentUsername).stream().map(traineeMapper::toTraineeResponseDTO).toList();
+    }
+
+    @Override
+    public void updateTraineeStatus(String username, Boolean isActive) {
+        Optional<Trainee> trainee = traineeRepository.findByUsername(username);
+        trainee.ifPresentOrElse(t -> t.getUser().setIsActive(isActive), () -> {
+            log.warning("Trainee " + username + " not found");
+            throw new TraineeNotFoundException(String.format("Trainee not found with username: %s", username));
+        });
+    }
+
+    @Override
+    public List<TrainingResponseDTO> getTraineeTrainings(String username, String periodFrom, String periodTo, String trainerName, String trainingType) {
+        log.info("Incoming data : " + periodFrom + " " + periodTo + " " + trainerName + " " + trainingType + " " + username);
+        List<Training> trainings = traineeRepository.getTraineeTrainings(username, periodFrom, periodTo, trainerName, trainingType)
+                .orElseThrow(() -> {
+                    log.info("Trainee " + username + " not found");
+                    return new TraineeNotFoundException(String.format("Trainee not found with username: %s", username));
+                });
+        return trainings.stream().map(trainingMapper::toTrainingResponseDTO).toList();
     }
 }

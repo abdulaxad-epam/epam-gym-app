@@ -16,15 +16,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.UUID;
 
 @Data
 @Entity
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "USERS")
+@Table(name = "users")
 @EntityListeners(value = {PasswordGeneratorListener.class, UsernameGeneratorListener.class})
 public class User {
 
@@ -39,7 +41,7 @@ public class User {
     private String lastname;
 
     @GenerateUsername
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, updatable = false)
     private String username;
 
     @GeneratePassword

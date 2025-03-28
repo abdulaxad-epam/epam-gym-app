@@ -7,7 +7,7 @@ import epam.trainer.mapper.TrainerMapper;
 import epam.training.dto.TrainingRequestDTO;
 import epam.training.dto.TrainingResponseDTO;
 import epam.training.entity.Training;
-import epam.shared.training_type.entity.TrainingType;
+import epam.training_type.entity.TrainingType;
 import epam.training.mapper.TrainingMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

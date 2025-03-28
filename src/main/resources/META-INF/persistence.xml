@@ -5,7 +5,7 @@
 
         <class>epam.training.entity.Training</class>
         <class>epam.user.entity.User</class>
-        <class>epam.shared.training_type.entity.TrainingType</class>
+        <class>epam.training_type.entity.TrainingType</class>
         <class>epam.trainee.entity.Trainee</class>
         <class>epam.trainer.entity.Trainer</class>
         <class>epam.shared.trainee_trainer.entity.TraineeTrainer</class>

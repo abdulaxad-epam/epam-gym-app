@@ -103,26 +103,4 @@ class UserServiceImplTest {
         verify(userRepository, never()).changePassword(any());
     }
 
-    @Test
-    void testToggleStatus_UserExists() {
-        User user = User.builder()
-                .username("user123")
-                .isActive(true)
-                .build();
-
-        when(userRepository.existsByUsername("user123")).thenReturn(true);
-        when(userRepository.getByUsername("user123")).thenReturn(user);
-        when(userRepository.toggleActiveStatus(user)).thenReturn(true);
-
-        assertTrue(userService.toggleStatus("user123"));
-        verify(userRepository, times(1)).toggleActiveStatus(user);
-    }
-
-    @Test
-    void testToggleStatus_UserDoesNotExist() {
-        when(userRepository.existsByUsername("unknownUser")).thenReturn(false);
-
-        assertFalse(userService.toggleStatus("unknownUser"));
-        verify(userRepository, never()).toggleActiveStatus(any());
-    }
 }

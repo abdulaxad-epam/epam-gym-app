@@ -1,17 +1,23 @@
 package epam.training.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Builder
 @Getter
 @Setter
-@Builder
 @ToString
-public class TrainingRequestDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+public class TrainingRequestDTO implements Serializable {
 
     private String trainerUsername;
 
@@ -19,7 +25,7 @@ public class TrainingRequestDTO {
 
     private String trainingName;
 
-    private LocalDateTime trainingDate;
+    private LocalDate trainingDate;
 
     private String trainingType;
 

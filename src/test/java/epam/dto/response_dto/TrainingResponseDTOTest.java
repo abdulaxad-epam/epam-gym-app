@@ -1,5 +1,8 @@
 package epam.dto.response_dto;
 
+import epam.trainee.dto.TraineeResponseDTO;
+import epam.trainer.dto.TrainerResponseDTO;
+import epam.training.dto.TrainingResponseDTO;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -13,7 +16,7 @@ class TrainingResponseDTOTest {
         LocalDateTime trainingDate = LocalDateTime.of(2024, 3, 8, 10, 0);
 
         TraineeResponseDTO trainee = TraineeResponseDTO.builder()
-                .traineeDateOfBirth(LocalDateTime.of(1995, 5, 15, 0, 0))
+                .traineeDateOfBirth(String.valueOf(LocalDateTime.of(1995, 5, 15, 0, 0)))
                 .address("123 Main St")
                 .build();
 

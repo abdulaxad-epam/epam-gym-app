@@ -21,17 +21,16 @@ public class TrainerTraineeServiceImpl implements TraineeTrainerService {
     @Override
     public Boolean addTrainerToTrainee(String currentUsername, String trainerUsername) {
 
-
         Trainee trainee = traineeRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new TraineeNotFoundException(currentUsername));
         Trainer trainer = trainerRepository.findByUsername(trainerUsername)
                 .orElseThrow(() -> new TrainerNotFoundException(trainerUsername));
 
         if (trainerRepository.trainerHasTrainee(trainer.getTrainerId(), trainee.getTraineeId())) {
-             trainerRepository.addTrainerToTrainee(trainee, trainer);
-             return true;
-        }else throw new TrainerNotFoundException(trainerUsername);
-
+            trainerRepository.addTrainerToTrainee(trainee, trainer);
+            return true;
+        }
+        throw new TrainerNotFoundException(trainerUsername);
     }
 
     @Override
@@ -45,7 +44,6 @@ public class TrainerTraineeServiceImpl implements TraineeTrainerService {
             trainerRepository.removeTraineeOfTrainer(trainee, trainer);
             return true;
         }
-        else throw new TraineeHasNotAssignedBeforeException(trainerUsername);
-
+        throw new TraineeHasNotAssignedBeforeException(trainerUsername);
     }
 }

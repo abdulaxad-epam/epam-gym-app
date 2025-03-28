@@ -2,6 +2,7 @@ package epam.trainer.repository;
 
 import epam.trainee.entity.Trainee;
 import epam.trainer.entity.Trainer;
+import epam.training.entity.Training;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -32,4 +33,6 @@ public interface TrainerRepository {
     Boolean trainerHasTrainee(UUID trainerId, UUID traineeId);
 
     void removeTraineeOfTrainer(Trainee trainee, Trainer trainer);
+
+    Optional<List<Training>> getTrainerTrainings(String username, String periodFrom, String periodTo, String traineeName);
 }

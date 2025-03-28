@@ -3,19 +3,19 @@ package epam.training.service.impl;
 import epam.shared.exception.exception.TraineeNotFoundException;
 import epam.shared.exception.exception.TrainerNotFoundException;
 import epam.shared.exception.exception.TrainingNotFoundException;
-import epam.shared.training_type.service.TrainingTypeService;
 import epam.trainee.repository.TraineeRepository;
 import epam.trainer.repository.TrainerRepository;
 import epam.training.dto.TrainingRequestDTO;
 import epam.training.dto.TrainingResponseDTO;
+import epam.training.entity.Training;
 import epam.training.mapper.TrainingMapper;
 import epam.training.repository.TrainingRepository;
 import epam.training.service.TrainingService;
+import epam.training_type.service.TrainingTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -31,21 +31,20 @@ public class TrainingServiceImpl implements TrainingService {
     @Transactional
     @Override
     public TrainingResponseDTO createTraining(TrainingRequestDTO trainingRequestDTO) {
-
-        return trainingMapper.toTrainingResponseDTO(
-                trainingMapper.toTraining(
-                        trainingRequestDTO,
-                        trainingTypeService.getTrainingByTrainingName(trainingRequestDTO.getTrainingType()),
-                        trainerRepository.findByUsername(trainingRequestDTO.getTrainerUsername())
-                                .orElseThrow(
-                                        () -> new TrainerNotFoundException("Trainer with username " + trainingRequestDTO.getTrainerUsername() + " not found")
-                                ),
-                        traineeRepository.findByUsername(trainingRequestDTO.getTraineeUsername())
-                                .orElseThrow(
-                                        () -> new TraineeNotFoundException("Trainee with username " + trainingRequestDTO.getTraineeUsername() + " not found")
-                                )
-                )
+        Training training = trainingMapper.toTraining(
+                trainingRequestDTO,
+                trainingTypeService.getTrainingByTrainingName(trainingRequestDTO.getTrainingType()),
+                trainerRepository.findByUsername(trainingRequestDTO.getTrainerUsername())
+                        .orElseThrow(
+                                () -> new TrainerNotFoundException("Trainer with username " + trainingRequestDTO.getTrainerUsername() + " not found")
+                        ),
+                traineeRepository.findByUsername(trainingRequestDTO.getTraineeUsername())
+                        .orElseThrow(
+                                () -> new TraineeNotFoundException("Trainee with username " + trainingRequestDTO.getTraineeUsername() + " not found")
+                        )
         );
+        trainingRepository.insert(training);
+        return trainingMapper.toTrainingResponseDTO(training);
     }
 
     @Override
@@ -71,10 +70,4 @@ public class TrainingServiceImpl implements TrainingService {
                 .stream().map(trainingMapper::toTrainingResponseDTO).toList();
     }
 
-    @Override
-    public List<TrainingResponseDTO> getTrainingsByUsernameAndCriteria(String username, LocalDate fromDate,
-                                                                       LocalDate toDate, String trainerName, String trainingType) {
-        return trainingRepository.getByCriteria(username, fromDate, toDate, trainerName, trainingType)
-                .stream().map(trainingMapper::toTrainingResponseDTO).toList();
-    }
 }

@@ -1,6 +1,5 @@
-package epam.shared.configuration;
+package epam.configuration;
 
-import epam.shared.configuration.WebConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import org.springframework.web.WebApplicationInitializer;

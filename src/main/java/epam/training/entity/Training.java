@@ -1,6 +1,6 @@
 package epam.training.entity;
 
-import epam.shared.training_type.entity.TrainingType;
+import epam.training_type.entity.TrainingType;
 import epam.trainee.entity.Trainee;
 import epam.trainer.entity.Trainer;
 import jakarta.persistence.CascadeType;
@@ -40,7 +40,7 @@ public class Training {
     private Trainee trainee;
 
     @JoinColumn(name = "trainer_id")
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = Trainer.class)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, targetEntity = Trainer.class)
     private Trainer trainer;
 
     @Column(nullable = false)

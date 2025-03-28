@@ -1,6 +1,7 @@
 package epam.trainee.repository;
 
 import epam.trainee.entity.Trainee;
+import epam.training.entity.Training;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,4 +26,6 @@ public interface TraineeRepository {
     void deleteTraineeByUsername(String username);
 
     List<Trainee> findTraineeByTrainer(String currentUsername);
+
+    Optional<List<Training>> getTraineeTrainings(String username, String periodFrom, String periodTo, String trainerName, String trainingType);
 }

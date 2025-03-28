@@ -1,4 +1,4 @@
-package epam.shared.training_type.entity;
+package epam.training_type.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

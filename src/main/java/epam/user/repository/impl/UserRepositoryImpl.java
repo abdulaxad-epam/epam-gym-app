@@ -8,16 +8,17 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.logging.Log;
+import lombok.extern.java.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
+@Log
 @Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
-
-    private final Log log = LogFactory.getLog(UserRepositoryImpl.class);
 
     private final EntityManager entityManager;
 
@@ -38,24 +39,26 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean existsByUsernameAndPassword(String username, String password) {
+
         Long count = entityManager.createQuery("""
-                            SELECT COUNT(u) FROM User u WHERE u.username = :username AND u.password = :password
+                            SELECT COUNT(u) FROM User u WHERE  u.username = :username AND u.password = :password
                         """, Long.class)
                 .setParameter("username", username)
                 .setParameter("password", password)
                 .getSingleResult();
+
         return count > 0;
     }
 
 
     @Override
     public Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) {
-        if (existsByUsernameAndPassword(changePasswordRequestDTO.getUsername(), changePasswordRequestDTO.getOldPassword())) {
+        if (existsByUsernameAndPassword(changePasswordRequestDTO.getUsername().toLowerCase(), changePasswordRequestDTO.getOldPassword())) {
             try {
 
                 entityManager.getTransaction().begin();
 
-                entityManager.createQuery(
+                int i = entityManager.createQuery(
                                 """
                                         UPDATE User u
                                         SET u.password = :newPassword
@@ -67,53 +70,28 @@ public class UserRepositoryImpl implements UserRepository {
                         .executeUpdate();
 
                 entityManager.getTransaction().commit();
-                return true;
+                return i > 0;
             } catch (Exception e) {
                 entityManager.getTransaction().rollback();
-                log.error(e.getMessage());
+                log.warning(e.getMessage());
             }
         }
         return false;
     }
 
     @Override
-    public Boolean toggleActiveStatus(User user) {
-        try {
-            entityManager.getTransaction().begin();
-
-            // Toggle status in Java
-            user.setIsActive(!user.getIsActive());
-
-            // Merge updated entity into persistence context
-            User updatedUser = entityManager.merge(user);
-
-            entityManager.getTransaction().commit();
-
-            return updatedUser.getIsActive();
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            log.error("Error toggling active status: " + e.getMessage(), e);
-            return false;
-        }
-    }
-
-
-
-    @Override
     @Transactional(readOnly = true)
-    public User getByUsername(String username) {
+    public Optional<User> findUserByUsername(String username) {
 
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-
-        CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
-
-        Root<User> root = criteriaQuery.from(User.class);
-
-        criteriaQuery.select(root);
-
-        criteriaQuery.where(criteriaBuilder.equal(root.get("username"), username));
-
-        return entityManager.createQuery(criteriaQuery).getSingleResult();
+        User foundUser = entityManager.createQuery(
+                        """
+                                SELECT u FROM User u WHERE u.username = :username
+                                """,
+                        User.class)
+                .setParameter("username", username)
+                .getSingleResult();
+        return Optional.ofNullable(foundUser);
     }
+
 
 }

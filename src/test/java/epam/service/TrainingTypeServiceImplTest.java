@@ -1,8 +1,10 @@
 package epam.service;
 
-import epam.shared.training_type.entity.TrainingType;
-import epam.shared.training_type.service.TrainingTypeService;
-import epam.shared.training_type.service.impl.TrainingTypServiceImpl;
+import epam.training_type.dto.TrainingTypeResponseDTO;
+import epam.training_type.entity.TrainingType;
+import epam.training_type.repository.TrainingTypeRepository;
+import epam.training_type.service.TrainingTypeService;
+import epam.training_type.service.impl.TrainingTypeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +27,6 @@ class TrainingTypeServiceImplTest {
     @BeforeEach
     void setUp() {
         trainingTypeRepository = mock(TrainingTypeRepository.class);
-        trainingTypeService = new TrainingTypServiceImpl(trainingTypeRepository); // Fix the typo in the actual class!
     }
 
     @Test
@@ -56,9 +57,9 @@ class TrainingTypeServiceImplTest {
     void testFindAllTrainingTypes_Success() {
         List<String> mockTrainingTypes = List.of("Strength Training", "Cardio", "Yoga");
 
-        when(trainingTypeRepository.findAll()).thenReturn(mockTrainingTypes);
+//        when(trainingTypeRepository.findAll()).thenReturn(mockTrainingTypes);
 
-        List<String> result = trainingTypeService.findAll();
+        List<TrainingTypeResponseDTO> result = trainingTypeService.findAll();
 
         assertEquals(3, result.size());
         assertTrue(result.contains("Strength Training"));

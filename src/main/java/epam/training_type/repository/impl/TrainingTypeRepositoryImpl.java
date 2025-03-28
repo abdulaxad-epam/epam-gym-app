@@ -1,8 +1,8 @@
-package epam.shared.training_type.repository.impl;
+package epam.training_type.repository.impl;
 
 
-import epam.shared.training_type.entity.TrainingType;
-import epam.shared.training_type.repository.TrainingTypeRepository;
+import epam.training_type.entity.TrainingType;
+import epam.training_type.repository.TrainingTypeRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -25,8 +25,8 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
     }
 
     @Override
-    public List<String> findAll() {
-        return entityManager.createQuery("SELECT t.description FROM TrainingType t", String.class).getResultList();
+    public List<TrainingType> findAll() {
+        return entityManager.createQuery("SELECT t FROM TrainingType t", TrainingType.class).getResultList();
     }
 
 }

@@ -5,6 +5,8 @@ import epam.shared.exception.exception.EntityManagerInsertException;
 import epam.trainee.entity.Trainee;
 import epam.trainer.entity.Trainer;
 import epam.trainer.repository.TrainerRepository;
+import epam.training.entity.Training;
+import epam.training.repository.AbstractTrainingRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
@@ -12,17 +14,25 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
-public class TrainerRepositoryImpl implements TrainerRepository {
+public class TrainerRepositoryImpl extends AbstractTrainingRepository implements TrainerRepository {
 
     private final Log log = LogFactory.getLog(TrainerRepositoryImpl.class);
 
     private final EntityManager entityManager;
+
+
+    @Override
+    public EntityManager entityManager(){
+        return entityManager;
+    }
 
     @Override
     public Trainer insert(Trainer trainer) {
@@ -47,15 +57,17 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     }
 
     @Override
+    @Transactional
     public Optional<Trainer> findByUsername(String username) {
         try {
-            List<Trainer> trainers = entityManager.createQuery("""
+            Trainer trainers = entityManager.createQuery("""
                             SELECT t FROM Trainer t WHERE t.user.username = :username
                             """, Trainer.class)
                     .setParameter("username", username)
-                    .getResultList();
 
-            return trainers.isEmpty() ? Optional.empty() : Optional.of(trainers.get(0));
+                    .getSingleResult();
+
+            return Optional.of(trainers);
         } catch (Exception e) {
             log.error("Error finding trainer by username: " + e.getMessage(), e);
         }
@@ -170,5 +182,15 @@ public class TrainerRepositoryImpl implements TrainerRepository {
                 .setParameter("trainerId", trainer.getTrainerId())
                 .setParameter("traineeId", trainee.getTraineeId())
                 .executeUpdate();
+    }
+
+
+    @Override
+    public Optional<List<Training>> getTrainerTrainings(String username, String periodFrom, String periodTo, String traineeName) {
+        Map<String, Object> filters = new HashMap<>();
+        if (traineeName != null && !traineeName.isEmpty()) {
+            filters.put("t.trainee.user.username", traineeName);
+        }
+        return getTrainings(username, "trainer", periodFrom, periodTo, filters);
     }
 }

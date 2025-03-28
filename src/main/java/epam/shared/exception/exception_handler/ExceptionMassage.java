@@ -19,6 +19,8 @@ import java.time.format.DateTimeFormatter;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExceptionMassage {
+    @Builder.Default
+    private String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
     private int status;
 
@@ -26,6 +28,4 @@ public class ExceptionMassage {
 
     private String message;
 
-    @Builder.Default
-    private String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 }

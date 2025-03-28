@@ -4,7 +4,8 @@ package epam.trainee.repository.impl;
 import epam.shared.exception.exception.EntityManagerInsertException;
 import epam.trainee.entity.Trainee;
 import epam.trainee.repository.TraineeRepository;
-import epam.user.entity.User;
+import epam.training.entity.Training;
+import epam.training.repository.AbstractTrainingRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
@@ -12,17 +13,24 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
-public class TraineeRepositoryImpl implements TraineeRepository {
+public class TraineeRepositoryImpl extends AbstractTrainingRepository implements TraineeRepository {
 
     private final EntityManager entityManager;
 
     private final Log log = LogFactory.getLog(TraineeRepositoryImpl.class);
+
+    @Override
+    public EntityManager entityManager() {
+        return entityManager;
+    }
 
     @Override
     public Trainee insert(Trainee trainee) {
@@ -57,7 +65,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
 
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Optional<Trainee> findByUsername(String username) {
         List<Trainee> traineeList = entityManager.createQuery("""
                         SELECT t FROM Trainee t WHERE user.username = :username
@@ -144,7 +152,6 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         }
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public List<Trainee> findTraineeByTrainer(String currentUsername) {
@@ -159,4 +166,17 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                 .getResultList();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<List<Training>> getTraineeTrainings(String username, String periodFrom, String periodTo,
+                                                        String trainerName, String trainingType) {
+        Map<String, Object> filters = new HashMap<>();
+        if (trainerName != null && !trainerName.isEmpty()) {
+            filters.put("t.trainer.user.username", trainerName);
+        }
+        if (trainingType != null && !trainingType.isEmpty()) {
+            filters.put("t.trainingType.description", trainingType);
+        }
+        return getTrainings(username, "trainee", periodFrom, periodTo, filters);
+    }
 }

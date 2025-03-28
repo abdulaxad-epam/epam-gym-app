@@ -1,8 +1,9 @@
-package epam.shared.training_type.mapper;
+package epam.training_type.mapper;
 
 
 import epam.shared.security.dto.RegisterTrainerRequestDTO;
-import epam.shared.training_type.entity.TrainingType;
+import epam.training_type.dto.TrainingTypeResponseDTO;
+import epam.training_type.entity.TrainingType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -25,4 +26,7 @@ public interface TrainingTypeMapper {
                 .description(specialization)
                 .build();
     }
+    @Named("toTrainingTypeResponseDTO")
+    @Mapping(source = "description", target = "trainingType")
+    TrainingTypeResponseDTO toTrainingTypeResponseDTO(TrainingType s);
 }

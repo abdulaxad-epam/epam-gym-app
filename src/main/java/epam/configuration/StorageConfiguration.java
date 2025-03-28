@@ -1,4 +1,4 @@
-package epam.shared.configuration;
+package epam.configuration;
 
 
 import jakarta.persistence.EntityManager;

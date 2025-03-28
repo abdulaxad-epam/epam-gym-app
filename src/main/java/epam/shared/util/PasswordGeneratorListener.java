@@ -17,6 +17,7 @@ public class PasswordGeneratorListener {
         for (Field field : fields) {
             if (field.isAnnotationPresent(GeneratePassword.class)) {
                 field.setAccessible(true);
+
                 try {
                     if (field.get(entity) == null || field.get(entity).toString().isEmpty()) {
                         int length = field.getAnnotation(GeneratePassword.class).length();

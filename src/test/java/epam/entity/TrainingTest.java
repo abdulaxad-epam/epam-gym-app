@@ -1,6 +1,6 @@
 package epam.entity;
 
-import epam.shared.training_type.entity.TrainingType;
+import epam.training_type.entity.TrainingType;
 import epam.trainee.entity.Trainee;
 import epam.trainer.entity.Trainer;
 import epam.training.entity.Training;

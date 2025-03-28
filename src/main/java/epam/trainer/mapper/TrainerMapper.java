@@ -1,6 +1,6 @@
 package epam.trainer.mapper;
 
-import epam.shared.training_type.entity.TrainingType;
+import epam.training_type.entity.TrainingType;
 import epam.trainer.dto.TrainerRequestDTO;
 import epam.trainer.dto.TrainerResponseDTO;
 import epam.trainer.entity.Trainer;

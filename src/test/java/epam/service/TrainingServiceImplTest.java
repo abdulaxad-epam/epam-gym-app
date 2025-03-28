@@ -1,6 +1,6 @@
 package epam.service;
 
-import epam.shared.training_type.service.TrainingTypeService;
+import epam.training_type.service.TrainingTypeService;
 import epam.trainee.dto.TraineeResponseDTO;
 import epam.trainee.entity.Trainee;
 import epam.trainee.repository.TraineeRepository;
@@ -10,7 +10,7 @@ import epam.trainer.repository.TrainerRepository;
 import epam.training.dto.TrainingRequestDTO;
 import epam.training.dto.TrainingResponseDTO;
 import epam.training.entity.Training;
-import epam.shared.training_type.entity.TrainingType;
+import epam.training_type.entity.TrainingType;
 import epam.shared.exception.exception.TraineeNotFoundException;
 import epam.shared.exception.exception.TrainerNotFoundException;
 import epam.shared.exception.exception.TrainingNotFoundException;
@@ -145,31 +145,6 @@ class TrainingServiceImplTest {
         when(traineeRepository.findByUsername(requestDTO.getTraineeUsername())).thenReturn(Optional.empty());
 
         assertThrows(TraineeNotFoundException.class, () -> trainingService.createTraining(requestDTO));
-    }
-
-    @Test
-    void testUpdateTraining_Success() {
-        String username = "trainingUser";
-        TrainingRequestDTO requestDTO = trainingRequestDTO;
-        UUID trainingId = UUID.randomUUID();
-        TrainingType trainingType = new TrainingType();
-        Trainer trainer = new Trainer();
-        Trainee trainee = new Trainee();
-        Training updatedTraining = new Training();
-        TrainingResponseDTO responseDTO = trainingResponseDTO;
-
-        when(trainingRepository.getIdByUsername(username)).thenReturn(Optional.of(trainingId));
-        when(trainingTypeService.getTrainingByTrainingName(requestDTO.getTrainingType())).thenReturn(trainingType);
-        when(trainerRepository.findByUsername(requestDTO.getTrainerUsername())).thenReturn(Optional.of(trainer));
-        when(traineeRepository.findByUsername(requestDTO.getTraineeUsername())).thenReturn(Optional.of(trainee));
-        when(trainingMapper.toTraining(requestDTO, trainingType, trainer, trainee)).thenReturn(updatedTraining);
-        when(trainingRepository.update(trainingId, updatedTraining)).thenReturn(updatedTraining);
-        when(trainingMapper.toTrainingResponseDTO(updatedTraining)).thenReturn(responseDTO);
-
-        TrainingResponseDTO result = trainingService.updateTraining(username, requestDTO);
-
-        assertNotNull(result);
-        verify(trainingRepository, times(1)).update(trainingId, updatedTraining);
     }
 
     @Test

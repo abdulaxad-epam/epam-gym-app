@@ -9,6 +9,4 @@ public interface UserService {
     boolean existsByUsername(String username);
 
     Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO);
-
-    Boolean toggleStatus(String username);
 }

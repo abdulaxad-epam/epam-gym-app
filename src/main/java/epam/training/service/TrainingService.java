@@ -19,5 +19,4 @@ public interface TrainingService {
 
     List<TrainingResponseDTO> getTrainingsByTraineeUsername(String username);
 
-    List<TrainingResponseDTO> getTrainingsByUsernameAndCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingType);
 }

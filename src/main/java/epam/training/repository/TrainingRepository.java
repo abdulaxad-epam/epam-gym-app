@@ -18,8 +18,6 @@ public interface TrainingRepository {
 
     List<Training> findTrainingsByTrainee(String username);
 
-    List<Training> getByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingType);
-
     @Transactional(readOnly = true)
     Optional<UUID> getIdByUsername(String username);
 

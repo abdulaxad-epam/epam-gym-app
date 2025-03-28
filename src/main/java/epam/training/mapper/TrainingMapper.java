@@ -1,7 +1,7 @@
 package epam.training.mapper;
 
 
-import epam.shared.training_type.entity.TrainingType;
+import epam.training_type.entity.TrainingType;
 import epam.trainee.entity.Trainee;
 import epam.trainee.mapper.TraineeMapper;
 import epam.trainer.entity.Trainer;

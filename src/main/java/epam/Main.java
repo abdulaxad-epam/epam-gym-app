@@ -1,7 +1,7 @@
 package epam;
 
 
-import epam.shared.configuration.WebConfig;
+import epam.configuration.WebConfig;
 import lombok.extern.java.Log;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;

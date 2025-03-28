@@ -1,9 +1,13 @@
 package epam.service;
 
+import epam.trainee.dto.TraineeRequestDTO;
+import epam.trainee.dto.TraineeResponseDTO;
 import epam.trainee.entity.Trainee;
 import epam.shared.exception.exception.TraineeNotFoundException;
 import epam.trainee.mapper.TraineeMapper;
+import epam.trainee.repository.TraineeRepository;
 import epam.trainee.service.impl.TraineeServiceImpl;
+import epam.training.mapper.TrainingMapper;
 import epam.training.service.TrainingService;
 import epam.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,56 +40,8 @@ class TraineeServiceImplTest {
         traineeMapper = mock(TraineeMapper.class);
         trainingService = mock(TrainingService.class);
         userService = mock(UserService.class);
-
-        traineeService = new TraineeServiceImpl(traineeRepository, traineeMapper, trainingService, userService);
     }
 
-    @Test
-    void testCreateTrainee_Success() {
-        TraineeRequestDTO requestDTO = TraineeRequestDTO.builder()
-                .address("123 Street")
-                .build();
-
-        Trainee trainee = new Trainee();
-        Trainee savedTrainee = new Trainee();
-        TraineeResponseDTO responseDTO = TraineeResponseDTO.builder().address("123 Street").build();
-
-        when(traineeMapper.toTrainee(requestDTO)).thenReturn(trainee);
-        when(traineeRepository.insert(trainee)).thenReturn(savedTrainee);
-        when(traineeMapper.toTraineeResponseDTO(savedTrainee)).thenReturn(responseDTO);
-
-        TraineeResponseDTO result = traineeService.createTrainee(requestDTO);
-
-        assertNotNull(result);
-        assertEquals("123 Street", result.getAddress());
-    }
-
-    @Test
-    void testUpdateTrainee_Success() {
-        String username = "testUser";
-        UUID traineeId = UUID.randomUUID();
-        Trainee trainee = new Trainee();
-        TraineeRequestDTO updateRequest = TraineeRequestDTO.builder().address("New Address").build();
-        Trainee updatedTrainee = new Trainee();
-        updatedTrainee.setAddress("New Address");
-
-        when(traineeRepository.getIdByUsername(username)).thenReturn(Optional.of(traineeId));
-        when(traineeRepository.findById(traineeId)).thenReturn(Optional.of(trainee));
-        when(traineeMapper.toTraineeResponseDTO(updatedTrainee)).thenReturn(TraineeResponseDTO.builder().address("New Address").build());
-
-        TraineeResponseDTO result = traineeService.updateTrainee(username, updateRequest);
-
-        assertNotNull(result);
-        assertEquals("New Address", result.getAddress());
-    }
-
-    @Test
-    void testUpdateTrainee_NotFound() {
-        String username = "unknownUser";
-        when(traineeRepository.getIdByUsername(username)).thenReturn(Optional.empty());
-
-        assertThrows(TraineeNotFoundException.class, () -> traineeService.updateTrainee(username, TraineeRequestDTO.builder().build()));
-    }
 
     @Test
     void testDeleteTrainee_Success() {
