@@ -24,10 +24,15 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     @Override
     public Training insert(Training training) {
         try {
-            entityManager.getTransaction().begin();
-
+            if (!entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().begin();
+            }
             training.setTrainee(entityManager.merge(training.getTrainee()));
+
+            System.out.println(training.getTrainee());
             training.setTrainer(entityManager.merge(training.getTrainer()));
+
+            System.out.println(training.getTrainer());
             training.setTrainingType(entityManager.merge(training.getTrainingType()));
 
             entityManager.persist(training);
@@ -43,8 +48,9 @@ public class TrainingRepositoryImpl implements TrainingRepository {
     @Override
     public void delete(UUID id) {
         try {
-            entityManager.getTransaction().begin();
-
+            if (!entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().begin();
+            }
             Training training = entityManager.find(Training.class, id);
             log.info("Deleting training with ID " + id);
 

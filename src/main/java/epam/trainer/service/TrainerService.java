@@ -1,5 +1,7 @@
 package epam.trainer.service;
 
+import epam.shared.security.dto.RegisterTraineeResponseDTO;
+import epam.shared.security.dto.RegisterTrainerResponseDTO;
 import epam.trainer.dto.TrainerRequestDTO;
 import epam.trainer.dto.TrainerResponseDTO;
 import epam.training.dto.TrainingResponseDTO;
@@ -9,7 +11,7 @@ import java.util.List;
 
 public interface TrainerService {
 
-    TrainerResponseDTO createTrainer(TrainerRequestDTO training);
+    RegisterTrainerResponseDTO createTrainer(TrainerRequestDTO training);
 
     TrainerResponseDTO updateTrainer(String username, TrainerRequestDTO trainer);
 
@@ -19,7 +21,6 @@ public interface TrainerService {
 
     List<TrainerResponseDTO> getAllTrainers();
 
-    List<TrainerResponseDTO> getTrainersByTrainee(String currentUsername);
 
     List<TrainingResponseDTO> getTrainerTrainings(String username, String periodFrom, String periodTo, String traineeName);
 

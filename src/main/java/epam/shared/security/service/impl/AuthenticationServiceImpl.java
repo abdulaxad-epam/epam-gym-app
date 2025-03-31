@@ -4,7 +4,9 @@ import epam.shared.exception.exception.UserNotFoundException;
 import epam.shared.security.dto.AuthenticateRequestDTO;
 import epam.shared.security.dto.ChangePasswordRequestDTO;
 import epam.shared.security.dto.RegisterTraineeRequestDTO;
+import epam.shared.security.dto.RegisterTraineeResponseDTO;
 import epam.shared.security.dto.RegisterTrainerRequestDTO;
+import epam.shared.security.dto.RegisterTrainerResponseDTO;
 import epam.shared.security.service.AuthenticationService;
 import epam.trainee.dto.TraineeRequestDTO;
 import epam.trainee.dto.TraineeResponseDTO;
@@ -30,7 +32,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final TraineeService traineeService;
 
     @Override
-    public TraineeResponseDTO register(RegisterTraineeRequestDTO userRequestDTO, HttpServletResponse response) {
+    public RegisterTraineeResponseDTO register(RegisterTraineeRequestDTO userRequestDTO, HttpServletResponse response) {
 
         TraineeRequestDTO traineeRequestDTO = TraineeRequestDTO.builder()
                 .dateOfBirth(userRequestDTO.getDateOfBirth())
@@ -38,25 +40,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .user(userRequestDTO.getUser())
                 .build();
 
+        RegisterTraineeResponseDTO trainee = traineeService.createTrainee(traineeRequestDTO);
 
-        TraineeResponseDTO trainee = traineeService.createTrainee(traineeRequestDTO);
-
-        addCookie(response, trainee.getUser().getUsername(), trainee.getUser().getPassword());
+        addCookie(response, trainee.getUser().getUsername(), trainee.getPassword());
 
         return trainee;
     }
 
     @Override
-    public TrainerResponseDTO register(RegisterTrainerRequestDTO userRequestDTO, HttpServletResponse response) {
+    public RegisterTrainerResponseDTO register(RegisterTrainerRequestDTO userRequestDTO, HttpServletResponse response) {
 
         TrainerRequestDTO trainerRequestDTO = TrainerRequestDTO.builder()
                 .specialization(userRequestDTO.getSpecialization())
                 .user(userRequestDTO.getUser())
                 .build();
 
-        TrainerResponseDTO trainer = trainerService.createTrainer(trainerRequestDTO);
+        RegisterTrainerResponseDTO trainer = trainerService.createTrainer(trainerRequestDTO);
 
-        addCookie(response, trainer.getUser().getUsername(), trainer.getUser().getPassword());
+        addCookie(response, trainer.getUser().getUsername(), trainer.getPassword());
 
         return trainer;
     }

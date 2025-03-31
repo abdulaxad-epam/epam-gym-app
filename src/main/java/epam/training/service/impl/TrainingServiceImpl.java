@@ -3,6 +3,7 @@ package epam.training.service.impl;
 import epam.shared.exception.exception.TraineeNotFoundException;
 import epam.shared.exception.exception.TrainerNotFoundException;
 import epam.shared.exception.exception.TrainingNotFoundException;
+import epam.shared.trainee_trainer.service.TraineeTrainerService;
 import epam.trainee.repository.TraineeRepository;
 import epam.trainer.repository.TrainerRepository;
 import epam.training.dto.TrainingRequestDTO;
@@ -25,8 +26,11 @@ public class TrainingServiceImpl implements TrainingService {
     private final TrainingRepository trainingRepository;
     private final TrainingMapper trainingMapper;
     private final TrainingTypeService trainingTypeService;
+
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
+
+    private final TraineeTrainerService traineeTrainerService;
 
     @Transactional
     @Override
@@ -43,7 +47,11 @@ public class TrainingServiceImpl implements TrainingService {
                                 () -> new TraineeNotFoundException("Trainee with username " + trainingRequestDTO.getTraineeUsername() + " not found")
                         )
         );
+
+        traineeTrainerService.assignTrainerToTrainee(trainingRequestDTO.getTraineeUsername(), trainingRequestDTO.getTrainerUsername());
+
         trainingRepository.insert(training);
+
         return trainingMapper.toTrainingResponseDTO(training);
     }
 
@@ -69,5 +77,7 @@ public class TrainingServiceImpl implements TrainingService {
         return trainingRepository.findTrainingsByTrainee(username)
                 .stream().map(trainingMapper::toTrainingResponseDTO).toList();
     }
+
+
 
 }

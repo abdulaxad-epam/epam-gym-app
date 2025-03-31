@@ -35,7 +35,9 @@ public class TraineeRepositoryImpl extends AbstractTrainingRepository implements
     @Override
     public Trainee insert(Trainee trainee) {
         try {
-            entityManager.getTransaction().begin();
+            if (!entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().begin();
+            }
 
             entityManager.persist(trainee);
             entityManager.getTransaction().commit();
@@ -134,8 +136,9 @@ public class TraineeRepositoryImpl extends AbstractTrainingRepository implements
         try {
             log.info("User " + username + " is deleted");
 
-            entityManager.getTransaction().begin();
-
+            if (!entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().begin();
+            }
             Trainee trainee = entityManager.createQuery(
                             "SELECT t FROM Trainee t WHERE t.user.username = :username", Trainee.class)
                     .setParameter("username", username)
@@ -154,20 +157,6 @@ public class TraineeRepositoryImpl extends AbstractTrainingRepository implements
 
     @Override
     @Transactional(readOnly = true)
-    public List<Trainee> findTraineeByTrainer(String currentUsername) {
-        return entityManager.createQuery("""
-                        SELECT DISTINCT t FROM Trainee t
-                        JOIN TraineeTrainer tt ON t.traineeId = tt.trainee.traineeId
-                        JOIN Trainee tr ON tt.trainer.trainerId = tr.traineeId
-                        JOIN User u ON tr.user.userId = u.userId
-                        WHERE u.username = :username
-                        """, Trainee.class)
-                .setParameter("username", currentUsername)
-                .getResultList();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Optional<List<Training>> getTraineeTrainings(String username, String periodFrom, String periodTo,
                                                         String trainerName, String trainingType) {
         Map<String, Object> filters = new HashMap<>();
@@ -179,4 +168,5 @@ public class TraineeRepositoryImpl extends AbstractTrainingRepository implements
         }
         return getTrainings(username, "trainee", periodFrom, periodTo, filters);
     }
+
 }

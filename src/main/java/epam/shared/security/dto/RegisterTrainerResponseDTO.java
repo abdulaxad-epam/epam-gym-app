@@ -1,0 +1,27 @@
+package epam.shared.security.dto;
+
+import epam.trainee.dto.TraineeResponseDTO;
+import epam.user.dto.UserResponseDTO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+import java.io.Serializable;
+
+@Builder
+@ToString
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class RegisterTrainerResponseDTO implements Serializable {
+
+    private UserResponseDTO user;
+
+    private String password;
+
+    private String trainerSpecialization;
+}

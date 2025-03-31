@@ -23,7 +23,5 @@ public class UserResponseDTO implements Serializable {
 
     private String username;
 
-    private String password;
-
     private Boolean isActive;
 }

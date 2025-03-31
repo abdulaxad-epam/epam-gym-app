@@ -1,6 +1,7 @@
 package epam.trainee.mapper;
 
 import epam.shared.security.dto.RegisterTraineeRequestDTO;
+import epam.shared.security.dto.RegisterTraineeResponseDTO;
 import epam.trainee.dto.TraineeRequestDTO;
 import epam.trainee.dto.TraineeResponseDTO;
 import epam.trainee.entity.Trainee;
@@ -38,5 +39,13 @@ public interface TraineeMapper {
             @Mapping(source = "connectedUser", target = "user")
     })
     Trainee toTrainee(RegisterTraineeRequestDTO userRequestDTO, User connectedUser);
+
+    @Named("toRegisterTraineeResponseDTO")
+    @Mappings({
+            @Mapping(source = "user.password", target = "password"),
+            @Mapping(source = "dateOfBirth", target = "traineeDateOfBirth"),
+            @Mapping(source = "user", target = "user", qualifiedByName = "toUserResponseDTO")
+    })
+    RegisterTraineeResponseDTO toRegisterTraineeResponseDTO(Trainee insert);
 }
 

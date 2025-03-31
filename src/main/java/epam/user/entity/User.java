@@ -46,6 +46,8 @@ public class User {
 
     @GeneratePassword
     @Column(nullable = false)
+
+
     private String password;
 
     @Column(nullable = false)

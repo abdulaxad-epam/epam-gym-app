@@ -8,7 +8,7 @@
         <class>epam.training_type.entity.TrainingType</class>
         <class>epam.trainee.entity.Trainee</class>
         <class>epam.trainer.entity.Trainer</class>
-        <class>epam.shared.trainee_trainer.entity.TraineeTrainer</class>
+        <class>epam.shared.trainee_trainer.entity.TrainerTrainee</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />

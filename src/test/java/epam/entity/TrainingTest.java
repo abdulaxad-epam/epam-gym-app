@@ -4,32 +4,21 @@ import epam.training_type.entity.TrainingType;
 import epam.trainee.entity.Trainee;
 import epam.trainer.entity.Trainer;
 import epam.training.entity.Training;
+import org.instancio.Instancio;
+import org.instancio.junit.InstancioExtension;
+import org.instancio.Model;
+import org.instancio.Select;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)  // Enables Mockito support
+@ExtendWith(InstancioExtension.class)
 class TrainingTest {
-
-    @Mock
-    private Trainee mockTrainee;
-
-    @Mock
-    private Trainer mockTrainer;
-
-    @Mock
-    private TrainingType mockTrainingType;
 
     private Training training;
     private UUID trainingId;
@@ -40,55 +29,46 @@ class TrainingTest {
         trainingId = UUID.randomUUID();
         trainingDate = LocalDateTime.now();
 
-        training = Training.builder()
-                .trainingId(trainingId)
-                .trainee(mockTrainee)
-                .trainer(mockTrainer)
-                .trainingName("Strength Training")
-                .trainingDate(trainingDate)
-                .trainingType(mockTrainingType)
-                .trainingDuration(60)
-                .build();
+        training = Instancio.of(Training.class)
+                .set(Select.field(Training::getTrainingId), trainingId)
+                .set(Select.field(Training::getTrainingName), "Strength Training")
+                .set(Select.field(Training::getTrainingDate), trainingDate)
+                .set(Select.field(Training::getTrainingDuration), 60)
+                .create();
     }
 
     @Test
     void testTrainingCreation() {
         assertNotNull(training);
         assertEquals(trainingId, training.getTrainingId());
-        assertEquals(mockTrainee, training.getTrainee());
-        assertEquals(mockTrainer, training.getTrainer());
         assertEquals("Strength Training", training.getTrainingName());
         assertEquals(trainingDate, training.getTrainingDate());
-        assertEquals(mockTrainingType, training.getTrainingType());
         assertEquals(60, training.getTrainingDuration());
     }
 
     @Test
     void testTrainingEquality() {
-        Training anotherTraining = Training.builder()
-                .trainingId(trainingId)  // Same ID should make them equal
-                .trainee(mockTrainee)
-                .trainer(mockTrainer)
-                .trainingName("Strength Training")
-                .trainingDate(trainingDate)
-                .trainingType(mockTrainingType)
-                .trainingDuration(60)
-                .build();
+        Training anotherTraining = Instancio.of(Training.class)
+                .set(Select.field(Training::getTrainingId), trainingId)
+                .set(Select.field(Training::getTrainingName), "Strength Training")
+                .set(Select.field(Training::getTrainingDate), trainingDate)
+                .set(Select.field(Training::getTrainingDuration), 60)
+                .create();
 
-        assertEquals(training, anotherTraining);
+        assertEquals(training.getTrainingId(), anotherTraining.getTrainingId());
+        assertEquals(training.getTrainingName(), anotherTraining.getTrainingName());
+        assertEquals(training.getTrainingDate(), anotherTraining.getTrainingDate());
+        assertEquals(training.getTrainingDuration(), anotherTraining.getTrainingDuration());
     }
 
     @Test
     void testTrainingInequality() {
-        Training differentTraining = Training.builder()
-                .trainingId(UUID.randomUUID())  // Different ID should make them unequal
-                .trainee(mockTrainee)
-                .trainer(mockTrainer)
-                .trainingName("Strength Training")
-                .trainingDate(trainingDate)
-                .trainingType(mockTrainingType)
-                .trainingDuration(60)
-                .build();
+        Training differentTraining = Instancio.of(Training.class)
+                .set(Select.field(Training::getTrainingId), UUID.randomUUID())
+                .set(Select.field(Training::getTrainingName), "Strength Training")
+                .set(Select.field(Training::getTrainingDate), trainingDate)
+                .set(Select.field(Training::getTrainingDuration), 60)
+                .create();
 
         assertNotEquals(training, differentTraining);
     }

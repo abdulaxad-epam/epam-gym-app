@@ -22,10 +22,11 @@ import java.util.UUID;
 public class TrainingType {
 
     @Id
+    @Column(insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID trainingTypeId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, insertable = false, updatable = false)
     private String description;
 
 }

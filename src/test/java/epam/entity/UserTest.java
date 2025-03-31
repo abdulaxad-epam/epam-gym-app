@@ -2,26 +2,20 @@ package epam.entity;
 
 import epam.user.entity.User;
 import epam.shared.util.PasswordGeneratorListener;
+import org.instancio.Instancio;
+import org.instancio.junit.InstancioExtension;
+import org.instancio.Model;
+import org.instancio.Select;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(InstancioExtension.class)
 class UserTest {
-
-    @Mock
-    private PasswordGeneratorListener mockPasswordListener;
 
     private User user;
     private UUID userId;
@@ -30,14 +24,14 @@ class UserTest {
     void setUp() {
         userId = UUID.randomUUID();
 
-        user = User.builder()
-                .userId(userId)
-                .firstname("John")
-                .lastname("Doe")
-                .username("johndoe123")
-                .password("SecurePass@123")
-                .isActive(true)
-                .build();
+        user = Instancio.of(User.class)
+                .set(Select.field(User::getUserId), userId)
+                .set(Select.field(User::getFirstname), "John")
+                .set(Select.field(User::getLastname), "Doe")
+                .set(Select.field(User::getUsername), "johndoe123")
+                .set(Select.field(User::getPassword), "SecurePass@123")
+                .set(Select.field(User::getIsActive), true)
+                .create();
     }
 
     @Test
@@ -53,34 +47,28 @@ class UserTest {
 
     @Test
     void testUserEquality() {
-        User anotherUser = User.builder()
-                .userId(userId)  // Same ID should make them equal
-                .firstname("John")
-                .lastname("Doe")
-                .username("johndoe123")
-                .password("SecurePass@123")
-                .isActive(true)
-                .build();
+        User anotherUser = Instancio.of(User.class)
+                .set(Select.field(User::getUserId), userId)
+                .set(Select.field(User::getFirstname), "John")
+                .set(Select.field(User::getLastname), "Doe")
+                .set(Select.field(User::getUsername), "johndoe123")
+                .set(Select.field(User::getPassword), "SecurePass@123")
+                .set(Select.field(User::getIsActive), true)
+                .create();
 
         assertEquals(user, anotherUser);
     }
 
-//    @Test
-//    void testMockPasswordListener(){
-//
-//        when()
-//    }
-
     @Test
     void testUserInequality() {
-        User differentUser = User.builder()
-                .userId(UUID.randomUUID())  // Different ID should make them unequal
-                .firstname("John")
-                .lastname("Doe")
-                .username("johndoe123")
-                .password("SecurePass@123")
-                .isActive(true)
-                .build();
+        User differentUser = Instancio.of(User.class)
+                .set(Select.field(User::getUserId), UUID.randomUUID())
+                .set(Select.field(User::getFirstname), "John")
+                .set(Select.field(User::getLastname), "Doe")
+                .set(Select.field(User::getUsername), "johndoe123")
+                .set(Select.field(User::getPassword), "SecurePass@123")
+                .set(Select.field(User::getIsActive), true)
+                .create();
 
         assertNotEquals(user, differentUser);
     }
@@ -115,7 +103,6 @@ class UserTest {
         assertNull(user.getPassword());
     }
 
-
     @Test
     void testUserHandlesInactiveState() {
         user.setIsActive(false);
@@ -124,14 +111,14 @@ class UserTest {
 
     @Test
     void testUsernameUniqueness() {
-        User anotherUser = User.builder()
-                .userId(UUID.randomUUID())
-                .firstname("Jane")
-                .lastname("Doe")
-                .username("johndoe123") // Same username
-                .password("DifferentPass@456")
-                .isActive(true)
-                .build();
+        User anotherUser = Instancio.of(User.class)
+                .set(Select.field(User::getUserId), UUID.randomUUID())
+                .set(Select.field(User::getFirstname), "Jane")
+                .set(Select.field(User::getLastname), "Doe")
+                .set(Select.field(User::getUsername), "johndoe123") // Same username
+                .set(Select.field(User::getPassword), "DifferentPass@456")
+                .set(Select.field(User::getIsActive), true)
+                .create();
 
         assertEquals(user.getUsername(), anotherUser.getUsername());
     }

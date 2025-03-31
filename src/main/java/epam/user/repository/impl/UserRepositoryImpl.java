@@ -4,18 +4,12 @@ import epam.shared.security.dto.ChangePasswordRequestDTO;
 import epam.user.entity.User;
 import epam.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-@Log
 @Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
@@ -55,9 +49,9 @@ public class UserRepositoryImpl implements UserRepository {
     public Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) {
         if (existsByUsernameAndPassword(changePasswordRequestDTO.getUsername().toLowerCase(), changePasswordRequestDTO.getOldPassword())) {
             try {
-
-                entityManager.getTransaction().begin();
-
+                if (!entityManager.getTransaction().isActive()) {
+                    entityManager.getTransaction().begin();
+                }
                 int i = entityManager.createQuery(
                                 """
                                         UPDATE User u
@@ -73,7 +67,6 @@ public class UserRepositoryImpl implements UserRepository {
                 return i > 0;
             } catch (Exception e) {
                 entityManager.getTransaction().rollback();
-                log.warning(e.getMessage());
             }
         }
         return false;

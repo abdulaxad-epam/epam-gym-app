@@ -1,5 +1,6 @@
 package epam.trainer.mapper;
 
+import epam.shared.security.dto.RegisterTrainerResponseDTO;
 import epam.training_type.entity.TrainingType;
 import epam.trainer.dto.TrainerRequestDTO;
 import epam.trainer.dto.TrainerResponseDTO;
@@ -28,4 +29,12 @@ public interface TrainerMapper {
             @Mapping(source = "trainerRequestDTO.user", target = "user", qualifiedByName = "toUser")
     })
     Trainer toTrainer(TrainerRequestDTO trainerRequestDTO, TrainingType trainingType);
+
+    @Named("toRegisterTrainerResponseDTO")
+    @Mappings({
+            @Mapping(source = "specialization.description", target = "trainerSpecialization"),
+            @Mapping(source = "user", target = "user", qualifiedByName = "toUserResponseDTO"),
+            @Mapping(source = "user.password", target = "password")
+    })
+    RegisterTrainerResponseDTO toRegisterTrainerResponseDTO(Trainer insert);
 }

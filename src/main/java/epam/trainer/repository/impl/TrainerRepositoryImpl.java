@@ -2,7 +2,6 @@ package epam.trainer.repository.impl;
 
 
 import epam.shared.exception.exception.EntityManagerInsertException;
-import epam.trainee.entity.Trainee;
 import epam.trainer.entity.Trainer;
 import epam.trainer.repository.TrainerRepository;
 import epam.training.entity.Training;
@@ -40,8 +39,9 @@ public class TrainerRepositoryImpl extends AbstractTrainingRepository implements
             throw new IllegalArgumentException("Trainer cannot be null");
 
         try {
-            entityManager.getTransaction().begin();
-
+            if (!entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().begin();
+            }
             entityManager.persist(trainer);
 
             entityManager.getTransaction().commit();
@@ -121,8 +121,9 @@ public class TrainerRepositoryImpl extends AbstractTrainingRepository implements
     @Override
     public void deleteTrainerByUsername(String username) {
         try {
-            entityManager.getTransaction().begin();
-
+            if (!entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().begin();
+            }
             entityManager.createQuery("DELETE FROM Trainer t WHERE t.user.username = :username ")
                     .setParameter("username", username)
                     .executeUpdate();
@@ -131,57 +132,6 @@ public class TrainerRepositoryImpl extends AbstractTrainingRepository implements
         } catch (Exception e) {
             log.error(e.getMessage());
         }
-    }
-
-    @Override
-    public List<Trainer> findTrainersByTrainee(String currentUsername) {
-        return entityManager.createQuery(
-                        """
-                                SELECT DISTINCT t FROM Trainer t
-                                JOIN TraineeTrainer tt ON t.trainerId = tt.trainer.trainerId
-                                JOIN Trainee tr ON tt.trainee.traineeId = tr.traineeId
-                                JOIN User u ON tr.user.userId = u.userId
-                                WHERE u.username = :username
-                                """, Trainer.class)
-                .setParameter("username", currentUsername)
-                .getResultList();
-    }
-
-    @Override
-    public void addTrainerToTrainee(Trainee trainee, Trainer trainer) {
-        entityManager.createQuery("""
-                        INSERT INTO TraineeTrainer (trainee, trainer) VALUES (:trainer, :trainee)
-                        """)
-                .setParameter("trainee", trainee)
-                .setParameter("trainer", trainer);
-    }
-
-    @Override
-    public Boolean trainerHasTrainee(UUID trainerId, UUID traineeId) {
-        return entityManager.createQuery("""
-                        SELECT CASE WHEN EXISTS
-                        (
-                            SELECT 1 FROM TraineeTrainer t
-                            WHERE t.trainer.trainerId = :trainerId
-                            and t.trainee.traineeId = :traineeId
-                            )
-                        THEN TRUE ELSE FALSE END
-                        """, Boolean.class)
-                .setParameter("trainerId", trainerId)
-                .setParameter("traineeId", traineeId)
-                .getSingleResult();
-    }
-
-    @Override
-    public void removeTraineeOfTrainer(Trainee trainee, Trainer trainer) {
-        entityManager.createQuery("""
-                        DELETE FROM TraineeTrainer t WHERE
-                        t.trainer.trainerId = :trainerId
-                        AND t.trainee.traineeId = :traineeId
-                        """)
-                .setParameter("trainerId", trainer.getTrainerId())
-                .setParameter("traineeId", trainee.getTraineeId())
-                .executeUpdate();
     }
 
 

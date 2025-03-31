@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -25,16 +26,7 @@ import static org.mockito.Mockito.when;
 class TraineeTest {
 
     @Mock
-    private EntityManagerFactory entityManagerFactory;
-
-    @Mock
     private EntityManager entityManager;
-
-    @Mock
-    private EntityTransaction transaction;
-
-    @InjectMocks
-    private Trainee trainee;
 
     @BeforeEach
     void setUp() {
@@ -54,7 +46,7 @@ class TraineeTest {
 
         Trainee trainee = Trainee.builder()
                 .traineeId(UUID.randomUUID())
-                .dateOfBirth(LocalDateTime.of(1995, 5, 15, 0, 0))
+                .dateOfBirth(LocalDate.of(1995, 5, 15))
                 .address("123 Main Street")
                 .user(user)
                 .build();

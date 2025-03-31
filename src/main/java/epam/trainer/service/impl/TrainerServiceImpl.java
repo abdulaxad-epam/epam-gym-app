@@ -1,6 +1,7 @@
 package epam.trainer.service.impl;
 
 import epam.shared.exception.exception.TrainerNotFoundException;
+import epam.shared.security.dto.RegisterTrainerResponseDTO;
 import epam.trainer.entity.Trainer;
 import epam.training_type.service.TrainingTypeService;
 import epam.trainer.dto.TrainerRequestDTO;
@@ -20,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-@Log
 @Service
 @RequiredArgsConstructor
 public class TrainerServiceImpl implements TrainerService {
@@ -35,9 +35,9 @@ public class TrainerServiceImpl implements TrainerService {
     private final UserService userService;
 
     @Override
-    public TrainerResponseDTO createTrainer(TrainerRequestDTO trainerRequestDTO) {
+    public RegisterTrainerResponseDTO createTrainer(TrainerRequestDTO trainerRequestDTO) {
 
-        return trainerMapper.toTrainerResponseDTO(
+        return trainerMapper.toRegisterTrainerResponseDTO(
                 trainerRepository.insert(
                         trainerMapper.toTrainer(
                                 trainerRequestDTO, trainingTypeService.getTrainingByTrainingName(trainerRequestDTO.getSpecialization())
@@ -79,17 +79,8 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public List<TrainerResponseDTO> getTrainersByTrainee(String currentUsername) {
-        return trainerRepository.findTrainersByTrainee(currentUsername)
-                .stream().map(trainerMapper::toTrainerResponseDTO).toList();
-    }
-
-    @Override
     public List<TrainingResponseDTO> getTrainerTrainings(String username, String periodFrom, String periodTo, String traineeName) {
-        List<Training> training = trainerRepository.getTrainerTrainings(username, periodFrom, periodTo, traineeName).orElseThrow(() -> {
-            log.warning("Exception occurred while getting trainers trainings with username: " + username);
-            return new TrainerNotFoundException("Trainer not found");
-        });
+        List<Training> training = trainerRepository.getTrainerTrainings(username, periodFrom, periodTo, traineeName).orElseThrow(() -> new TrainerNotFoundException("Trainer not found"));
         return training.stream().map(trainingMapper::toTrainingResponseDTO).toList();
     }
 
@@ -97,7 +88,6 @@ public class TrainerServiceImpl implements TrainerService {
     public void updateTrainerStatus(String username, Boolean isActive) {
         Optional<Trainer> trainer = trainerRepository.findByUsername(username);
         trainer.ifPresentOrElse(t->t.getUser().setIsActive(isActive), () -> {
-            log.warning("Exception occurred while updating trainer status with username: " + username);
             throw new TrainerNotFoundException("Trainer not found");
         });
     }

@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Log
 @RequiredArgsConstructor
 public abstract class AbstractTrainingRepository {
 
@@ -42,7 +41,6 @@ public abstract class AbstractTrainingRepository {
                 parameters.put("endDate", LocalDate.parse(periodTo).atTime(0, 0, 0));
             }
         } catch (Exception e) {
-            log.warning(e.getMessage());
             throw new DateConversionException("Invalid date format");
         }
 

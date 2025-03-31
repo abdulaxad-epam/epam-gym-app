@@ -5,14 +5,13 @@ import epam.shared.exception.exception.TraineeNotFoundException;
 import epam.shared.security.dto.AuthenticateRequestDTO;
 import epam.shared.security.dto.ChangePasswordRequestDTO;
 import epam.shared.security.dto.RegisterTraineeRequestDTO;
+import epam.shared.security.dto.RegisterTraineeResponseDTO;
 import epam.shared.security.dto.RegisterTrainerRequestDTO;
+import epam.shared.security.dto.RegisterTrainerResponseDTO;
 import epam.shared.security.service.AuthenticationService;
-import epam.trainee.dto.TraineeResponseDTO;
-import epam.trainer.dto.TrainerResponseDTO;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
-import org.aspectj.lang.annotation.Aspect;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Log
-@Aspect
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/auth")
@@ -30,28 +27,24 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping(value = "/register/trainer", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<TrainerResponseDTO> createTrainer(@RequestBody RegisterTrainerRequestDTO traineeRequestDTO, HttpServletResponse response) {
-        log.info("New trainer signed up:  {}"+ traineeRequestDTO);
+    public ResponseEntity<RegisterTrainerResponseDTO> createTrainer(@Valid @RequestBody RegisterTrainerRequestDTO traineeRequestDTO, HttpServletResponse response) {
         return ResponseEntity.ok(authenticationService.register(traineeRequestDTO, response));
     }
 
     @PostMapping(value = "/register/trainee", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<TraineeResponseDTO> createTrainee(@RequestBody RegisterTraineeRequestDTO traineeRequestDTO, HttpServletResponse response) {
-        log.info("New trainee signed up:  " + traineeRequestDTO);
+    public ResponseEntity<RegisterTraineeResponseDTO> createTrainee(@Valid @RequestBody RegisterTraineeRequestDTO traineeRequestDTO, HttpServletResponse response) {
         return ResponseEntity.ok(authenticationService.register(traineeRequestDTO, response));
     }
 
 
     @PostMapping(value = "/authenticate", consumes = "application/json")
-    public ResponseEntity<Void> authenticateTrainee(@RequestBody AuthenticateRequestDTO authenticateRequestDTO, HttpServletResponse response) throws TraineeNotFoundException {
-        log.info("User tries to authenticate: " + authenticateRequestDTO.getUsername());
+    public ResponseEntity<Void> authenticateTrainee(@Valid @RequestBody AuthenticateRequestDTO authenticateRequestDTO, HttpServletResponse response) throws TraineeNotFoundException {
         authenticationService.authenticate(authenticateRequestDTO, response);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping(value = "/changePassword", consumes = "application/json")
-    public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequestDTO changePasswordRequestDTO, HttpServletResponse response) throws TraineeNotFoundException {
-        log.info("Change password signed up: " + changePasswordRequestDTO.getOldPassword());
+    public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO, HttpServletResponse response) throws TraineeNotFoundException {
         authenticationService.changePassword(changePasswordRequestDTO, response);
         return ResponseEntity.ok().build();
     }

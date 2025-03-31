@@ -5,6 +5,9 @@ import epam.trainer.dto.TrainerRequestDTO;
 import epam.trainer.dto.TrainerResponseDTO;
 import epam.trainer.service.TrainerService;
 import epam.training.dto.TrainingResponseDTO;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Log
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/trainers")
@@ -28,34 +30,31 @@ public class TrainerController {
 
     @Authenticated
     @GetMapping(value = "/{username}", produces = "application/json")
-    public ResponseEntity<TrainerResponseDTO> getTrainer(@PathVariable("username") String username) {
-        log.info("Get trainer signed up:  {}"+ username);
+    public ResponseEntity<TrainerResponseDTO> getTrainer(@PathVariable("username") @NotBlank(message = "Username is required") String username) {
         return ResponseEntity.ok(trainerService.getTrainerByUsername(username));
     }
 
     @Authenticated
     @PutMapping(value = "/update/{username}", produces = "application/json")
-    public ResponseEntity<TrainerResponseDTO> updateTrainer(@PathVariable("username") String username, @RequestBody TrainerRequestDTO traineeRequestDTO) {
-        log.info("Update trainer signed up:  {}"+ username);
+    public ResponseEntity<TrainerResponseDTO> updateTrainer(@PathVariable("username") @NotBlank(message = "Username is required") String username,
+                                                            @Valid @RequestBody TrainerRequestDTO traineeRequestDTO) {
         return ResponseEntity.ok(trainerService.updateTrainer(username, traineeRequestDTO));
     }
 
     @Authenticated
     @GetMapping(value = "/{username}/trainings", produces = "application/json")
 
-    public ResponseEntity<List<TrainingResponseDTO>> getTrainings(@PathVariable(value = "username") String username,
+    public ResponseEntity<List<TrainingResponseDTO>> getTrainings(@PathVariable(value = "username") @NotBlank(message = "Username is required") String username,
                                                                   @RequestParam(value = "periodFrom", required = false) String periodFrom,
                                                                   @RequestParam(value = "periodTo", required = false) String periodTo,
                                                                   @RequestParam(value = "traineeName", required = false) String traineeName) {
-        log.info("Get trainings signed up:  {}"+ username);
         return ResponseEntity.ok(trainerService.getTrainerTrainings(username, periodFrom, periodTo, traineeName));
     }
 
     @Authenticated
     @PatchMapping(value = "/status/{username}")
-    public ResponseEntity<Void> trainerStatus(@PathVariable(value = "username") String username,
-                                              @RequestParam(value = "isActive") Boolean isActive) {
-        log.info("Trainer status is being updated:  {}, {}"+ username + isActive);
+    public ResponseEntity<Void> trainerStatus(@PathVariable(value = "username") @NotBlank(message = "Username is required") String username,
+                                              @RequestParam(value = "isActive") @NotNull(message = "isActive status must be provided") Boolean isActive) {
         trainerService.updateTrainerStatus(username, isActive);
         return ResponseEntity.ok().build();
     }

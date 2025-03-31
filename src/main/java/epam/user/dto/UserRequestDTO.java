@@ -1,12 +1,16 @@
 package epam.user.dto;
 
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.Serializable;
 
@@ -18,9 +22,14 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class UserRequestDTO implements Serializable {
 
+    @NotBlank(message = "First name is required")
+    @Size(min = 4, message = "First name must have at least 4 characters")
     private String firstName;
 
+    @NotBlank(message = "Last name is required")
+    @Size(min = 4, message = "Last name must have at least 4 characters")
     private String lastName;
 
+    @NotNull(message = "isActive status must be provided")
     private Boolean isActive;
 }

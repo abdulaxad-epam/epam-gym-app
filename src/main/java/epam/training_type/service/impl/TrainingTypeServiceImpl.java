@@ -1,5 +1,6 @@
 package epam.training_type.service.impl;
 
+import epam.shared.exception.exception.TrainingTypeNotFoundException;
 import epam.training_type.dto.TrainingTypeResponseDTO;
 import epam.training_type.entity.TrainingType;
 import epam.training_type.mapper.TrainingTypeMapper;
@@ -19,7 +20,8 @@ public class TrainingTypeServiceImpl implements TrainingTypeService {
 
     @Override
     public TrainingType getTrainingByTrainingName(String trainingName) {
-        return trainingTypeRepository.findTrainingByTrainingName(trainingName);
+        return trainingTypeRepository.findTrainingByTrainingName(trainingName)
+                .orElseThrow(() -> new TrainingTypeNotFoundException("Training with training name " + trainingName + " not found"));
     }
 
     @Override

@@ -26,13 +26,5 @@ public interface TrainerRepository {
 
     void deleteTrainerByUsername(String username);
 
-    List<Trainer> findTrainersByTrainee(String currentUsername);
-
-    void addTrainerToTrainee(Trainee trainee, Trainer trainer);
-
-    Boolean trainerHasTrainee(UUID trainerId, UUID traineeId);
-
-    void removeTraineeOfTrainer(Trainee trainee, Trainer trainer);
-
     Optional<List<Training>> getTrainerTrainings(String username, String periodFrom, String periodTo, String traineeName);
 }

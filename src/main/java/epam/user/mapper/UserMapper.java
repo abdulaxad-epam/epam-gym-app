@@ -18,7 +18,6 @@ public interface UserMapper {
             @Mapping(source = "firstname", target = "firstName"),
             @Mapping(source = "lastname", target = "lastName"),
             @Mapping(source = "isActive", target = "isActive"),
-            @Mapping(source = "password", target = "password"),
             @Mapping(source = "username", target = "username")
     })
     UserResponseDTO toUserResponseDTO(User user);

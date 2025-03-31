@@ -4,10 +4,8 @@ import epam.shared.security.dto.ChangePasswordRequestDTO;
 import epam.user.repository.UserRepository;
 import epam.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
 
-@Log
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {

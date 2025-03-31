@@ -1,7 +1,7 @@
 package epam.trainer.dto;
 
 
-import epam.user.dto.UserRequestDTO;
+import epam.trainee.dto.TraineeResponseDTO;
 import epam.user.dto.UserResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,4 +23,6 @@ public class TrainerResponseDTO implements Serializable {
     private String trainerSpecialization;
 
     private UserResponseDTO user;
+
+    private TraineeResponseDTO trainees;
 }
