@@ -28,8 +28,6 @@ import java.util.UUID;
 @Table(name = "trainees")
 public class Trainee {
 
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID traineeId;

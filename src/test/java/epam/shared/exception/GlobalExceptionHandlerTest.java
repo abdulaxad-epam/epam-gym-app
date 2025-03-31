@@ -1,10 +1,12 @@
 package epam.shared.exception;
 
 import epam.shared.exception.exception.DateConversionException;
+import epam.shared.exception.exception.TraineeHasAssignedBeforeException;
 import epam.shared.exception.exception.TraineeHasNotAssignedBeforeException;
 import epam.shared.exception.exception.TraineeNotFoundException;
 import epam.shared.exception.exception.TrainerNotFoundException;
 import epam.shared.exception.exception.TrainingNotFoundException;
+import epam.shared.exception.exception.TrainingTypeNotFoundException;
 import epam.shared.exception.exception.UserNotAuthenticated;
 import epam.shared.exception.exception.UserNotFoundException;
 import epam.shared.exception.exception.UsernameGenerateException;
@@ -15,6 +17,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -98,6 +103,37 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.SEE_OTHER, response.getStatusCode());
         assertEquals("Failed to generate username", response.getBody().getMessage());
+    }
+
+    @Test
+    void testHandleTrainingTypeNotFound() {
+        TrainingTypeNotFoundException exception = new TrainingTypeNotFoundException("Training type not found");
+        ResponseEntity<ExceptionMassage> response = handler.handleTrainingTypeNotFound(exception);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals("Training type not found", response.getBody().getMessage());
+    }
+
+    @Test
+    void testHandleTraineeHasAssignedBefore() {
+        TraineeHasAssignedBeforeException exception = new TraineeHasAssignedBeforeException("Trainee already assigned");
+        ResponseEntity<ExceptionMassage> response = handler.handleTrainingTypeNotFound(exception);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Trainee already assigned", response.getBody().getMessage());
+    }
+
+    @Test
+    void testHandleMethodArgumentNotValidException() {
+        BindingResult bindingResult = mock(BindingResult.class);
+        FieldError fieldError = new FieldError("object", "field", "must not be blank");
+        when(bindingResult.getFieldErrors()).thenReturn(java.util.List.of(fieldError));
+
+        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(null, bindingResult);
+        ResponseEntity<ExceptionMassage> response = handler.handleMethodArgumentNotValid(exception);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertTrue(response.getBody().getMessage().contains("must not be blank"));
     }
 
     @Test

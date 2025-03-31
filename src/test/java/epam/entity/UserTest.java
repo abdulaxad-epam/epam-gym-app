@@ -27,7 +27,7 @@ class UserTest {
         user = Instancio.of(User.class)
                 .set(Select.field(User::getUserId), userId)
                 .set(Select.field(User::getFirstname), "John")
-                .set(Select.field(User::getLastname), "Doe")
+                .set(Select.field(User::getLastname), "Doe2")
                 .set(Select.field(User::getUsername), "johndoe123")
                 .set(Select.field(User::getPassword), "SecurePass@123")
                 .set(Select.field(User::getIsActive), true)
@@ -39,7 +39,7 @@ class UserTest {
         assertNotNull(user);
         assertEquals(userId, user.getUserId());
         assertEquals("John", user.getFirstname());
-        assertEquals("Doe", user.getLastname());
+        assertEquals("Doe2", user.getLastname());
         assertEquals("johndoe123", user.getUsername());
         assertEquals("SecurePass@123", user.getPassword());
         assertTrue(user.getIsActive());
@@ -50,7 +50,7 @@ class UserTest {
         User anotherUser = Instancio.of(User.class)
                 .set(Select.field(User::getUserId), userId)
                 .set(Select.field(User::getFirstname), "John")
-                .set(Select.field(User::getLastname), "Doe")
+                .set(Select.field(User::getLastname), "Doe2")
                 .set(Select.field(User::getUsername), "johndoe123")
                 .set(Select.field(User::getPassword), "SecurePass@123")
                 .set(Select.field(User::getIsActive), true)
@@ -63,8 +63,8 @@ class UserTest {
     void testUserInequality() {
         User differentUser = Instancio.of(User.class)
                 .set(Select.field(User::getUserId), UUID.randomUUID())
-                .set(Select.field(User::getFirstname), "John")
-                .set(Select.field(User::getLastname), "Doe")
+                .set(Select.field(User::getFirstname), "John2")
+                .set(Select.field(User::getLastname), "Doe2")
                 .set(Select.field(User::getUsername), "johndoe123")
                 .set(Select.field(User::getPassword), "SecurePass@123")
                 .set(Select.field(User::getIsActive), true)
@@ -113,8 +113,8 @@ class UserTest {
     void testUsernameUniqueness() {
         User anotherUser = Instancio.of(User.class)
                 .set(Select.field(User::getUserId), UUID.randomUUID())
-                .set(Select.field(User::getFirstname), "Jane")
-                .set(Select.field(User::getLastname), "Doe")
+                .set(Select.field(User::getFirstname), "Jane2")
+                .set(Select.field(User::getLastname), "Doe2")
                 .set(Select.field(User::getUsername), "johndoe123") // Same username
                 .set(Select.field(User::getPassword), "DifferentPass@456")
                 .set(Select.field(User::getIsActive), true)

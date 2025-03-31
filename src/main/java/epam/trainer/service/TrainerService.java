@@ -19,8 +19,6 @@ public interface TrainerService {
 
     TrainerResponseDTO getTrainerByUsername(String username);
 
-    List<TrainerResponseDTO> getAllTrainers();
-
 
     List<TrainingResponseDTO> getTrainerTrainings(String username, String periodFrom, String periodTo, String traineeName);
 

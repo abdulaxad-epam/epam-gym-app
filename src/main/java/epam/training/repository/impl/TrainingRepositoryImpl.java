@@ -65,7 +65,10 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
             entityManager.getTransaction().commit();
 
-        } catch (Exception e) {
+        }catch (TrainingNotFoundException exception){
+            entityManager.getTransaction().rollback();
+            throw new TrainingNotFoundException("Training not found");
+        }catch (Exception e) {
             entityManager.getTransaction().rollback();
             throw new RuntimeException("Failed to delete training: " + e.getMessage(), e);
         }
@@ -73,35 +76,6 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public Training findById(UUID id) {
-        return entityManager.find(Training.class, id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Training> findAll() {
-        return entityManager.createQuery("SELECT t FROM Training t", Training.class)
-                .getResultList();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public boolean existsById(UUID id) {
-        return entityManager.createQuery(
-                        """
-                                SELECT CASE WHEN EXISTS
-                                (SELECT 1 FROM Training t WHERE t.trainingId = :id)
-                                THEN TRUE
-                                ELSE
-                                FALSE END
-                                """,
-                        Boolean.class)
-                .setParameter("id", id)
-                .getSingleResult();
-    }
-
-    @Transactional(readOnly = true)
-    @Override
     public Optional<UUID> getIdByUsername(String username) {
 
         log.info("getIdByUsername: " + username);
@@ -116,22 +90,6 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
         log.info("getIdByUsername: " + singleResult);
         return Optional.ofNullable(singleResult);
-    }
-
-    @Override
-    public Optional<Training> findByUser_Username(String username) {
-        return Optional.empty();
-    }
-
-    @Override
-    public List<Training> findTrainingsByTrainee(String username) {
-        return entityManager.createQuery("""
-                        SELECT DISTINCT t FROM Training t
-                        JOIN FETCH t.trainee trainee
-                        JOIN FETCH trainee.user user
-                        WHERE user.username = :username
-                        """, Training.class)
-                .getResultList();
     }
 
 }

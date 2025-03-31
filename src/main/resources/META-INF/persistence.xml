@@ -22,7 +22,7 @@
             <property name="hibernate.format_sql" value="true" />
             <property name="hibernate.use_sql_comments" value="true" />
 
-            <property name="jakarta.persistence.sql-load-script-source" value="src/main/resources/database_initializer/training_types.sql"/>
+            <property name="jakarta.persistence.sql-load-script-source" value="src/main/resources/database_initializer/data.sql"/>
         </properties>
     </persistence-unit>
 

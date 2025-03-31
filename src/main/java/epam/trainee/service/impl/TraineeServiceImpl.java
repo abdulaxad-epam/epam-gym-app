@@ -9,16 +9,12 @@ import epam.trainee.entity.Trainee;
 import epam.trainee.mapper.TraineeMapper;
 import epam.trainee.repository.TraineeRepository;
 import epam.trainee.service.TraineeService;
-import epam.trainer.dto.TrainerResponseDTO;
-import epam.trainer.mapper.TrainerMapper;
 import epam.training.dto.TrainingResponseDTO;
 import epam.training.entity.Training;
 import epam.training.mapper.TrainingMapper;
 import epam.training.service.TrainingService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -35,8 +31,6 @@ public class TraineeServiceImpl implements TraineeService {
     private final TrainingService trainingService;
 
     private final TrainingMapper trainingMapper;
-
-    private final TrainerMapper trainerMapper;
 
     @Override
     public RegisterTraineeResponseDTO createTrainee(TraineeRequestDTO traineeRequestDTO) {
@@ -63,7 +57,7 @@ public class TraineeServiceImpl implements TraineeService {
                 if(address != null && !address.isEmpty()){
                 t.setAddress(address);
                 }
-                if (isActive != null && isActive) {
+                if (isActive != null) {
                 t.getUser().setIsActive(isActive);
                 }
 

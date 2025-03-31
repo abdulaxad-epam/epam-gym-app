@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Set;
 
+import static epam.trainer.TrainerControllerTest.settings;
 import static org.instancio.Select.field;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -32,6 +33,7 @@ public class RegisterTrainerRequestDTOTest {
     @Test
     public void testValidRegisterTrainerRequest() {
         RegisterTrainerRequestDTO request = Instancio.of(RegisterTrainerRequestDTO.class)
+                .withSettings(settings)
                 .set(field(UserRequestDTO::getFirstName), "John")
                 .set(field(UserRequestDTO::getLastName),"John")
                 .create();
@@ -44,10 +46,10 @@ public class RegisterTrainerRequestDTOTest {
 
     @Test
     public void testBlankSpecialization() {
-        RegisterTrainerRequestDTO request = RegisterTrainerRequestDTO.builder()
-                .specialization("")
-                .user(Instancio.create(UserRequestDTO.class))
-                .build();
+        RegisterTrainerRequestDTO request = Instancio.of(RegisterTrainerRequestDTO.class)
+                .withSettings(settings)
+                .set(field(RegisterTrainerRequestDTO::getSpecialization), "")
+                .create();
 
         Set<ConstraintViolation<RegisterTrainerRequestDTO>> violations = validator.validate(request);
         assertFalse(violations.isEmpty());

@@ -9,17 +9,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface TrainingRepository {
+
     Training insert(Training trainer);
+
     void delete(UUID id);
-    Training findById(UUID id);
-    List<Training> findAll();
 
-    boolean existsById(UUID id);
-
-    List<Training> findTrainingsByTrainee(String username);
-
-    @Transactional(readOnly = true)
     Optional<UUID> getIdByUsername(String username);
-
-    Optional<Training> findByUser_Username(String username);
 }

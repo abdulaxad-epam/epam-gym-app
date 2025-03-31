@@ -7,9 +7,6 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.instancio.Instancio;
 import org.instancio.junit.InstancioExtension;
-import org.instancio.junit.WithSettings;
-import org.instancio.settings.Keys;
-import org.instancio.settings.Settings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import java.time.LocalDate;
 import java.util.Set;
 
+import static epam.trainer.TrainerControllerTest.settings;
 import static org.instancio.Select.field;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -37,6 +35,7 @@ public class RegisterTraineeRequestDTOTest {
     @Test
     public void testValidRegisterTraineeRequest() {
         RegisterTraineeRequestDTO request = Instancio.of(RegisterTraineeRequestDTO.class)
+                .withSettings(settings)
                 .set(field(RegisterTraineeRequestDTO::getDateOfBirth), LocalDate.of(2000, 1, 1))
                 .set(field(RegisterTraineeRequestDTO::getAddress), "123 Test Street")
                 .set(field(RegisterTraineeRequestDTO::getUser),
@@ -54,6 +53,7 @@ public class RegisterTraineeRequestDTOTest {
     @Test
     public void testInvalidFutureDateOfBirth() {
         RegisterTraineeRequestDTO request = Instancio.of(RegisterTraineeRequestDTO.class)
+                .withSettings(settings)
                 .set(field(UserRequestDTO::getFirstName), "John")
                 .set(field(RegisterTraineeRequestDTO::getDateOfBirth), LocalDate.now().plusDays(1))
                 .create();
@@ -68,6 +68,7 @@ public class RegisterTraineeRequestDTOTest {
     @Test
     public void testBlankAddress() {
         RegisterTraineeRequestDTO request = Instancio.of(RegisterTraineeRequestDTO.class)
+                .withSettings(settings)
                 .set(field(RegisterTraineeRequestDTO::getDateOfBirth), LocalDate.of(2000, 1, 1))
                 .set(field(RegisterTraineeRequestDTO::getAddress), "")
                 .create();
@@ -80,6 +81,7 @@ public class RegisterTraineeRequestDTOTest {
     @Test
     public void testNullUserDetails() {
         RegisterTraineeRequestDTO request = Instancio.of(RegisterTraineeRequestDTO.class)
+                .withSettings(settings)
                 .set(field(RegisterTraineeRequestDTO::getDateOfBirth), LocalDate.of(2000, 1, 1))
                 .set(field(RegisterTraineeRequestDTO::getUser), null)
                 .create();

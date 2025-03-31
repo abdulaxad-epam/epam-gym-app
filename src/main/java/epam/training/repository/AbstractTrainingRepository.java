@@ -19,7 +19,7 @@ public abstract class AbstractTrainingRepository {
 
     public abstract EntityManager entityManager();
 
-    protected Optional<List<Training>> getTrainings(String username, String userRole, String periodFrom, String periodTo, Map<String, Object> additionalFilters) {
+    public Optional<List<Training>> getTrainings(String username, String userRole, String periodFrom, String periodTo, Map<String, Object> additionalFilters) {
 
         EntityManager entityManager = entityManager();
 

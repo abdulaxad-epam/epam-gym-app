@@ -11,12 +11,5 @@ public interface TrainingService {
 
     TrainingResponseDTO createTraining(TrainingRequestDTO training);
 
-    TrainingResponseDTO getTrainingByUsername(String username);
-
-    List<TrainingResponseDTO> getAllTrainings();
-
     void deleteTraining(String username);
-
-    List<TrainingResponseDTO> getTrainingsByTraineeUsername(String username);
-
 }

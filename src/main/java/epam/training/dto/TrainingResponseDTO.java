@@ -1,6 +1,7 @@
 package epam.training.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import epam.trainee.dto.TraineeResponseDTO;
 import epam.trainer.dto.TrainerResponseDTO;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ public class TrainingResponseDTO implements Serializable {
 
     private String trainingName;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDateTime trainingDate;
 
     private String trainingType;

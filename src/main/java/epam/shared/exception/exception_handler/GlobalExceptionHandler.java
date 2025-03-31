@@ -193,8 +193,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionMassage> handleException(Exception e) {
         return ResponseEntity

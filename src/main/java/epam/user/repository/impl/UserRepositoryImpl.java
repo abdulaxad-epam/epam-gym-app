@@ -41,7 +41,7 @@ public class UserRepositoryImpl implements UserRepository {
                 .setParameter("password", password)
                 .getSingleResult();
 
-        return count > 0;
+        return count != null && count > 0;
     }
 
 
@@ -49,6 +49,7 @@ public class UserRepositoryImpl implements UserRepository {
     public Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) {
         if (existsByUsernameAndPassword(changePasswordRequestDTO.getUsername().toLowerCase(), changePasswordRequestDTO.getOldPassword())) {
             try {
+
                 if (!entityManager.getTransaction().isActive()) {
                     entityManager.getTransaction().begin();
                 }

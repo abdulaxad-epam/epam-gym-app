@@ -53,18 +53,6 @@ public class TraineeRepositoryImpl extends AbstractTrainingRepository implements
         }
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public Optional<Trainee> findById(UUID id) {
-        Trainee trainee = null;
-        try {
-            trainee = entityManager.find(Trainee.class, id);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-        return Optional.ofNullable(trainee);
-    }
-
 
     @Override
     @Transactional
@@ -81,14 +69,6 @@ public class TraineeRepositoryImpl extends AbstractTrainingRepository implements
         return Optional.of(traineeList.get(0));
     }
 
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Trainee> findAll() {
-        return entityManager
-                .createQuery("from Trainee", Trainee.class)
-                .getResultList();
-    }
 
     @Override
     @Transactional(readOnly = true)
@@ -118,17 +98,6 @@ public class TraineeRepositoryImpl extends AbstractTrainingRepository implements
                         Boolean.class)
                 .setParameter("username", username)
                 .getSingleResult();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<UUID> getIdByUsername(String username) {
-        UUID singleResult = entityManager.createQuery("""
-                        SELECT id FROM Trainee t WHERE t.user.username = :username
-                        """, UUID.class)
-                .setParameter("username", username)
-                .getSingleResult();
-        return Optional.of(singleResult);
     }
 
     @Override

@@ -73,12 +73,6 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public List<TrainerResponseDTO> getAllTrainers() {
-        return trainerRepository.findAll()
-                .stream().map(trainerMapper::toTrainerResponseDTO).toList();
-    }
-
-    @Override
     public List<TrainingResponseDTO> getTrainerTrainings(String username, String periodFrom, String periodTo, String traineeName) {
         List<Training> training = trainerRepository.getTrainerTrainings(username, periodFrom, periodTo, traineeName).orElseThrow(() -> new TrainerNotFoundException("Trainer not found"));
         return training.stream().map(trainingMapper::toTrainingResponseDTO).toList();

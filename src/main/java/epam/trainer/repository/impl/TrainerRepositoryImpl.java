@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -72,50 +71,6 @@ public class TrainerRepositoryImpl extends AbstractTrainingRepository implements
             log.error("Error finding trainer by username: " + e.getMessage(), e);
         }
         return Optional.empty();
-    }
-
-
-    @Transactional(readOnly = true)
-    @Override
-    public Optional<Trainer> findById(UUID id) {
-        Trainer trainer = null;
-        try {
-            trainer = entityManager.find(Trainer.class, id);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-        return Optional.ofNullable(trainer);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<Trainer> findAll() {
-        return entityManager.createQuery("from Trainer", Trainer.class).getResultList();
-    }
-
-    @Override
-    public boolean existsById(UUID id) {
-        return entityManager.createQuery(
-                        """
-                                SELECT CASE WHEN EXISTS
-                                (SELECT 1 FROM Trainer t WHERE t.trainerId = :id)
-                                THEN TRUE
-                                ELSE
-                                FALSE END
-                                """,
-                        Boolean.class)
-                .setParameter("id", id)
-                .getSingleResult();
-    }
-
-    @Override
-    public Optional<UUID> getIdByUsername(String username) {
-        UUID singleResult = entityManager.createQuery("""
-                        SELECT id FROM Trainer t WHERE t.user.username = :username
-                        """, UUID.class)
-                .setParameter("username", username)
-                .getSingleResult();
-        return Optional.of(singleResult);
     }
 
     @Override
