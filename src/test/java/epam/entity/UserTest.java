@@ -1,10 +1,7 @@
 package epam.entity;
 
-import epam.user.entity.User;
-import epam.shared.util.PasswordGeneratorListener;
 import org.instancio.Instancio;
 import org.instancio.junit.InstancioExtension;
-import org.instancio.Model;
 import org.instancio.Select;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

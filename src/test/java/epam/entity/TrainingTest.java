@@ -1,12 +1,7 @@
 package epam.entity;
 
-import epam.training_type.entity.TrainingType;
-import epam.trainee.entity.Trainee;
-import epam.trainer.entity.Trainer;
-import epam.training.entity.Training;
 import org.instancio.Instancio;
 import org.instancio.junit.InstancioExtension;
-import org.instancio.Model;
 import org.instancio.Select;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

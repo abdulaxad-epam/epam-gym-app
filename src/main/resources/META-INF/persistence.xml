@@ -3,12 +3,12 @@
     <persistence-unit name="myPersistenceUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-        <class>epam.training.entity.Training</class>
-        <class>epam.user.entity.User</class>
-        <class>epam.training_type.entity.TrainingType</class>
-        <class>epam.trainee.entity.Trainee</class>
-        <class>epam.trainer.entity.Trainer</class>
-        <class>epam.shared.trainee_trainer.entity.TrainerTrainee</class>
+        <class>epam.entity.Training</class>
+        <class>epam.entity.User</class>
+        <class>epam.entity.TrainingType</class>
+        <class>epam.entity.Trainee</class>
+        <class>epam.entity.Trainer</class>
+        <class>epam.entity.TrainerTrainee</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />

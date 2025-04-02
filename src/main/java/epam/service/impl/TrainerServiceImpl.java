@@ -1,0 +1,98 @@
+package epam.service.impl;
+
+import epam.exception.exception.TrainerNotFoundException;
+import epam.dto.response_dto.RegisterTrainerResponseDTO;
+import epam.entity.Trainer;
+import epam.service.TrainingTypeService;
+import epam.dto.request_dto.TrainerRequestDTO;
+import epam.dto.response_dto.TrainerResponseDTO;
+import epam.mapper.TrainerMapper;
+import epam.repository.TrainerRepository;
+import epam.service.TrainerService;
+import epam.dto.response_dto.TrainingResponseDTO;
+import epam.entity.Training;
+import epam.mapper.TrainingMapper;
+import epam.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
+public class TrainerServiceImpl implements TrainerService {
+
+    private final TrainerRepository trainerRepository;
+
+    private final TrainingTypeService trainingTypeService;
+
+    private final TrainerMapper trainerMapper;
+    private final TrainingMapper trainingMapper;
+
+    private final UserService userService;
+
+    @Override
+    public RegisterTrainerResponseDTO createTrainer(TrainerRequestDTO trainerRequestDTO) {
+
+        return trainerMapper.toRegisterTrainerResponseDTO(
+                trainerRepository.insert(
+                        trainerMapper.toTrainer(
+                                trainerRequestDTO, trainingTypeService.getTrainingByTrainingName(trainerRequestDTO.getSpecialization())
+                        )
+                )
+        );
+    }
+
+    @Transactional
+    @Override
+    public TrainerResponseDTO updateTrainer(String username, TrainerRequestDTO trainerRequestDTO) {
+        return trainerRepository.findByUsername(username).map(trainer -> {
+            trainer.setSpecialization(
+                    trainingTypeService.getTrainingByTrainingName(trainerRequestDTO.getSpecialization())
+            );
+            if (trainerRequestDTO.getUser() != null) {
+                if (trainerRequestDTO.getUser().getFirstName() != null) {
+                    trainer.getUser().setFirstname(trainerRequestDTO.getUser().getFirstName());
+                }
+                if (trainerRequestDTO.getUser().getLastName() != null) {
+                    trainer.getUser().setLastname(trainerRequestDTO.getUser().getLastName());
+                }
+                if (trainerRequestDTO.getUser().getIsActive() != null) {
+                    trainer.getUser().setIsActive(trainerRequestDTO.getUser().getIsActive());
+                }
+            }
+            return trainerMapper.toTrainerResponseDTO(trainer);
+        }).orElseThrow(() -> new TrainerNotFoundException("Trainer not found"));
+    }
+
+    @Override
+    public void deleteTrainer(String username) {
+        if (userService.existsByUsername(username)) {
+            trainerRepository.deleteTrainerByUsername(username);
+        }
+        throw new TrainerNotFoundException("Trainer not found");
+    }
+
+    @Override
+    public TrainerResponseDTO getTrainerByUsername(String username) {
+        return trainerRepository.findByUsername(username)
+                .map(trainerMapper::toTrainerResponseDTO)
+                .orElseThrow(() -> new TrainerNotFoundException("Trainer not found"));
+    }
+
+    @Override
+    public List<TrainingResponseDTO> getTrainerTrainings(String username, String periodFrom, String periodTo, String traineeName) {
+        List<Training> training = trainerRepository.getTrainerTrainings(username, periodFrom, periodTo, traineeName).orElseThrow(() -> new TrainerNotFoundException("Trainer not found"));
+        return training.stream().map(trainingMapper::toTrainingResponseDTO).toList();
+    }
+
+    @Override
+    public void updateTrainerStatus(String username, Boolean isActive) {
+        Optional<Trainer> trainer = trainerRepository.findByUsername(username);
+        trainer.ifPresentOrElse(t->t.getUser().setIsActive(isActive), () -> {
+            throw new TrainerNotFoundException("Trainer not found");
+        });
+    }
+}

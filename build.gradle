@@ -11,58 +11,73 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+ext {
+    springVersion = "6.2.2"
+    aspectjVersion = "1.9.19"
+    validationApiVersion = "3.0.2"
+    hibernateValidatorVersion = "8.0.1.Final"
+    jakartaElVersion = "4.0.2"
+    openApiVersion = "2.3.0"
+    tomcatVersion = "11.0.5"
+    servletApiVersion = "6.0.0"
+    junitJupiterVersion = "5.11.4"
+    junitPlatformVersion = "1.10.0"
+    assertjVersion = "3.26.3"
+    mockitoVersion = "5.14.2"
+    mockitoJunitVersion = "5.11.0"
+    junitVersion = "3.8.1"
+    lombokVersion = "1.18.36"
+    mapstructVersion = "1.6.0.Beta1"
+    mapstructBindingVersion = "0.2.0"
+    h2Version = "2.2.224"
+    hibernateCoreVersion = "6.6.4.Final"
+    log4jVersion = "2.23.1"
+    instancioVersion = "5.0.2"
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation group: 'org.springframework', name: 'spring-context', version: '6.2.2'
-    testImplementation group: 'org.springframework', name: 'spring-test', version: '6.2.2'
-    implementation group: 'org.springframework', name: 'spring-web', version: '6.2.2'
-    implementation group: 'org.springframework', name: 'spring-core', version: '6.2.2'
-    implementation group: 'org.springframework', name: 'spring-webmvc', version: '6.2.2'
-
-    implementation("org.springframework:spring-context:6.2.2")
-    implementation("org.springframework:spring-aop:6.2.2")
-
-    implementation("org.aspectj:aspectjweaver:1.9.19")
-    implementation("org.aspectj:aspectjrt:1.9.19")
-
-    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
-    implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
-    implementation 'org.glassfish:jakarta.el:4.0.2'
-
-    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.3.0'
-
-    implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '11.0.5'
-    implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper', version: '11.0.5'
-    implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '11.0.5'
-    compileOnly group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.0.0'
-
-
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.11.4'
-    testImplementation group: 'org.junit.platform', name: 'junit-platform-suite', version: '1.10.0'
-    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.26.3'
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.14.2'
-    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '5.11.0'
-    testImplementation group: 'junit', name: 'junit', version: '3.8.1'
-
-    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.36'
-    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.36'
+    // Compile dependencies
+    implementation group: 'org.springframework', name: 'spring-context', version: springVersion
+    implementation group: 'org.springframework', name: 'spring-web', version: springVersion
+    implementation group: 'org.springframework', name: 'spring-core', version: springVersion
+    implementation group: 'org.springframework', name: 'spring-webmvc', version: springVersion
+    implementation group: 'org.springframework', name: 'spring-aop', version: springVersion
+    implementation group: 'org.aspectj', name: 'aspectjweaver', version: aspectjVersion
+    implementation group: 'org.aspectj', name: 'aspectjrt', version: aspectjVersion
+    implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: validationApiVersion
+    implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: hibernateValidatorVersion
+    implementation group: 'org.glassfish', name: 'jakarta.el', version: jakartaElVersion
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: openApiVersion
+    implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: tomcatVersion
+    implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper', version: tomcatVersion
+    implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: tomcatVersion
+    implementation group: 'org.mapstruct', name: 'mapstruct', version: mapstructVersion
+    implementation group: 'com.h2database', name: 'h2', version: h2Version
+    implementation group: 'org.hibernate.orm', name: 'hibernate-core', version: hibernateCoreVersion
+    implementation group: 'org.springframework', name: 'spring-orm', version: springVersion
     implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '2.1.1'
 
-    implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.6.0.Beta1'
-    annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.6.0.Beta1'
-    annotationProcessor group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: '0.2.0'
+    // Compile-only dependencies
+    compileOnly group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: servletApiVersion
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+    annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: mapstructVersion
+    annotationProcessor group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: mapstructBindingVersion
 
-    implementation group: 'com.h2database', name: 'h2', version: '2.2.224'
-    implementation group: 'org.hibernate.orm', name: 'hibernate-core', version: '6.6.4.Final'
-    implementation group: 'org.springframework', name: 'spring-orm', version: '6.2.2'
-
-    testImplementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.23.1'
-
-
-    testImplementation group: 'org.instancio', name: 'instancio-junit', version: '5.0.2'
+    // Test dependencies
+    testImplementation group: 'org.springframework', name: 'spring-test', version: springVersion
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: junitJupiterVersion
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-suite', version: junitPlatformVersion
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: assertjVersion
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: mockitoVersion
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoJunitVersion
+    testImplementation group: 'junit', name: 'junit', version: junitVersion
+    testImplementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: log4jVersion
+    testImplementation group: 'org.instancio', name: 'instancio-junit', version: instancioVersion
 }
 
 tasks.named('test') {
