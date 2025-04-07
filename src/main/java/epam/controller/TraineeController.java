@@ -27,6 +27,7 @@ public class TraineeController {
 
     private final Authentication authentication;
 
+
     @Operation(summary = "Get trainee details by username")
     @ApiResponse(responseCode = "200", description = "Trainee details retrieved successfully",
             content = @Content(schema = @Schema(implementation = TraineeResponseDTO.class)))
@@ -35,7 +36,7 @@ public class TraineeController {
     public ResponseEntity<TraineeResponseDTO> getTraineeByUsername(
             @PathVariable("username") @NotBlank(message = "Username is required") String username,
             @RequestHeader("password") String password
-            ) {
+    ) {
         authentication.checkAuthentication(username, password);
         return ResponseEntity.ok(traineeService.getTraineeByUsername(username));
     }
@@ -51,15 +52,17 @@ public class TraineeController {
             @RequestParam(value = "periodTo", required = false) String periodTo,
             @RequestParam(value = "trainerName", required = false) String trainerName,
             @RequestParam(value = "trainingType", required = false) String trainingType,
-            @RequestHeader("password") String password) {
+            @RequestHeader("password") String password
+    ) {
         authentication.checkAuthentication(username, password);
+
         return ResponseEntity.ok(traineeService.getTraineeTrainings(username, periodFrom, periodTo, trainerName, trainingType));
     }
 
     @Operation(summary = "Update trainee details")
-            @ApiResponse(responseCode = "200", description = "Trainee updated successfully",
-                    content = @Content(schema = @Schema(implementation = TraineeResponseDTO.class)))
-            @ApiResponse(responseCode = "404", description = "Trainee not found", content = @Content)
+    @ApiResponse(responseCode = "200", description = "Trainee updated successfully",
+            content = @Content(schema = @Schema(implementation = TraineeResponseDTO.class)))
+    @ApiResponse(responseCode = "404", description = "Trainee not found", content = @Content)
     @PutMapping(value = "/update/{username}", produces = "application/json")
     public ResponseEntity<TraineeResponseDTO> update(
             @PathVariable(value = "username") @NotBlank(message = "Username is required") String username,
@@ -68,34 +71,40 @@ public class TraineeController {
             @RequestParam(value = "dateOfBirth", required = false) String dateOfBirth,
             @RequestParam(value = "address", required = false) String address,
             @RequestParam(value = "isActive", required = false) Boolean isActive,
-            @RequestHeader("password") String password) {
+            @RequestHeader("password") String password
+    ) {
         authentication.checkAuthentication(username, password);
+
         return ResponseEntity.ok(traineeService.updateTrainee(username, firstname, lastname, dateOfBirth, address, isActive));
     }
 
     @Operation(summary = "Delete a trainee by username")
-            @ApiResponse(responseCode = "200", description = "Trainee deleted successfully")
-            @ApiResponse(responseCode = "404", description = "Trainee not found", content = @Content)
+    @ApiResponse(responseCode = "200", description = "Trainee deleted successfully")
+    @ApiResponse(responseCode = "404", description = "Trainee not found", content = @Content)
     @DeleteMapping(value = "/delete/{username}", produces = "application/json")
     public ResponseEntity<Void> delete(
             @PathVariable("username") @NotBlank(message = "Username is required") String username,
-            @RequestHeader("password") String password) {
+            @RequestHeader("password") String password
+    ) {
         authentication.checkAuthentication(username, password);
         traineeService.deleteTrainee(username);
+
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Update active status of a trainee")
-            @ApiResponse(responseCode = "200", description = "Status updated successfully")
-            @ApiResponse(responseCode = "400", description = "Invalid status update request", content = @Content)
-            @ApiResponse(responseCode = "404", description = "Trainee not found", content = @Content)
+    @ApiResponse(responseCode = "200", description = "Status updated successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid status update request", content = @Content)
+    @ApiResponse(responseCode = "404", description = "Trainee not found", content = @Content)
     @PatchMapping(value = "/status/{username}")
     public ResponseEntity<Void> updateTraineeStatus(
             @PathVariable(value = "username") @NotBlank(message = "Username is required") String username,
             @RequestParam(value = "isActive") @NotNull(message = "isActive status must be provided") Boolean isActive,
-            @RequestHeader("password") String password) {
+            @RequestHeader("password") String password
+    ) {
         authentication.checkAuthentication(username, password);
         traineeService.updateTraineeStatus(username, isActive);
+
         return ResponseEntity.ok().build();
     }
 }

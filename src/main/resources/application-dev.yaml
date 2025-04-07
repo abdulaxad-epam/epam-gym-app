@@ -23,8 +23,3 @@ spring:
     jpa:
       repositories:
         enabled: true
-management:
-  endpoints:
-    web:
-      exposure:
-        include: -prometheus
