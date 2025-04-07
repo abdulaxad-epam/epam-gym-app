@@ -75,7 +75,7 @@ public class TrainerTraineeServiceImpl implements TraineeTrainerService {
     @Transactional(readOnly = true)
     @Override
     public List<TrainerResponseDTO> getAllNotAssignedTrainers(String username) {
-        if (traineeRepository.existsTraineeByUser_Username(username)){
+        if (!traineeRepository.existsTraineeByUser_Username(username)){
             throw new TraineeNotFoundException("Trainee not found");
         }
         return trainerTraineeRepository.findByUsernameNotAssignedToTrainee(username)

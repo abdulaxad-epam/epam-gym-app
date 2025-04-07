@@ -50,7 +50,7 @@ public class LoggingAspect {
                 result);
     }
 
-    @AfterThrowing(value = "execution(* epam.*.*.*.*(..))", throwing = "exception")
+    @AfterThrowing(value = "execution(* epam.*.*.*(..))", throwing = "exception")
     public void logExceptions(JoinPoint joinPoint, Throwable exception) {
         logger.error("Exception in Method: {0}.{1}(), Message: {2}",
                 joinPoint.getSignature().getDeclaringTypeName(),

@@ -19,5 +19,5 @@ public interface AuthenticationService {
 
     Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO, HttpServletResponse response);
 
-    boolean validateToken(String authCookie);
+    boolean validateToken(String username, String password);
 }

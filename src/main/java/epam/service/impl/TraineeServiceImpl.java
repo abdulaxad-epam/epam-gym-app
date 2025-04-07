@@ -73,7 +73,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public void deleteTrainee(String username) {
-        if (traineeRepository.existsTraineeByUser_Username(username)) {
+        if (!traineeRepository.existsTraineeByUser_Username(username)) {
             throw new TraineeNotFoundException(String.format("Trainee not found with username: %s", username));
         }
         trainingService.deleteTraining(username);

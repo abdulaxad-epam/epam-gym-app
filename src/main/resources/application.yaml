@@ -3,35 +3,3 @@ spring:
     name: epam-gym-application-boot
   profiles:
     active: dev
-  h2:
-    console:
-      path: /h2-console
-      settings:
-        web-allow-others: true
-  datasource:
-    url: jdbc:h2:mem:gym;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-    username: abdulaxad
-    password: root
-
-  jpa:
-    hibernate:
-      ddl-auto: create-drop  # Similar to hibernate.hbm2ddl.auto
-      show-sql: true
-      format-sql: true
-      use_sql_comments: true
-    # To specify the dialect, similar to "hibernate.dialect"
-    database-platform: org.hibernate.dialect.H2Dialect
-    properties:
-      jakarta.persistence.sql-load-script-source: classpath:database_initializer/data.sql
-
-  logging:
-    level:
-      org.hibernate.SQL: DEBUG
-      org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-
-  data:
-    jpa:
-      repositories:
-        enabled: true
-

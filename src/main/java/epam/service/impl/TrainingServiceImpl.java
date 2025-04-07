@@ -5,6 +5,7 @@ import epam.dto.response_dto.TrainingResponseDTO;
 import epam.entity.Training;
 import epam.exception.exception.TraineeNotFoundException;
 import epam.exception.exception.TrainerNotFoundException;
+import epam.exception.exception.TrainingNotFoundException;
 import epam.mapper.TrainingMapper;
 import epam.repository.TraineeRepository;
 import epam.repository.TrainerRepository;
@@ -55,7 +56,9 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public void deleteTraining(String username) {
-        trainingRepository.getIdByUsername(username).ifPresent(trainingRepository::removeTrainingByTrainingId);
+        trainingRepository.getIdByUsername(username).ifPresentOrElse(trainingRepository::deleteTrainingByTrainingId, () -> {
+            throw new TrainingNotFoundException("Training with username " + username + " not found");
+        });
     }
 
 }

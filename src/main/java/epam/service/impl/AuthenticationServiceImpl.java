@@ -80,12 +80,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public boolean validateToken(String authCookie) {
-        String[] split = authCookie.split(":");
-        if (split.length == 3) {
-            return userService.existsByUsernameAndPassword(split[0], split[2]);
-        }
-        return false;
+    public boolean validateToken(String username, String password) {
+        return userService.existsByUsernameAndPassword(username, password);
     }
 
     private void addCookie(HttpServletResponse response, String... credentials) {

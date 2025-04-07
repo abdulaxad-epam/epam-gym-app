@@ -1,0 +1,64 @@
+package epam.exception;
+
+import epam.exception.exception_handler.ExceptionMassage;
+import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class ExceptionMessageTest {
+
+    @Test
+    void testNoArgsConstructorAndSetters() {
+        ExceptionMassage exceptionMassage = new ExceptionMassage();
+        exceptionMassage.setStatus(404);
+        exceptionMassage.setError("Not Found");
+        exceptionMassage.setMessage("The requested resource was not found");
+
+        assertEquals(404, exceptionMassage.getStatus());
+        assertEquals("Not Found", exceptionMassage.getError());
+        assertEquals("The requested resource was not found", exceptionMassage.getMessage());
+        assertNotNull(exceptionMassage.getTimestamp()); // Should be auto-set
+    }
+
+    @Test
+    void testAllArgsConstructor() {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        ExceptionMassage exceptionMassage = new ExceptionMassage(timestamp, 500, "Internal Server Error", "Something went wrong");
+
+        assertEquals(500, exceptionMassage.getStatus());
+        assertEquals("Internal Server Error", exceptionMassage.getError());
+        assertEquals("Something went wrong", exceptionMassage.getMessage());
+        assertEquals(timestamp, exceptionMassage.getTimestamp());
+    }
+
+    @Test
+    void testBuilder() {
+        ExceptionMassage exceptionMassage = ExceptionMassage.builder()
+                .status(400)
+                .error("Bad Request")
+                .message("Invalid input")
+                .build();
+
+        assertEquals(400, exceptionMassage.getStatus());
+        assertEquals("Bad Request", exceptionMassage.getError());
+        assertEquals("Invalid input", exceptionMassage.getMessage());
+        assertNotNull(exceptionMassage.getTimestamp());
+    }
+
+    @Test
+    void testToString() {
+        ExceptionMassage exceptionMassage = new ExceptionMassage();
+        exceptionMassage.setStatus(403);
+        exceptionMassage.setError("Forbidden");
+        exceptionMassage.setMessage("You don't have permission to access this resource");
+
+        String expected = "ExceptionMassage(timestamp=" + exceptionMassage.getTimestamp() +
+                ", status=403, error=Forbidden, message=You don't have permission to access this resource)";
+
+        assertEquals(expected, exceptionMassage.toString());
+    }
+}

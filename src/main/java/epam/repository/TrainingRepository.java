@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface TrainingRepository extends JpaRepository<Training, UUID> {
 
-    void removeTrainingByTrainingId(UUID trainingId);
+    void deleteTrainingByTrainingId(UUID trainingId);
 
     @Query("""
             SELECT CASE WHEN EXISTS ( FROM Training t WHERE t.trainee.user.username = :username)
