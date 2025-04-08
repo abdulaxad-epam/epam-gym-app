@@ -20,6 +20,7 @@ ext {
     lombokVersion = "1.18.36"
     instancioVersion = "5.0.2"
     suitVersion = "1.10.0"
+    loggerVersion = "2.0.16"
 }
 
 repositories {
@@ -27,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    // Spring Boot Starters
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -35,37 +36,37 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
-    // AspectJ
+
     implementation 'org.aspectj:aspectjweaver:1.9.19'
 
-    testImplementation "org.junit.platform:junit-platform-suite-api:${suitVersion}"
-    testImplementation group: 'org.instancio', name: 'instancio-junit', version: instancioVersion
 
-
-    // Database
     implementation 'com.h2database:h2'
     implementation 'org.postgresql:postgresql'
 
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.16'
 
-    // OpenAPI Documentation
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: loggerVersion
+
+
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}"
 
-    // Lombok
+
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+
+
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
+
+
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
     annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${mapstructBindingVersion}"
 
-    // MapStruct
-    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
-    testImplementation 'junit:junit'
 
-    // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation "org.junit.platform:junit-platform-suite-api:${suitVersion}"
+    testImplementation 'junit:junit'
     testImplementation 'org.mockito:mockito-core'
-    testImplementation 'org.instancio:instancio-junit'
+    testImplementation group: 'org.instancio', name: 'instancio-junit', version: instancioVersion
 }
 
 tasks.named('test') {
