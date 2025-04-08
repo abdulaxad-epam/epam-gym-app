@@ -51,16 +51,6 @@ git clone --branch epam-gym-app-boot https://github.com/abdulaxad-epam/epam-gym-
 cd epam-gym-app
 ```
 
-2. Build the application:
-```bash
-mvn clean install
-```
-
-3. Run the application:
-```bash
-java -jar target/epam-gym-app.jar
-```
-
 ## Usage Examples
 
 ### Register a Trainer
