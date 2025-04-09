@@ -1,9 +1,11 @@
 package epam.controller;
 
+import epam.dto.request_dto.UpdateTraineeRequestDTO;
 import epam.service.impl.Authentication;
 import epam.dto.response_dto.TraineeResponseDTO;
 import epam.dto.response_dto.TrainingResponseDTO;
 import epam.service.TraineeService;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,6 +19,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -74,24 +77,21 @@ public class TraineeControllerTest {
     @Test
     void testUpdate() {
         // Arrange
+        UpdateTraineeRequestDTO requestDTO = Instancio.of(UpdateTraineeRequestDTO.class).create();
         String username = "testUser";
-        String password = "password";
-        String firstname = "John";
-        String lastname = "Doe";
-        String dateOfBirth = "1990-01-01";
-        String address = "123 Main St";
-        Boolean isActive = true;
+        String password = "testPassword";
 
-        TraineeResponseDTO mockResponse = new TraineeResponseDTO();
-        when(traineeService.updateTrainee(username, firstname, lastname, dateOfBirth, address, isActive)).thenReturn(mockResponse);
+
+        TraineeResponseDTO mockResponse = mock(TraineeResponseDTO.class);
+        when(traineeService.updateTrainee(username,requestDTO)).thenReturn(mockResponse);
 
         // Act
-        ResponseEntity<TraineeResponseDTO> response = traineeController.update(username, firstname, lastname, dateOfBirth, address, isActive, password);
+        ResponseEntity<TraineeResponseDTO> response = traineeController.update(username, requestDTO, password);
 
         // Assert
         assertNotNull(response);
         assertEquals(mockResponse, response.getBody());
-        verify(traineeService, times(1)).updateTrainee(username, firstname, lastname, dateOfBirth, address, isActive);
+        verify(traineeService, times(1)).updateTrainee(username, requestDTO);
     }
 
     @Test

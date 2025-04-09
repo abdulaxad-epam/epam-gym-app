@@ -15,24 +15,18 @@ public interface TrainerMapper {
     TrainerMapper INSTANCE = Mappers.getMapper(TrainerMapper.class);
 
     @Named("toTrainerResponseDTO")
-
-            @Mapping(source = "specialization.description", target = "trainerSpecialization")
-            @Mapping(source = "user", target = "user", qualifiedByName = "toUserResponseDTO")
-
+    @Mapping(source = "specialization.description", target = "trainerSpecialization")
+    @Mapping(source = "user", target = "user", qualifiedByName = "toUserResponseDTO")
     TrainerResponseDTO toTrainerResponseDTO(Trainer trainer);
 
     @Named("toTrainer")
-
-            @Mapping(source = "trainingType", target = "specialization")
-            @Mapping(source = "trainerRequestDTO.user", target = "user", qualifiedByName = "toUser")
-
+    @Mapping(source = "trainingType", target = "specialization")
+    @Mapping(source = "trainerRequestDTO.user", target = "user", qualifiedByName = "toUser")
     Trainer toTrainer(TrainerRequestDTO trainerRequestDTO, TrainingType trainingType);
 
     @Named("toRegisterTrainerResponseDTO")
-
-            @Mapping(source = "specialization.description", target = "trainerSpecialization")
-            @Mapping(source = "user", target = "user", qualifiedByName = "toUserResponseDTO")
-            @Mapping(source = "user.password", target = "password")
-
+    @Mapping(source = "specialization.description", target = "trainerSpecialization")
+    @Mapping(source = "user", target = "user", qualifiedByName = "toUserResponseDTO")
+    @Mapping(source = "user.password", target = "password")
     RegisterTrainerResponseDTO toRegisterTrainerResponseDTO(Trainer insert);
 }

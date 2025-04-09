@@ -1,6 +1,7 @@
 package epam.service;
 
 import epam.dto.request_dto.TraineeRequestDTO;
+import epam.dto.request_dto.UpdateTraineeRequestDTO;
 import epam.dto.response_dto.RegisterTraineeResponseDTO;
 import epam.dto.response_dto.TraineeResponseDTO;
 import epam.dto.response_dto.TrainingResponseDTO;
@@ -19,5 +20,5 @@ public interface TraineeService {
 
     void updateTraineeStatus(String username, Boolean isActive);
 
-    TraineeResponseDTO updateTrainee(String username, String firstname, String lastname, String dateOfBirth, String address, Boolean isActive);
+    TraineeResponseDTO updateTrainee(String username, UpdateTraineeRequestDTO updateTrainee);
 }

@@ -21,6 +21,7 @@ ext {
     instancioVersion = "5.0.2"
     suitVersion = "1.10.0"
     loggerVersion = "2.0.16"
+    mockitoVersion = "5.2.0"
 }
 
 repositories {
@@ -28,47 +29,65 @@ repositories {
 }
 
 dependencies {
+    // Spring Boot
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
+    runtimeOnly group: 'io.micrometer', name: 'micrometer-registry-prometheus'
 
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-aop'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+    // AspectJ
+    implementation group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.19'
 
+    // Databases
+    implementation group: 'com.h2database', name: 'h2'
+    implementation group: 'org.postgresql', name: 'postgresql'
 
-    implementation 'org.aspectj:aspectjweaver:1.9.19'
-
-
-    implementation 'com.h2database:h2'
-    implementation 'org.postgresql:postgresql'
-
-
+    // Logging
     implementation group: 'org.slf4j', name: 'slf4j-api', version: loggerVersion
 
+    // OpenAPI
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: openApiVersion
 
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}"
+    // MapStruct
+    implementation group: 'org.mapstruct', name: 'mapstruct', version: mapstructVersion
+    annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: mapstructVersion
 
+    // Lombok
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+    annotationProcessor group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: mapstructBindingVersion
 
-    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    // Tests
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter'
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-suite-api', version: suitVersion
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-launcher', version: suitVersion
+    testImplementation group: 'junit', name: 'junit'
 
+    // Mockito
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: mockitoVersion
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: mockitoVersion
 
-    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    // ByteBuddy
+    testImplementation group: 'net.bytebuddy', name: 'byte-buddy', version: '1.14.5'
+    testImplementation group: 'net.bytebuddy', name: 'byte-buddy-agent', version: '1.14.5'
 
-
-    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
-    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${mapstructBindingVersion}"
-
-
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation "org.junit.platform:junit-platform-suite-api:${suitVersion}"
-    testImplementation 'junit:junit'
-    testImplementation 'org.mockito:mockito-core'
+    // Instancio
     testImplementation group: 'org.instancio', name: 'instancio-junit', version: instancioVersion
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
+
+    // Fix test order issues
+    systemProperty 'junit.jupiter.testmethod.order.default', 'org.junit.jupiter.api.MethodOrderer$OrderAnnotation'
+
+    // More verbose test output
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
 }

@@ -1,6 +1,5 @@
 package epam.exception;
 
-import epam.exception.exception.DateConversionException;
 import epam.exception.exception.TraineeHasAssignedBeforeException;
 import epam.exception.exception.TraineeHasNotAssignedBeforeException;
 import epam.exception.exception.TraineeNotFoundException;
@@ -83,16 +82,6 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("User not found", response.getBody().getMessage());
-    }
-
-    @Test
-    void testHandleDateConversionException() {
-        DateConversionException exception = new DateConversionException("Invalid date format");
-
-        ResponseEntity<ExceptionMassage> response = handler.handleDateConversion(exception);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Invalid date format", response.getBody().getMessage());
     }
 
     @Test

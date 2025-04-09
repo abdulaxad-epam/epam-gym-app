@@ -1,10 +1,15 @@
 package epam.service.impl;
 
 import epam.dto.request_dto.ChangePasswordRequestDTO;
+import epam.entity.User;
+import epam.exception.exception.UserNotFoundException;
 import epam.repository.UserRepository;
 import epam.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,10 +27,17 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByUsername(username.toLowerCase());
     }
 
+    @Transactional
     @Override
     public Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) {
-        return userRepository.existsByUsername(changePasswordRequestDTO.getUsername()) &&
-                userRepository.changePassword(changePasswordRequestDTO.getNewPassword(), changePasswordRequestDTO.getOldPassword(), changePasswordRequestDTO.getUsername());
+
+        userRepository.getByUsernameAndPassword(((changePasswordRequestDTO.getUsername())), changePasswordRequestDTO.getOldPassword())
+                .ifPresentOrElse(
+                        user -> user.setPassword(changePasswordRequestDTO.getNewPassword()),
+                        () -> {
+                            throw new UserNotFoundException("User not found");
+                        });
+        return true;
     }
 
 }

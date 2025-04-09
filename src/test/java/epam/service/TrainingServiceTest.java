@@ -100,10 +100,11 @@ public class TrainingServiceTest {
 
     @Test
     void testDeleteTraining_Success() {
-        lenient().when(trainingRepository.getIdByUsername(anyString())).thenReturn(Optional.of(mock(UUID.class)));
+        UUID trainingId = UUID.randomUUID();
+        lenient().when(trainingRepository.getIdByUsername("testUser")).thenReturn(Optional.of(trainingId));
 
         trainingService.deleteTraining("testUser");
 
-        verify(trainingRepository).deleteTrainingByTrainingId(any());
+        verify(trainingRepository).deleteTrainingByTrainingId(trainingId);
     }
 }

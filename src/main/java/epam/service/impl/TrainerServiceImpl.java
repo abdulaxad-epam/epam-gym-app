@@ -88,6 +88,7 @@ public class TrainerServiceImpl implements TrainerService {
         return training.stream().map(trainingMapper::toTrainingResponseDTO).toList();
     }
 
+    @Transactional
     @Override
     public void updateTrainerStatus(String username, Boolean isActive) {
         Optional<Trainer> trainer = trainerRepository.findTraineeByUser_Username(username);

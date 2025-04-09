@@ -1,18 +1,19 @@
 package epam.service;
 
 import epam.dto.request_dto.TraineeRequestDTO;
+import epam.dto.request_dto.UpdateTraineeRequestDTO;
 import epam.dto.response_dto.RegisterTraineeResponseDTO;
 import epam.dto.response_dto.TraineeResponseDTO;
 import epam.dto.response_dto.TrainingResponseDTO;
 import epam.entity.Trainee;
 import epam.entity.Training;
 import epam.entity.User;
-import epam.exception.exception.DateConversionException;
 import epam.exception.exception.TraineeNotFoundException;
 import epam.mapper.TraineeMapper;
 import epam.mapper.TrainingMapper;
 import epam.repository.TraineeRepository;
 import epam.service.impl.TraineeServiceImpl;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,24 +78,20 @@ public class TraineeServiceTest {
 
     @Test
     void testUpdateTraineeSuccess() {
+        UpdateTraineeRequestDTO updateRequestDTO = Instancio.create(UpdateTraineeRequestDTO.class);
         when(traineeRepository.findTraineeByUser_Username("testUser")).thenReturn(Optional.of(trainee));
         when(traineeMapper.toTraineeResponseDTO(trainee)).thenReturn(new TraineeResponseDTO());
 
-        TraineeResponseDTO result = traineeService.updateTrainee("testUser", "John", "Doe", "2000-01-01", "Address", true);
+        TraineeResponseDTO result = traineeService.updateTrainee("testUser", updateRequestDTO);
         assertNotNull(result);
         verify(traineeRepository, times(1)).findTraineeByUser_Username("testUser");
     }
 
     @Test
     void testUpdateTraineeNotFound() {
+        UpdateTraineeRequestDTO updateRequestDTO = Instancio.create(UpdateTraineeRequestDTO.class);
         when(traineeRepository.findTraineeByUser_Username("testUser")).thenReturn(Optional.empty());
-        assertThrows(TraineeNotFoundException.class, () -> traineeService.updateTrainee("testUser", "John", "Doe", "2000-01-01", "Address", true));
-    }
-
-    @Test
-    void testUpdateTraineeInvalidDate() {
-        when(traineeRepository.findTraineeByUser_Username("testUser")).thenReturn(Optional.of(trainee));
-        assertThrows(DateConversionException.class, () -> traineeService.updateTrainee("testUser", "John", "Doe", "invalid-date", "Address", true));
+        assertThrows(TraineeNotFoundException.class, () -> traineeService.updateTrainee("testUser", updateRequestDTO));
     }
 
     @Test

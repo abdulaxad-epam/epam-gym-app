@@ -1,12 +1,12 @@
 package epam.service.impl;
 
 import epam.dto.request_dto.TraineeRequestDTO;
+import epam.dto.request_dto.UpdateTraineeRequestDTO;
 import epam.dto.response_dto.RegisterTraineeResponseDTO;
 import epam.dto.response_dto.TraineeResponseDTO;
 import epam.dto.response_dto.TrainingResponseDTO;
 import epam.entity.Trainee;
 import epam.entity.Training;
-import epam.exception.exception.DateConversionException;
 import epam.exception.exception.TraineeNotFoundException;
 import epam.mapper.TraineeMapper;
 import epam.mapper.TrainingMapper;
@@ -15,8 +15,8 @@ import epam.service.TraineeService;
 import epam.service.TrainingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,28 +43,23 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public TraineeResponseDTO updateTrainee(String username, String firstname, String lastname, String dateOfBirth, String address, Boolean isActive) {
+    public TraineeResponseDTO updateTrainee(String username, UpdateTraineeRequestDTO requestDTO) {
         Optional<Trainee> trainee = traineeRepository.findTraineeByUser_Username(username);
 
         trainee.ifPresentOrElse(t -> {
-            try {
 
-                t.getUser().setFirstname(firstname);
-                t.getUser().setLastname(lastname);
-                if(dateOfBirth != null && !dateOfBirth.isEmpty()){
-                    t.setDateOfBirth(LocalDate.parse(dateOfBirth));
-                }
-                if(address != null && !address.isEmpty()){
-                t.setAddress(address);
-                }
-                if (isActive != null) {
-                t.getUser().setIsActive(isActive);
-                }
 
-            } catch (Exception exception) {
-                throw new DateConversionException("Cannot convert dateOfBirth to date");
+            t.getUser().setFirstname(requestDTO.getFirstname());
+            t.getUser().setLastname(requestDTO.getLastname());
+            if (requestDTO.getDateOfBirth() != null) {
+                t.setDateOfBirth(requestDTO.getDateOfBirth());
             }
-
+            if (requestDTO.getAddress() != null) {
+                t.setAddress(requestDTO.getAddress());
+            }
+            if (requestDTO.getIsActive() != null) {
+                t.getUser().setIsActive(requestDTO.getIsActive());
+            }
         }, () -> {
             throw new TraineeNotFoundException(String.format("Trainee not found with username: %s", username));
         });
@@ -87,6 +82,7 @@ public class TraineeServiceImpl implements TraineeService {
                 .orElseThrow(() -> new TraineeNotFoundException("Trainee not found")));
     }
 
+    @Transactional
     @Override
     public void updateTraineeStatus(String username, Boolean isActive) {
         Optional<Trainee> trainee = traineeRepository.findTraineeByUser_Username(username);

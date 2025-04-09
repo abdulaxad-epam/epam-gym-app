@@ -11,6 +11,4 @@ public interface TraineeTrainerService {
     List<TrainerResponseDTO> getAllNotAssignedTrainers(String username);
 
     void assignTrainerToTrainee(String traineeUsername, String trainerUsername);
-
-    Boolean removeTrainerFromTrainee(String currentUsername, String trainerUsername);
 }

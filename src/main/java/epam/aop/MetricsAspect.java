@@ -10,16 +10,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class MetricsAspect {
 
-    private final Counter customEventCounter;
+    private final Counter eventCounter;
 
     public MetricsAspect(MeterRegistry meterRegistry) {
-        this.customEventCounter = Counter.builder("custom_event_counter")
+        this.eventCounter = Counter.builder("event_counter")
                 .description("A counter for tracking custom events")
                 .register(meterRegistry);
     }
 
     @Before("execution(* epam.controller.*.*(..))")
     public void trackCustomEvent() {
-        customEventCounter.increment();
+        eventCounter.increment();
     }
 }

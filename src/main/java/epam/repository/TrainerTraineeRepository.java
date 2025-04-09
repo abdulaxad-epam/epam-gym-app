@@ -13,13 +13,12 @@ public interface TrainerTraineeRepository extends JpaRepository<TrainerTrainee, 
 
     @Query(value = """
             SELECT t FROM Trainer t
-              WHERE t.user.username NOT IN(
+              WHERE t.user.username NOT IN (
               SELECT tt.trainer.user.username FROM TrainerTrainee tt
-              WHERE tt.trainee.user.username = :username
-            """, nativeQuery = true)
+              WHERE tt.trainee.user.username = :username )
+            """)
     List<Trainer> findByUsernameNotAssignedToTrainee(String username);
 
-    void removeTraineeTrainerByTraineeAndTrainer(Trainee trainee, Trainer trainer);
 
     boolean existsById_TrainerIdAndId_TraineeId(UUID trainer, UUID trainee);
 

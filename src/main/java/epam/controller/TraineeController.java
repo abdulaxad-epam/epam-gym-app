@@ -1,19 +1,31 @@
 package epam.controller;
 
-import epam.service.impl.Authentication;
+import epam.dto.request_dto.UpdateTraineeRequestDTO;
 import epam.dto.response_dto.TraineeResponseDTO;
 import epam.dto.response_dto.TrainingResponseDTO;
 import epam.service.TraineeService;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import epam.service.impl.Authentication;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -65,18 +77,14 @@ public class TraineeController {
     @ApiResponse(responseCode = "404", description = "Trainee not found", content = @Content)
     @PutMapping(value = "/update/{username}", produces = "application/json")
     public ResponseEntity<TraineeResponseDTO> update(
-            @PathVariable(value = "username") @NotBlank(message = "Username is required") String username,
-            @RequestParam(value = "firstname") @NotBlank(message = "Firstname is required") String firstname,
-            @RequestParam(value = "lastname") @NotBlank(message = "Lastname is required") String lastname,
-            @RequestParam(value = "dateOfBirth", required = false) String dateOfBirth,
-            @RequestParam(value = "address", required = false) String address,
-            @RequestParam(value = "isActive", required = false) Boolean isActive,
+            @PathVariable("username") @NotBlank String username,
+            @RequestBody @Valid UpdateTraineeRequestDTO requestDTO,
             @RequestHeader("password") String password
     ) {
         authentication.checkAuthentication(username, password);
-
-        return ResponseEntity.ok(traineeService.updateTrainee(username, firstname, lastname, dateOfBirth, address, isActive));
+        return ResponseEntity.ok(traineeService.updateTrainee(username, requestDTO));
     }
+
 
     @Operation(summary = "Delete a trainee by username")
     @ApiResponse(responseCode = "200", description = "Trainee deleted successfully")

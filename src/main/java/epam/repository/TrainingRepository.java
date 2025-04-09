@@ -13,7 +13,7 @@ public interface TrainingRepository extends JpaRepository<Training, UUID> {
 
     @Query("""
             SELECT CASE WHEN EXISTS ( FROM Training t WHERE t.trainee.user.username = :username)
-               THEN (SELECT trainingId FROM Training t WHERE t.trainee.user.username = :username)
+               THEN (SELECT t.trainingId FROM Training t WHERE t.trainee.user.username = :username)
                ELSE NULL END
             """)
     Optional<UUID> getIdByUsername(String username);

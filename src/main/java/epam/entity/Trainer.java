@@ -35,6 +35,7 @@ public class Trainer {
 
     private TrainingType specialization;
 
+
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;

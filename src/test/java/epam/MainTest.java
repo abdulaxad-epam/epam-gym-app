@@ -1,15 +1,13 @@
 package epam;
 
-import junit.framework.TestCase;
 import org.junit.platform.suite.api.SelectPackages;
 import org.junit.platform.suite.api.Suite;
-import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.junit.Assert.assertTrue;
 
 @Suite
 @SelectPackages("epam")
-@SpringBootTest(classes = Main.class)
-public class MainTest
-        extends TestCase {
+public class MainTest {
     public void testApp() {
         assertTrue(true);
     }

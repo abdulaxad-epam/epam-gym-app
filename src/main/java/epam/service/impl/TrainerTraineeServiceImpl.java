@@ -82,19 +82,6 @@ public class TrainerTraineeServiceImpl implements TraineeTrainerService {
                 .stream().map(trainerMapper::toTrainerResponseDTO).toList();
     }
 
-    @Override
-    public Boolean removeTrainerFromTrainee(String currentUsername, String trainerUsername) {
-
-        TrainerTraineeRecord result = getTrainerTraineeRecord(currentUsername, trainerUsername);
-
-        if (trainerTraineeRepository.existsById_TrainerIdAndId_TraineeId(result.trainer().getTrainerId(), result.trainee.getTraineeId())) {
-            trainerTraineeRepository.removeTraineeTrainerByTraineeAndTrainer(result.trainee, result.trainer);
-            return true;
-        }
-        throw new TraineeHasNotAssignedBeforeException("Trainee not assigned before");
-    }
-
-
 
     private TrainerTraineeRecord getTrainerTraineeRecord(String currentUsername, String trainerUsername) {
         Trainee trainee = traineeRepository.findTraineeByUser_Username(currentUsername)

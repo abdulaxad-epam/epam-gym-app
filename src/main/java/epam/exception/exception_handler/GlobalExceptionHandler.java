@@ -1,6 +1,5 @@
 package epam.exception.exception_handler;
 
-import epam.exception.exception.DateConversionException;
 import epam.exception.exception.EntityManagerInsertException;
 import epam.exception.exception.TraineeHasAssignedBeforeException;
 import epam.exception.exception.TraineeHasNotAssignedBeforeException;
@@ -88,17 +87,6 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(ExceptionMassage.builder()
                         .status(HttpStatus.NOT_FOUND.value())
-                        .error(e.getMessage())
-                        .message(e.getMessage())
-                        .build());
-    }
-
-    @ExceptionHandler(DateConversionException.class)
-    public ResponseEntity<ExceptionMassage> handleDateConversion(DateConversionException e) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ExceptionMassage.builder()
-                        .status(HttpStatus.BAD_REQUEST.value())
                         .error(e.getMessage())
                         .message(e.getMessage())
                         .build());

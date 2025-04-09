@@ -1,6 +1,8 @@
 package epam.service;
 
 import epam.dto.request_dto.ChangePasswordRequestDTO;
+import epam.entity.User;
+import epam.exception.exception.UserNotFoundException;
 import epam.repository.UserRepository;
 import epam.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +12,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.lenient;
@@ -50,21 +55,27 @@ public class UserServiceTest {
     @Test
     void testChangePassword_Success() {
         ChangePasswordRequestDTO requestDTO = new ChangePasswordRequestDTO("testUser", "oldPassword", "newPassword");
-        when(userRepository.existsByUsername("testUser")).thenReturn(true);
-        when(userRepository.changePassword(requestDTO.getNewPassword(), requestDTO.getOldPassword(), requestDTO.getUsername())).thenReturn(true);
+        User mockUser = new User();
+        mockUser.setUsername("testUser");
+        mockUser.setPassword("oldPassword");
+
+        when(userRepository.getByUsernameAndPassword("testUser", "oldPassword"))
+                .thenReturn(Optional.of(mockUser));
 
         assertTrue(userService.changePassword(requestDTO));
-        verify(userRepository, times(1)).existsByUsername("testUser");
-        verify(userRepository, times(1)).changePassword(requestDTO.getNewPassword(), requestDTO.getOldPassword(), requestDTO.getUsername());
+        verify(userRepository, times(1)).getByUsernameAndPassword("testUser", "oldPassword");
+        // Optional: assert the password was actually changed
+        // assertEquals("newPassword", mockUser.getPassword());
     }
 
     @Test
     void testChangePassword_Failure() {
         ChangePasswordRequestDTO requestDTO = new ChangePasswordRequestDTO("testUser", "oldPassword", "newPassword");
-        when(userRepository.existsByUsername("testUser")).thenReturn(false);
 
-        assertFalse(userService.changePassword(requestDTO));
-        verify(userRepository, times(1)).existsByUsername("testUser");
-        verify(userRepository, times(0)).changePassword(requestDTO.getNewPassword(), requestDTO.getOldPassword(), requestDTO.getUsername());
+        when(userRepository.getByUsernameAndPassword("testUser", "oldPassword"))
+                .thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userService.changePassword(requestDTO));
+        verify(userRepository, times(1)).getByUsernameAndPassword("testUser", "oldPassword");
     }
 }
