@@ -50,6 +50,16 @@ http://localhost:8080/swagger-ui/index.html
 git clone --branch epam-gym-app-boot https://github.com/abdulaxad-epam/epam-gym-app.git 
 cd epam-gym-app
 ```
+2. Build the application:
+
+```bash
+./gradlew clean build
+```
+
+3. Run the application:
+```bash
+java -jar build/libs/epam-gym-application-boot-1.0-0.jar
+```
 
 ## Usage Examples
 

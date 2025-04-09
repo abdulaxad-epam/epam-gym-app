@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'epam'
-version = '1.0-SNAPSHOT'
+version = '1.0-0'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -81,13 +81,4 @@ dependencies {
 
 test {
     useJUnitPlatform()
-
-    // Fix test order issues
-    systemProperty 'junit.jupiter.testmethod.order.default', 'org.junit.jupiter.api.MethodOrderer$OrderAnnotation'
-
-    // More verbose test output
-    testLogging {
-        events "passed", "skipped", "failed"
-        exceptionFormat "full"
-    }
 }

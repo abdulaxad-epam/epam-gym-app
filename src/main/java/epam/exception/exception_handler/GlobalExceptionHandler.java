@@ -1,6 +1,5 @@
 package epam.exception.exception_handler;
 
-import epam.exception.exception.EntityManagerInsertException;
 import epam.exception.exception.TraineeHasAssignedBeforeException;
 import epam.exception.exception.TraineeHasNotAssignedBeforeException;
 import epam.exception.exception.TraineeNotFoundException;
@@ -65,17 +64,6 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.CONFLICT)
                 .body(ExceptionMassage.builder()
                         .status(HttpStatus.CONFLICT.value())
-                        .error(e.getMessage())
-                        .message(e.getMessage())
-                        .build());
-    }
-
-    @ExceptionHandler(EntityManagerInsertException.class)
-    public ResponseEntity<ExceptionMassage> handleEntityManagerInsert(EntityManagerInsertException e) {
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ExceptionMassage.builder()
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                         .error(e.getMessage())
                         .message(e.getMessage())
                         .build());
