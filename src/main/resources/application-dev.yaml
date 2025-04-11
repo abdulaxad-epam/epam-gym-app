@@ -23,3 +23,5 @@ spring:
     jpa:
       repositories:
         enabled: true
+server:
+  port: 8080

@@ -2,7 +2,7 @@ spring:
   application:
     name: epam-gym-application-boot
   profiles:
-    active: dev
+    active: local
 management:
   endpoints:
     web:
