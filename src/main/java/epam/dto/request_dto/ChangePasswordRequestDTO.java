@@ -20,9 +20,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class ChangePasswordRequestDTO implements Serializable {
 
-    @NotBlank(message = "Username is required")
-    private String username;
-
     @NotBlank(message = "Old password is required")
     @Size(min = 10, max = 10, message = "Password length must be exactly 10 characters")
     private String oldPassword;

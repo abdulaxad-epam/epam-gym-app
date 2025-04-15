@@ -20,8 +20,18 @@ spring:
     open-in-view: true
 
   data:
+
     jpa:
       repositories:
         enabled: true
+
+application:
+  security:
+    jwt-token:
+      access-expiration: 3600000
+      refresh-expiration: 15778800000  #  6 months
+      keys:
+        secret-key: "eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0"
+
 server:
-  port: 8080
+ port: 8080

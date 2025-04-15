@@ -2,7 +2,6 @@ package epam.controller;
 
 import epam.dto.response_dto.TrainerResponseDTO;
 import epam.service.TraineeTrainerService;
-import epam.service.impl.Authentication;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,10 +12,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,7 +30,6 @@ public class TraineeTrainerController {
 
     private final TraineeTrainerService traineeTrainerService;
 
-    private final Authentication authentication;
 
     @Operation(summary = "Get trainers not yet assigned to the trainee")
     @ApiResponses(value = {
@@ -40,13 +38,10 @@ public class TraineeTrainerController {
                             schema = @Schema(implementation = TrainerResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "Trainee not found", content = @Content)
     })
-    @GetMapping(value = "/{username}/not-assigned-trainers", produces = "application/json")
-    public ResponseEntity<List<TrainerResponseDTO>> getNotAssignedTrainers(
-            @Parameter(description = "Username of the trainee", required = true)
-            @PathVariable("username") @NotBlank(message = "Username is required") String username,
-            @RequestHeader("password") String password) {
-        authentication.checkAuthentication(username, password);
-        return ResponseEntity.ok(traineeTrainerService.getAllNotAssignedTrainers(username));
+    @GetMapping(value = "/not-assigned-trainers", produces = "application/json")
+    public ResponseEntity<List<TrainerResponseDTO>> getNotAssignedTrainers(Authentication connectedUser) {
+
+        return ResponseEntity.ok(traineeTrainerService.getAllNotAssignedTrainers(connectedUser));
     }
 
     @Operation(summary = "Update the list of trainers assigned to a trainee")
@@ -57,15 +52,12 @@ public class TraineeTrainerController {
             @ApiResponse(responseCode = "400", description = "Invalid trainer list", content = @Content),
             @ApiResponse(responseCode = "404", description = "Trainee not found", content = @Content)
     })
-    @PutMapping(value = "/update/{username}", produces = "application/json")
+    @PutMapping(value = "/update", produces = "application/json")
     public ResponseEntity<List<TrainerResponseDTO>> updateTraineeTrainerList(
-            @Parameter(description = "Username of the trainee", required = true)
-            @PathVariable(value = "username") @NotBlank(message = "Username is required") String username,
-
             @Parameter(description = "List of trainer usernames to assign", required = true)
             @RequestParam(value = "trainers") List<String> trainers,
-            @RequestHeader("password") String password) {
-        authentication.checkAuthentication(username, password);
-        return ResponseEntity.ok(traineeTrainerService.updateTraineeTrainer(username, trainers));
+            Authentication connectedUser) {
+
+        return ResponseEntity.ok(traineeTrainerService.updateTraineeTrainer(connectedUser, trainers));
     }
 }

@@ -115,14 +115,14 @@ public class TraineeServiceTest {
         lenient().when(traineeRepository.findTraineeByUser_Username("testUser".toLowerCase())).thenReturn(Optional.of(trainee));
         when(traineeMapper.toTraineeResponseDTO(trainee)).thenReturn(new TraineeResponseDTO());
 
-        TraineeResponseDTO result = traineeService.getTraineeByUsername("testUser");
+        TraineeResponseDTO result = traineeService.getTraineeProfile("testUser");
         assertNotNull(result);
     }
 
     @Test
     void testGetTraineeByUsernameNotFound() {
         lenient().when(traineeRepository.findTraineeByUser_Username("testUser")).thenReturn(Optional.of(trainee));
-        assertThrows(TraineeNotFoundException.class, () -> traineeService.getTraineeByUsername("testUser"));
+        assertThrows(TraineeNotFoundException.class, () -> traineeService.getTraineeProfile("testUser"));
     }
 
     @Test

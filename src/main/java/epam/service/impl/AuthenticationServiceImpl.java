@@ -6,30 +6,52 @@ import epam.dto.request_dto.RegisterTraineeRequestDTO;
 import epam.dto.request_dto.RegisterTrainerRequestDTO;
 import epam.dto.request_dto.TraineeRequestDTO;
 import epam.dto.request_dto.TrainerRequestDTO;
+import epam.dto.response_dto.AuthenticationResponseDTO;
 import epam.dto.response_dto.RegisterTraineeResponseDTO;
 import epam.dto.response_dto.RegisterTrainerResponseDTO;
+import epam.dto.response_dto.Tokens;
+import epam.dto.response_dto.UserAuthenticationResponseDTO;
+import epam.dto.response_dto.UserResponseDTO;
+import epam.exception.exception.InvalidTokenType;
 import epam.exception.exception.UserNotFoundException;
 import epam.service.AuthenticationService;
+import epam.service.JwtService;
 import epam.service.TraineeService;
 import epam.service.TrainerService;
 import epam.service.UserService;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
+import epam.util.PasswordGenerator;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
+    private final JwtService jwtService;
     private final UserService userService;
     private final TrainerService trainerService;
     private final TraineeService traineeService;
+    private final PasswordEncoder passwordEncoder;
+    private final PasswordGenerator passwordGenerator;
+    private final UserDetailsService userDetailsService;
+    private final BruteForceProtectionService bruteForceProtectionService;
 
     @Override
-    public RegisterTraineeResponseDTO register(RegisterTraineeRequestDTO userRequestDTO, HttpServletResponse response) {
+    public AuthenticationResponseDTO register(RegisterTraineeRequestDTO userRequestDTO) {
+
+        String password = passwordGenerator.generatePassword();
+        String encryptedPassword = passwordEncoder.encode(password);
+
+        userRequestDTO.getUser().setPassword(encryptedPassword);
+        userRequestDTO.getUser().setRole("TRAINEE");
 
         TraineeRequestDTO traineeRequestDTO = TraineeRequestDTO.builder()
                 .dateOfBirth(userRequestDTO.getDateOfBirth())
@@ -39,13 +61,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         RegisterTraineeResponseDTO trainee = traineeService.createTrainee(traineeRequestDTO);
 
-        addCookie(response, trainee.getUser().getUsername(), trainee.getPassword());
-
-        return trainee;
+        return generateToken(trainee.getUser(), password);
     }
 
     @Override
-    public RegisterTrainerResponseDTO register(RegisterTrainerRequestDTO userRequestDTO, HttpServletResponse response) {
+    public AuthenticationResponseDTO register(RegisterTrainerRequestDTO userRequestDTO) {
+
+        String password = passwordGenerator.generatePassword();
+        String encryptedPassword = passwordEncoder.encode(password);
+
+        userRequestDTO.getUser().setPassword(encryptedPassword);
+        userRequestDTO.getUser().setRole("TRAINER");
 
         TrainerRequestDTO trainerRequestDTO = TrainerRequestDTO.builder()
                 .specialization(userRequestDTO.getSpecialization())
@@ -54,45 +80,120 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         RegisterTrainerResponseDTO trainer = trainerService.createTrainer(trainerRequestDTO);
 
-        addCookie(response, trainer.getUser().getUsername(), trainer.getPassword());
-
-        return trainer;
+        return generateToken(trainer.getUser(), password);
     }
 
     @Override
-    public Boolean authenticate(AuthenticateRequestDTO authenticateRequestDTO, HttpServletResponse response) {
-        if (authenticateRequestDTO.getUsername() != null && authenticateRequestDTO.getPassword() != null &&
-                userService.existsByUsernameAndPassword(authenticateRequestDTO.getUsername(), authenticateRequestDTO.getPassword())) {
-            addCookie(response, authenticateRequestDTO.getUsername(), authenticateRequestDTO.getPassword());
+    public AuthenticationResponseDTO authenticate(AuthenticateRequestDTO dto) {
+        String username = dto.getUsername();
+
+        if (bruteForceProtectionService.isBlocked(username)) {
+            throw new LockedException("Too many failed attempts. Try again later.");
+        }
+
+        var userOptional = userService.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            bruteForceProtectionService.loginFailed(username);
+            throw new UserNotFoundException("Invalid username or password");
+        }
+
+        var user = userOptional.get();
+
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            bruteForceProtectionService.loginFailed(username);
+            throw new UserNotFoundException("Invalid username or password");
+        }
+
+        bruteForceProtectionService.loginSucceeded(username);
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        var accessToken = jwtService.generateAccessToken(userDetails);
+        var refreshToken = jwtService.generateRefreshToken(userDetails);
+
+        return AuthenticationResponseDTO.builder()
+                .token
+                        (Tokens.builder()
+                                .refreshToken(refreshToken)
+                                .accessToken(accessToken)
+                                .build())
+                .user(null)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO, Authentication authentication) {
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        var userOptional = userService.findByUsername(userDetails.getUsername());
+
+        if (userOptional.isPresent() && passwordEncoder.matches(changePasswordRequestDTO.getOldPassword(), userOptional.get().getPassword())) {
+
+            userOptional.get().setPassword(passwordEncoder.encode(changePasswordRequestDTO.getNewPassword()));
+
             return true;
         }
-        throw new UserNotFoundException("User not found wrong username/password");
+
+        throw new UserNotFoundException("User not found wrong old password");
     }
 
     @Override
-    public Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO, HttpServletResponse response) {
-        if (changePasswordRequestDTO.getOldPassword() != null && changePasswordRequestDTO.getNewPassword() != null &&
-                userService.changePassword(changePasswordRequestDTO)) {
-            addCookie(response, changePasswordRequestDTO.getUsername(), changePasswordRequestDTO.getNewPassword());
-            return true;
+    public void logout(HttpServletRequest request) {
+        jwtService.blackList(request);
+    }
+
+    @Override
+    public AuthenticationResponseDTO refreshToken(HttpServletRequest request) {
+        final String authHeader = request.getHeader("Authorization");
+        final String refreshToken;
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new InvalidTokenType("Missing or invalid Authorization header");
         }
-        throw new UserNotFoundException("User not found wrong username/password");
+
+        refreshToken = authHeader.substring(7);
+
+        if (!jwtService.isTokenNotExpired(refreshToken)) {
+            throw new InvalidTokenType("Refresh token is expired");
+        }
+
+        String username = jwtService.extractUsername(refreshToken);
+        UserDetails user = userDetailsService.loadUserByUsername(username);
+
+        if (!jwtService.validateRefreshToken(refreshToken, user)) {
+            throw new InvalidTokenType("Refresh token is not valid");
+        }
+
+        String accessToken = jwtService.generateAccessToken(user);
+        return AuthenticationResponseDTO.builder()
+                .token(Tokens.builder()
+                        .accessToken(accessToken)
+                        .refreshToken(refreshToken)
+                        .build()).build();
     }
 
-    @Override
-    public boolean validateToken(String username, String password) {
-        return userService.existsByUsernameAndPassword(username, password);
+    private AuthenticationResponseDTO generateToken(UserResponseDTO userResponseDTO, String password) {
+        var user = userDetailsService.loadUserByUsername(userResponseDTO.getUsername());
+
+        var accessToken = jwtService.generateAccessToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
+
+        var userResponse = UserAuthenticationResponseDTO.builder()
+                .username(userResponseDTO.getUsername())
+                .password(password)
+                .isActive(userResponseDTO.getIsActive())
+                .build();
+
+        return AuthenticationResponseDTO.builder()
+                .token(Tokens.builder()
+                        .refreshToken(refreshToken)
+                        .accessToken(accessToken)
+                        .build())
+                .user(userResponse)
+                .build();
     }
 
-    private void addCookie(HttpServletResponse response, String... credentials) {
-        Cookie cookie = new Cookie("__auth", generateToken(credentials[0], credentials[1]));
-        cookie.setMaxAge(3600);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        response.addCookie(cookie);
-    }
 
-    private String generateToken(String... credentials) {
-        return credentials[0] + ":" + UUID.randomUUID() + ":" + credentials[1];
-    }
 }

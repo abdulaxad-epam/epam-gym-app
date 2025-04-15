@@ -4,7 +4,6 @@ import epam.dto.request_dto.TrainerRequestDTO;
 import epam.dto.response_dto.TrainerResponseDTO;
 import epam.dto.response_dto.TrainingResponseDTO;
 import epam.service.TrainerService;
-import epam.service.impl.Authentication;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,6 +16,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +37,6 @@ public class TrainerController {
 
     private final TrainerService trainerService;
 
-    private final Authentication authentication;
 
     @Operation(summary = "Get trainer details by username")
     @ApiResponses(value = {
@@ -46,13 +45,9 @@ public class TrainerController {
                             schema = @Schema(implementation = TrainerResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "Trainer not found", content = @Content)
     })
-    @GetMapping(value = "/{username}", produces = "application/json")
-    public ResponseEntity<TrainerResponseDTO> getTrainer(
-            @Parameter(description = "Username of the trainer", required = true)
-            @PathVariable("username") @NotBlank(message = "Username is required") String username,
-            @RequestHeader("password") String password) {
-        authentication.checkAuthentication(username, password);
-        return ResponseEntity.ok(trainerService.getTrainerByUsername(username));
+    @GetMapping(value = "/profile", produces = "application/json")
+    public ResponseEntity<TrainerResponseDTO> getTrainer(Authentication connectedUser) {
+        return ResponseEntity.ok(trainerService.getTrainerByUsername(connectedUser));
     }
 
     @Operation(summary = "Update trainer profile by username")
@@ -62,15 +57,12 @@ public class TrainerController {
             @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content),
             @ApiResponse(responseCode = "404", description = "Trainer not found", content = @Content)
     })
-    @PutMapping(value = "/update/{username}", produces = "application/json")
+    @PutMapping(value = "/update", produces = "application/json")
     public ResponseEntity<TrainerResponseDTO> updateTrainer(
-            @Parameter(description = "Username of the trainer", required = true)
-            @PathVariable("username") @NotBlank(message = "Username is required") String username,
             @Parameter(description = "Updated trainer data", required = true)
-            @Valid @RequestBody TrainerRequestDTO traineeRequestDTO,
-            @RequestHeader("password") String password) {
-        authentication.checkAuthentication(username, password);
-        return ResponseEntity.ok(trainerService.updateTrainer(username, traineeRequestDTO));
+            @Valid @RequestBody TrainerRequestDTO traineeRequestDTO, Authentication connectedUser) {
+
+        return ResponseEntity.ok(trainerService.updateTrainer(connectedUser, traineeRequestDTO));
     }
 
     @Operation(summary = "Get trainings conducted by a trainer with optional filters")
@@ -79,11 +71,8 @@ public class TrainerController {
                     content = @Content(schema = @Schema(implementation = TrainingResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "Trainer not found", content = @Content)
     })
-    @GetMapping(value = "/{username}/trainings", produces = "application/json")
+    @GetMapping(value = "/trainings", produces = "application/json")
     public ResponseEntity<List<TrainingResponseDTO>> getTrainings(
-            @Parameter(description = "Trainer's username", required = true)
-            @PathVariable(value = "username") @NotBlank(message = "Username is required") String username,
-
             @Parameter(description = "Filter by start date (yyyy-MM-dd)")
             @RequestParam(value = "periodFrom", required = false) String periodFrom,
 
@@ -92,9 +81,9 @@ public class TrainerController {
 
             @Parameter(description = "Filter by trainee name")
             @RequestParam(value = "traineeName", required = false) String traineeName,
-            @RequestHeader("password") String password) {
-        authentication.checkAuthentication(username, password);
-        return ResponseEntity.ok(trainerService.getTrainerTrainings(username, periodFrom, periodTo, traineeName));
+            Authentication connectedUser) {
+
+        return ResponseEntity.ok(trainerService.getTrainerTrainings(connectedUser, periodFrom, periodTo, traineeName));
     }
 
     @Operation(summary = "Update trainer's active status")
@@ -103,16 +92,13 @@ public class TrainerController {
             @ApiResponse(responseCode = "400", description = "Invalid status update request", content = @Content),
             @ApiResponse(responseCode = "404", description = "Trainer not found", content = @Content)
     })
-    @PatchMapping(value = "/status/{username}")
+    @PatchMapping(value = "/status")
     public ResponseEntity<Void> trainerStatus(
-            @Parameter(description = "Username of the trainer", required = true)
-            @PathVariable(value = "username") @NotBlank(message = "Username is required") String username,
-
             @Parameter(description = "New active status (true/false)", required = true)
             @RequestParam(value = "isActive") @NotNull(message = "isActive status must be provided") Boolean isActive,
-            @RequestHeader("password") String password) {
-        authentication.checkAuthentication(username, password);
-        trainerService.updateTrainerStatus(username, isActive);
+             Authentication connectedUser) {
+
+        trainerService.updateTrainerStatus(connectedUser, isActive);
         return ResponseEntity.ok().build();
     }
 }

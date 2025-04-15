@@ -19,7 +19,5 @@ public class RegisterTrainerResponseDTO implements Serializable {
 
     private UserResponseDTO user;
 
-    private String password;
-
     private String trainerSpecialization;
 }

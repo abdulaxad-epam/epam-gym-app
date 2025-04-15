@@ -4,6 +4,7 @@ import epam.dto.response_dto.TrainerResponseDTO;
 import epam.entity.Trainee;
 import epam.entity.Trainer;
 import epam.entity.TrainerTrainee;
+import epam.entity.User;
 import epam.exception.exception.TraineeHasAssignedBeforeException;
 import epam.exception.exception.TraineeHasNotAssignedBeforeException;
 import epam.exception.exception.TraineeNotFoundException;
@@ -14,6 +15,9 @@ import epam.repository.TrainerRepository;
 import epam.repository.TrainerTraineeRepository;
 import epam.service.TraineeTrainerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,15 +53,17 @@ public class TrainerTraineeServiceImpl implements TraineeTrainerService {
     }
 
 
-
+    @PreAuthorize("hasRole('TRAINEE')")
     @Transactional
     @Override
-    public List<TrainerResponseDTO> updateTraineeTrainer(String traineeUsername, List<String> trainerUsernames) {
+    public List<TrainerResponseDTO> updateTraineeTrainer(Authentication connectedUser, List<String> trainerUsernames) {
 
-        trainerTraineeRepository.removeTrainerTraineeByTrainee_User_Username(traineeUsername);
+        User user = (User) connectedUser.getPrincipal();
+        String username = user.getUsername();
+        trainerTraineeRepository.removeTrainerTraineeByTrainee_User_Username(username);
 
         List<Trainer> trainers = trainerUsernames.stream().map(trainerUsername -> {
-            TrainerTraineeRecord trainerTraineeRecord = getTrainerTraineeRecord(traineeUsername, trainerUsername);
+            TrainerTraineeRecord trainerTraineeRecord = getTrainerTraineeRecord(username, trainerUsername);
 
             TrainerTrainee trainerTrainee = TrainerTrainee.builder()
                     .trainee(trainerTraineeRecord.trainee())
@@ -72,9 +78,13 @@ public class TrainerTraineeServiceImpl implements TraineeTrainerService {
         return trainers.stream().map(trainerMapper::toTrainerResponseDTO).toList();
     }
 
+    @PreAuthorize("hasRole('TRAINEE')")
     @Transactional(readOnly = true)
     @Override
-    public List<TrainerResponseDTO> getAllNotAssignedTrainers(String username) {
+    public List<TrainerResponseDTO> getAllNotAssignedTrainers(Authentication connectedUser) {
+
+        UserDetails user = (UserDetails) connectedUser.getPrincipal();
+        String username = user.getUsername();
         if (!traineeRepository.existsTraineeByUser_Username(username)){
             throw new TraineeNotFoundException("Trainee not found");
         }

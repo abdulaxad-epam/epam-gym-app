@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 @ToString
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ExceptionMassage {
+public class ExceptionMessage {
     @Builder.Default
     private String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 

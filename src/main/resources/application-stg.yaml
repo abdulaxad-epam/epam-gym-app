@@ -20,9 +20,17 @@ spring:
     open-in-view: true
 
   data:
+
     jpa:
       repositories:
         enabled: true
 
 server:
   port: 9090
+
+application:
+  security:
+    jwt-token:
+      expiration: 7200
+      keys:
+        secret-key: "o9H1ScmmVwBcQP6XETqYd0aSHp1gOa9RdUPDvoXQ5oqygTqVtxaDr6wUFKrKItgBMzWId"

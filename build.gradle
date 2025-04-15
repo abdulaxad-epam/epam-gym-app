@@ -22,6 +22,7 @@ ext {
     suitVersion = "1.10.0"
     loggerVersion = "2.0.16"
     mockitoVersion = "5.2.0"
+    jjwtVersion = "0.12.6"
 }
 
 repositories {
@@ -38,6 +39,10 @@ dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security'
     testImplementation 'org.springframework.security:spring-security-test'
     runtimeOnly group: 'io.micrometer', name: 'micrometer-registry-prometheus'
+
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: jjwtVersion
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: jjwtVersion
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version:  jjwtVersion
 
     // AspectJ
     implementation group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.19'

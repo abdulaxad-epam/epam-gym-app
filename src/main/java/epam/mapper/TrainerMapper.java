@@ -27,6 +27,5 @@ public interface TrainerMapper {
     @Named("toRegisterTrainerResponseDTO")
     @Mapping(source = "specialization.description", target = "trainerSpecialization")
     @Mapping(source = "user", target = "user", qualifiedByName = "toUserResponseDTO")
-    @Mapping(source = "user.password", target = "password")
     RegisterTrainerResponseDTO toRegisterTrainerResponseDTO(Trainer insert);
 }

@@ -6,6 +6,7 @@ import epam.dto.response_dto.TrainerResponseDTO;
 import epam.dto.response_dto.TrainingResponseDTO;
 import epam.entity.Trainer;
 import epam.entity.Training;
+import epam.entity.User;
 import epam.exception.exception.TrainerNotFoundException;
 import epam.mapper.TrainerMapper;
 import epam.mapper.TrainingMapper;
@@ -14,6 +15,8 @@ import epam.service.TrainerService;
 import epam.service.TrainingTypeService;
 import epam.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,8 +50,9 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Transactional
     @Override
-    public TrainerResponseDTO updateTrainer(String username, TrainerRequestDTO trainerRequestDTO) {
-        return trainerRepository.findTraineeByUser_Username(username).map(trainer -> {
+    public TrainerResponseDTO updateTrainer(Authentication connectedUser, TrainerRequestDTO trainerRequestDTO) {
+        UserDetails user = (UserDetails) connectedUser.getPrincipal();
+        return trainerRepository.findTraineeByUser_Username(user.getUsername()).map(trainer -> {
             trainer.setSpecialization(
                     trainingTypeService.getTrainingByTrainingName(trainerRequestDTO.getSpecialization())
             );
@@ -68,7 +72,9 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public void deleteTrainer(String username) {
+    public void deleteTrainer(Authentication connectedUser) {
+        UserDetails user = (UserDetails) connectedUser.getPrincipal();
+        String username = user.getUsername();
         if (userService.existsByUsername(username)) {
             trainerRepository.deleteTrainerByUser_Username(username);
         }
@@ -76,23 +82,30 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public TrainerResponseDTO getTrainerByUsername(String username) {
-        return trainerRepository.findTraineeByUser_Username(username)
+    public TrainerResponseDTO getTrainerByUsername(Authentication connectedUser) {
+        UserDetails user = (UserDetails) connectedUser.getPrincipal();
+        return trainerRepository.findTraineeByUser_Username(user.getUsername())
                 .map(trainerMapper::toTrainerResponseDTO)
                 .orElseThrow(() -> new TrainerNotFoundException("Trainer not found"));
     }
 
     @Override
-    public List<TrainingResponseDTO> getTrainerTrainings(String username, String periodFrom, String periodTo, String traineeName) {
-        List<Training> training = trainerRepository.getTrainerTrainings(username, periodFrom, periodTo, traineeName).orElseThrow(() -> new TrainerNotFoundException("Trainer not found"));
+    public List<TrainingResponseDTO> getTrainerTrainings(Authentication connectedUser,
+                                                         String periodFrom, String periodTo, String traineeName) {
+        UserDetails user = (UserDetails) connectedUser.getPrincipal();
+        List<Training> training = trainerRepository.getTrainerTrainings(
+                user.getUsername(), periodFrom, periodTo, traineeName).orElseThrow(
+                () -> new TrainerNotFoundException("Trainer not found")
+        );
         return training.stream().map(trainingMapper::toTrainingResponseDTO).toList();
     }
 
     @Transactional
     @Override
-    public void updateTrainerStatus(String username, Boolean isActive) {
-        Optional<Trainer> trainer = trainerRepository.findTraineeByUser_Username(username);
-        trainer.ifPresentOrElse(t->t.getUser().setIsActive(isActive), () -> {
+    public void updateTrainerStatus(Authentication connectedUser, Boolean isActive) {
+        UserDetails user = (UserDetails) connectedUser.getPrincipal();
+        Optional<Trainer> trainer = trainerRepository.findTraineeByUser_Username(user.getUsername());
+        trainer.ifPresentOrElse(t -> t.getUser().setIsActive(isActive), () -> {
             throw new TrainerNotFoundException("Trainer not found");
         });
     }

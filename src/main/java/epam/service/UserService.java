@@ -1,6 +1,9 @@
 package epam.service;
 
 import epam.dto.request_dto.ChangePasswordRequestDTO;
+import epam.entity.User;
+
+import java.util.Optional;
 
 public interface UserService {
 
@@ -8,5 +11,5 @@ public interface UserService {
 
     boolean existsByUsername(String username);
 
-    Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO);
+    Optional<User> findByUsername(String username);
 }

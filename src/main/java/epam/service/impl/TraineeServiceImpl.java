@@ -7,6 +7,7 @@ import epam.dto.response_dto.TraineeResponseDTO;
 import epam.dto.response_dto.TrainingResponseDTO;
 import epam.entity.Trainee;
 import epam.entity.Training;
+import epam.entity.User;
 import epam.exception.exception.TraineeNotFoundException;
 import epam.mapper.TraineeMapper;
 import epam.mapper.TrainingMapper;
@@ -14,6 +15,8 @@ import epam.repository.TraineeRepository;
 import epam.service.TraineeService;
 import epam.service.TrainingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +46,11 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public TraineeResponseDTO updateTrainee(String username, UpdateTraineeRequestDTO requestDTO) {
+    public TraineeResponseDTO updateTrainee(Authentication connectedUser, UpdateTraineeRequestDTO requestDTO) {
+
+        UserDetails user = (UserDetails) connectedUser.getPrincipal();
+        String username = user.getUsername();
+
         Optional<Trainee> trainee = traineeRepository.findTraineeByUser_Username(username);
 
         trainee.ifPresentOrElse(t -> {
@@ -67,24 +74,32 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public void deleteTrainee(String username) {
+    public void deleteTrainee(Authentication connectedUser) {
+
+        UserDetails user = (UserDetails) connectedUser.getPrincipal();
+        String username = user.getUsername();
+
         if (!traineeRepository.existsTraineeByUser_Username(username)) {
             throw new TraineeNotFoundException(String.format("Trainee not found with username: %s", username));
         }
+
         trainingService.deleteTraining(username);
 
         traineeRepository.deleteTraineeByUser_Username(username);
     }
 
     @Override
-    public TraineeResponseDTO getTraineeByUsername(String username) {
-        return traineeMapper.toTraineeResponseDTO(traineeRepository.findTraineeByUser_Username(username.toLowerCase())
+    public TraineeResponseDTO getTraineeProfile(Authentication connectedUser) {
+        UserDetails user = (UserDetails) connectedUser.getPrincipal();
+        return traineeMapper.toTraineeResponseDTO(traineeRepository.findTraineeByUser_Username(user.getUsername().toLowerCase())
                 .orElseThrow(() -> new TraineeNotFoundException("Trainee not found")));
     }
 
     @Transactional
     @Override
-    public void updateTraineeStatus(String username, Boolean isActive) {
+    public void updateTraineeStatus(Authentication connectedUser, Boolean isActive) {
+        UserDetails user = (UserDetails) connectedUser.getPrincipal();
+        String username = user.getUsername();
         Optional<Trainee> trainee = traineeRepository.findTraineeByUser_Username(username);
         trainee.ifPresentOrElse(t -> t.getUser().setIsActive(isActive), () -> {
             throw new TraineeNotFoundException(String.format("Trainee not found with username: %s", username));
@@ -92,7 +107,11 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public List<TrainingResponseDTO> getTraineeTrainings(String username, String periodFrom, String periodTo, String trainerName, String trainingType) {
+    public List<TrainingResponseDTO> getTraineeTrainings(String periodFrom, String periodTo,
+                                                         String trainerName, String trainingType, Authentication connectedUser) {
+        UserDetails user = (UserDetails) connectedUser.getPrincipal();
+        String username = user.getUsername();
+
         List<Training> trainings = traineeRepository.getTraineeTrainings(username, periodFrom, periodTo, trainerName, trainingType)
                 .orElseThrow(() -> new TraineeNotFoundException(String.format("Trainee not found with username: %s", username)));
         return trainings.stream().map(trainingMapper::toTrainingResponseDTO).toList();

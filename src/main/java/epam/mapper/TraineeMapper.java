@@ -33,7 +33,6 @@ public interface TraineeMapper {
     Trainee toTrainee(RegisterTraineeRequestDTO userRequestDTO, User connectedUser);
 
     @Named("toRegisterTraineeResponseDTO")
-    @Mapping(source = "user.password", target = "password")
     @Mapping(source = "dateOfBirth", target = "traineeDateOfBirth")
     @Mapping(source = "user", target = "user", qualifiedByName = "toUserResponseDTO")
     RegisterTraineeResponseDTO toRegisterTraineeResponseDTO(Trainee insert);

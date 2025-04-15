@@ -14,6 +14,7 @@ import epam.service.TraineeTrainerService;
 import epam.service.TrainingService;
 import epam.service.TrainingTypeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,8 +31,9 @@ public class TrainingServiceImpl implements TrainingService {
 
     private final TraineeTrainerService traineeTrainerService;
 
-    @Transactional
     @Override
+    @Transactional
+    @PreAuthorize("hasRole('TRAINER')")
     public TrainingResponseDTO createTraining(TrainingRequestDTO trainingRequestDTO) {
         Training training = trainingMapper.toTraining(
                 trainingRequestDTO,
@@ -53,8 +55,8 @@ public class TrainingServiceImpl implements TrainingService {
         return trainingMapper.toTrainingResponseDTO(training);
     }
 
-
     @Override
+    @PreAuthorize("hasRole('TRAINER')")
     public void deleteTraining(String username) {
         trainingRepository.getIdByUsername(username).ifPresentOrElse(trainingRepository::deleteTrainingByTrainingId, () -> {
             throw new TrainingNotFoundException("Training with username " + username + " not found");

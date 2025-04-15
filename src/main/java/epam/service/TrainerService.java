@@ -4,6 +4,7 @@ import epam.dto.request_dto.TrainerRequestDTO;
 import epam.dto.response_dto.RegisterTrainerResponseDTO;
 import epam.dto.response_dto.TrainerResponseDTO;
 import epam.dto.response_dto.TrainingResponseDTO;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -11,14 +12,14 @@ public interface TrainerService {
 
     RegisterTrainerResponseDTO createTrainer(TrainerRequestDTO training);
 
-    TrainerResponseDTO updateTrainer(String username, TrainerRequestDTO trainer);
+    TrainerResponseDTO updateTrainer(Authentication connectedUser, TrainerRequestDTO trainer);
 
-    void deleteTrainer(String username);
+    void deleteTrainer(Authentication connectedUser);
 
-    TrainerResponseDTO getTrainerByUsername(String username);
+    TrainerResponseDTO getTrainerByUsername(Authentication connectedUser);
 
 
-    List<TrainingResponseDTO> getTrainerTrainings(String username, String periodFrom, String periodTo, String traineeName);
+    List<TrainingResponseDTO> getTrainerTrainings(Authentication connectedUser, String periodFrom, String periodTo, String traineeName);
 
-    void updateTrainerStatus(String username, Boolean isActive);
+    void updateTrainerStatus(Authentication connectedUser, Boolean isActive);
 }

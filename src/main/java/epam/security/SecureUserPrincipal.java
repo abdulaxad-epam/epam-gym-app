@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 @AllArgsConstructor
-public class SecureUser implements UserDetails {
+public class SecureUserPrincipal implements UserDetails {
 
     private final User user;
 
@@ -25,7 +25,7 @@ public class SecureUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(() -> "USER");
+        return user.getRole().getAuthorities();
     }
 
 

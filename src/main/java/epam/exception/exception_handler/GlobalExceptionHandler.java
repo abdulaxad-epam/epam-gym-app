@@ -1,5 +1,6 @@
 package epam.exception.exception_handler;
 
+import epam.exception.exception.InvalidTokenType;
 import epam.exception.exception.TraineeHasAssignedBeforeException;
 import epam.exception.exception.TraineeHasNotAssignedBeforeException;
 import epam.exception.exception.TraineeNotFoundException;
@@ -26,10 +27,10 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(TraineeNotFoundException.class)
-    public ResponseEntity<ExceptionMassage> handleTraineeNotFound(TraineeNotFoundException e) {
+    public ResponseEntity<ExceptionMessage> handleTraineeNotFound(TraineeNotFoundException e) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ExceptionMassage.builder()
+                .body(ExceptionMessage.builder()
                         .status(HttpStatus.NOT_FOUND.value())
                         .error(e.getMessage())
                         .message(e.getMessage())
@@ -37,10 +38,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(TrainerNotFoundException.class)
-    public ResponseEntity<ExceptionMassage> handleTrainerNotFound(TrainerNotFoundException e) {
+    public ResponseEntity<ExceptionMessage> handleTrainerNotFound(TrainerNotFoundException e) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ExceptionMassage.builder()
+                .body(ExceptionMessage.builder()
                         .status(HttpStatus.NOT_FOUND.value())
                         .error(e.getMessage())
                         .message(e.getMessage())
@@ -48,10 +49,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(TrainingNotFoundException.class)
-    public ResponseEntity<ExceptionMassage> handleTrainingNotFound(TrainingNotFoundException e) {
+    public ResponseEntity<ExceptionMessage> handleTrainingNotFound(TrainingNotFoundException e) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ExceptionMassage.builder()
+                .body(ExceptionMessage.builder()
                         .status(HttpStatus.NOT_FOUND.value())
                         .error(e.getMessage())
                         .message(e.getMessage())
@@ -59,10 +60,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(TraineeHasNotAssignedBeforeException.class)
-    public ResponseEntity<ExceptionMassage> handleTraineeHasNotAssignedBefore(TraineeHasNotAssignedBeforeException e) {
+    public ResponseEntity<ExceptionMessage> handleTraineeHasNotAssignedBefore(TraineeHasNotAssignedBeforeException e) {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
-                .body(ExceptionMassage.builder()
+                .body(ExceptionMessage.builder()
                         .status(HttpStatus.CONFLICT.value())
                         .error(e.getMessage())
                         .message(e.getMessage())
@@ -70,21 +71,32 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ExceptionMassage> handleUserNotFound(UserNotFoundException e) {
+    public ResponseEntity<ExceptionMessage> handleUserNotFound(UserNotFoundException e) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ExceptionMassage.builder()
+                .body(ExceptionMessage.builder()
                         .status(HttpStatus.NOT_FOUND.value())
                         .error(e.getMessage())
                         .message(e.getMessage())
                         .build());
     }
 
+    @ExceptionHandler(InvalidTokenType.class)
+    public ResponseEntity<ExceptionMessage> handleInvalidTokenType(InvalidTokenType e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ExceptionMessage.builder()
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .error(e.getMessage())
+                        .message(e.getMessage())
+                        .build());
+    }
+
     @ExceptionHandler(UsernameGenerateException.class)
-    public ResponseEntity<ExceptionMassage> handleUsernameGenerate(UsernameGenerateException e) {
+    public ResponseEntity<ExceptionMessage> handleUsernameGenerate(UsernameGenerateException e) {
         return ResponseEntity
                 .status(HttpStatus.SEE_OTHER)
-                .body(ExceptionMassage.builder()
+                .body(ExceptionMessage.builder()
                         .status(HttpStatus.SEE_OTHER.value())
                         .error(e.getMessage())
                         .message(e.getMessage())
@@ -92,9 +104,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserNotAuthenticated.class)
-    public ResponseEntity<ExceptionMassage> handleUserNotAuthenticated(UserNotAuthenticated e) {
+    public ResponseEntity<ExceptionMessage> handleUserNotAuthenticated(UserNotAuthenticated e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(ExceptionMassage.builder()
+                .body(ExceptionMessage.builder()
                         .status(HttpStatus.FORBIDDEN.value())
                         .error(e.getMessage())
                         .message(e.getMessage())
@@ -102,9 +114,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(TrainingTypeNotFoundException.class)
-    public ResponseEntity<ExceptionMassage> handleTrainingTypeNotFound(TrainingTypeNotFoundException e) {
+    public ResponseEntity<ExceptionMessage> handleTrainingTypeNotFound(TrainingTypeNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ExceptionMassage.builder()
+                .body(ExceptionMessage.builder()
                         .status(HttpStatus.NOT_FOUND.value())
                         .error(e.getMessage())
                         .message(e.getMessage())
@@ -113,9 +125,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(TraineeHasAssignedBeforeException.class)
-    public ResponseEntity<ExceptionMassage> handleTraineeHasAssignedBefore(TraineeHasAssignedBeforeException e) {
+    public ResponseEntity<ExceptionMessage> handleTraineeHasAssignedBefore(TraineeHasAssignedBeforeException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ExceptionMassage.builder()
+                .body(ExceptionMessage.builder()
                         .status(HttpStatus.BAD_REQUEST.value())
                         .error(e.getMessage())
                         .message(e.getMessage())
@@ -124,7 +136,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ExceptionMassage> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
+    public ResponseEntity<ExceptionMessage> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
 
         Map<String, String> errors = new HashMap<>();
 
@@ -133,7 +145,7 @@ public class GlobalExceptionHandler {
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                ExceptionMassage.builder()
+                ExceptionMessage.builder()
                         .status(HttpStatus.BAD_REQUEST.value())
                         .message(errors.values().toString())
                         .build()
@@ -141,14 +153,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ExceptionMassage> handleConstraintViolation(ConstraintViolationException e) {
+    public ResponseEntity<ExceptionMessage> handleConstraintViolation(ConstraintViolationException e) {
 
         Map<String, String> errors = new HashMap<>();
         e.getConstraintViolations().forEach(violation ->
                 errors.put(violation.getPropertyPath().toString(), violation.getMessage()));
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                ExceptionMassage.builder()
+                ExceptionMessage.builder()
                         .status(HttpStatus.BAD_REQUEST.value())
                         .message(errors.values().toString())
                         .build()
@@ -156,12 +168,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ExceptionMassage> handleJsonParsingException(HttpMessageNotReadableException e) {
+    public ResponseEntity<ExceptionMessage> handleJsonParsingException(HttpMessageNotReadableException e) {
         Map<String, String> error = new HashMap<>();
         error.put("error", "Invalid date format: " + e.getMostSpecificCause().getMessage() +". Must be yyyy-MM-dd");
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                ExceptionMassage.builder()
+                ExceptionMessage.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .message(error.values().toString())
                 .build()
@@ -169,10 +181,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionMassage> handleException(Exception e) {
+    public ResponseEntity<ExceptionMessage> handleException(Exception e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ExceptionMassage.builder()
+                .body(ExceptionMessage.builder()
                         .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                         .message(e.getMessage())
                         .build()

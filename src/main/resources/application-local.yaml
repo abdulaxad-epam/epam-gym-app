@@ -20,14 +20,17 @@ spring:
     open-in-view: true
 
   data:
+
     jpa:
       repositories:
         enabled: true
 server:
   port: 8080
 
-logging:
-  level:
-    org:
-      springframework:
-        security=TRACE:
+application:
+  security:
+    jwt-token:
+      access-expiration: 15778800000  #  6 months
+      refresh-expiration: 15778800000  #  6 months
+      keys:
+        secret-key: "wkm95QJ7hYC9RiwrV7mesbY4PAahERJawntho0my942XheVLmGwLMBkQ"

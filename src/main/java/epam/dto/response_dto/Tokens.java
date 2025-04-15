@@ -1,26 +1,21 @@
 package epam.dto.response_dto;
 
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.io.Serializable;
 
-@Builder
-@ToString
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
-public class RegisterTraineeResponseDTO implements Serializable {
-
-    private UserResponseDTO user;
-
-    private String traineeDateOfBirth;
-
-    private String address;
-
+@NoArgsConstructor
+public class Tokens implements Serializable {
+    private String accessToken;
+    private String refreshToken;
 }

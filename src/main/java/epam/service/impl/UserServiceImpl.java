@@ -27,17 +27,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByUsername(username.toLowerCase());
     }
 
-    @Transactional
     @Override
-    public Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) {
-
-        userRepository.getByUsernameAndPassword(((changePasswordRequestDTO.getUsername())), changePasswordRequestDTO.getOldPassword())
-                .ifPresentOrElse(
-                        user -> user.setPassword(changePasswordRequestDTO.getNewPassword()),
-                        () -> {
-                            throw new UserNotFoundException("User not found");
-                        });
-        return true;
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
 }

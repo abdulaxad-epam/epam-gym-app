@@ -2,7 +2,7 @@ package epam.service.impl;
 
 import epam.entity.User;
 import epam.repository.UserRepository;
-import epam.security.SecureUser;
+import epam.security.SecureUserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,7 +20,7 @@ public class UserDetailsService implements org.springframework.security.core.use
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> byUsername = userRepository.findByUsername(username);
-        return byUsername.map(SecureUser::new).orElseThrow(
+        return byUsername.map(SecureUserPrincipal::new).orElseThrow(
                 () -> new UsernameNotFoundException(username)
         );
     }
