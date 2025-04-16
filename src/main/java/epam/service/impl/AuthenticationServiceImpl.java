@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +38,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserService userService;
     private final TrainerService trainerService;
     private final TraineeService traineeService;
-    private final PasswordEncoder passwordEncoder;
     private final PasswordGenerator passwordGenerator;
     private final UserDetailsService userDetailsService;
     private final BruteForceProtectionService bruteForceProtectionService;
@@ -48,7 +46,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationResponseDTO register(RegisterTraineeRequestDTO userRequestDTO) {
 
         String password = passwordGenerator.generatePassword();
-        String encryptedPassword = passwordEncoder.encode(password);
+        String encryptedPassword = passwordGenerator.encode(password);
 
         userRequestDTO.getUser().setPassword(encryptedPassword);
         userRequestDTO.getUser().setRole("TRAINEE");
@@ -68,7 +66,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationResponseDTO register(RegisterTrainerRequestDTO userRequestDTO) {
 
         String password = passwordGenerator.generatePassword();
-        String encryptedPassword = passwordEncoder.encode(password);
+        String encryptedPassword = passwordGenerator.encode(password);
 
         userRequestDTO.getUser().setPassword(encryptedPassword);
         userRequestDTO.getUser().setRole("TRAINER");
@@ -99,7 +97,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         var user = userOptional.get();
 
-        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+        if (!passwordGenerator.matches(dto.getPassword(), user.getPassword())) {
             bruteForceProtectionService.loginFailed(username);
             throw new UserNotFoundException("Invalid username or password");
         }
@@ -112,8 +110,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var refreshToken = jwtService.generateRefreshToken(userDetails);
 
         return AuthenticationResponseDTO.builder()
-                .token
-                        (Tokens.builder()
+                .token(
+                        Tokens.builder()
                                 .refreshToken(refreshToken)
                                 .accessToken(accessToken)
                                 .build())
@@ -129,9 +127,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         var userOptional = userService.findByUsername(userDetails.getUsername());
 
-        if (userOptional.isPresent() && passwordEncoder.matches(changePasswordRequestDTO.getOldPassword(), userOptional.get().getPassword())) {
+        if (userOptional.isPresent() && passwordGenerator.matches(changePasswordRequestDTO.getOldPassword(), userOptional.get().getPassword())) {
 
-            userOptional.get().setPassword(passwordEncoder.encode(changePasswordRequestDTO.getNewPassword()));
+            userOptional.get().setPassword(passwordGenerator.encode(changePasswordRequestDTO.getNewPassword()));
 
             return true;
         }

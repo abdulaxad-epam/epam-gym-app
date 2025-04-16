@@ -13,29 +13,27 @@ import epam.mapper.TraineeMapper;
 import epam.mapper.TrainingMapper;
 import epam.repository.TraineeRepository;
 import epam.service.impl.TraineeServiceImpl;
-import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 public class TraineeServiceTest {
 
     @Mock
@@ -50,106 +48,166 @@ public class TraineeServiceTest {
     @Mock
     private TrainingMapper trainingMapper;
 
+    @Mock
+    private Authentication authentication;
+
+    @Mock
+    private UserDetails userDetails;
+
     @InjectMocks
     private TraineeServiceImpl traineeService;
 
-    private Trainee trainee;
-    private TraineeRequestDTO traineeRequestDTO;
-
     @BeforeEach
     void setUp() {
-        trainee = new Trainee();
-        trainee.setUser(new User());
-
-        traineeRequestDTO = new TraineeRequestDTO();
+        MockitoAnnotations.openMocks(this);
     }
 
-
     @Test
-    void testCreateTrainee() {
-        RegisterTraineeResponseDTO responseDTO = new RegisterTraineeResponseDTO();
-        when(traineeMapper.toTrainee(traineeRequestDTO)).thenReturn(trainee);
+    void shouldCreateTraineeSuccessfully() {
+        TraineeRequestDTO dto = new TraineeRequestDTO();
+        Trainee trainee = new Trainee();
+        RegisterTraineeResponseDTO response = new RegisterTraineeResponseDTO();
+
+        when(traineeMapper.toTrainee(dto)).thenReturn(trainee);
         when(traineeRepository.save(trainee)).thenReturn(trainee);
-        when(traineeMapper.toRegisterTraineeResponseDTO(trainee)).thenReturn(responseDTO);
+        when(traineeMapper.toRegisterTraineeResponseDTO(trainee)).thenReturn(response);
 
-        RegisterTraineeResponseDTO result = traineeService.createTrainee(traineeRequestDTO);
+        RegisterTraineeResponseDTO result = traineeService.createTrainee(dto);
+
         assertNotNull(result);
+        verify(traineeRepository).save(trainee);
     }
 
     @Test
-    void testUpdateTraineeSuccess() {
-        UpdateTraineeRequestDTO updateRequestDTO = Instancio.create(UpdateTraineeRequestDTO.class);
-        when(traineeRepository.findTraineeByUser_Username("testUser")).thenReturn(Optional.of(trainee));
-        when(traineeMapper.toTraineeResponseDTO(trainee)).thenReturn(new TraineeResponseDTO());
+    void shouldUpdateTraineeSuccessfully() {
+        UpdateTraineeRequestDTO dto = new UpdateTraineeRequestDTO();
+        dto.setFirstname("John");
+        dto.setLastname("Doe");
+        dto.setDateOfBirth(LocalDate.of(1990, 1, 1));
+        dto.setAddress("Some Address");
+        dto.setIsActive(true);
 
-        TraineeResponseDTO result = traineeService.updateTrainee("testUser", updateRequestDTO);
+        User user = new User();
+        user.setUsername("john");
+        Trainee trainee = new Trainee();
+        trainee.setUser(user);
+
+        when(authentication.getPrincipal()).thenReturn(userDetails);
+        when(userDetails.getUsername()).thenReturn("john");
+        when(traineeRepository.findTraineeByUser_Username("john")).thenReturn(Optional.of(trainee));
+
+        TraineeResponseDTO responseDTO = new TraineeResponseDTO();
+        when(traineeMapper.toTraineeResponseDTO(trainee)).thenReturn(responseDTO);
+
+        TraineeResponseDTO result = traineeService.updateTrainee(authentication, dto);
+
         assertNotNull(result);
-        verify(traineeRepository, times(1)).findTraineeByUser_Username("testUser");
+        assertEquals(responseDTO, result);
     }
 
     @Test
-    void testUpdateTraineeNotFound() {
-        UpdateTraineeRequestDTO updateRequestDTO = Instancio.create(UpdateTraineeRequestDTO.class);
-        when(traineeRepository.findTraineeByUser_Username("testUser")).thenReturn(Optional.empty());
-        assertThrows(TraineeNotFoundException.class, () -> traineeService.updateTrainee("testUser", updateRequestDTO));
+    void shouldThrowWhenTraineeNotFoundInUpdate() {
+        when(authentication.getPrincipal()).thenReturn(userDetails);
+        when(userDetails.getUsername()).thenReturn("john");
+        when(traineeRepository.findTraineeByUser_Username("john")).thenReturn(Optional.empty());
+
+        assertThrows(TraineeNotFoundException.class,
+                () -> traineeService.updateTrainee(authentication, new UpdateTraineeRequestDTO()));
     }
 
     @Test
-    void testDeleteTraineeSuccess() {
-        when(traineeRepository.existsTraineeByUser_Username("testUser")).thenReturn(true);
-        doNothing().when(trainingService).deleteTraining("testUser");
-        doNothing().when(traineeRepository).deleteTraineeByUser_Username("testUser");
+    void shouldDeleteTraineeSuccessfully() {
+        when(authentication.getPrincipal()).thenReturn(userDetails);
+        when(userDetails.getUsername()).thenReturn("john");
+        when(traineeRepository.existsTraineeByUser_Username("john")).thenReturn(true);
 
-        assertDoesNotThrow(() -> traineeService.deleteTrainee("testUser"));
+        doNothing().when(trainingService).deleteTraining("john");
+        doNothing().when(traineeRepository).deleteTraineeByUser_Username("john");
+
+        traineeService.deleteTrainee(authentication);
+
+        verify(trainingService).deleteTraining("john");
+        verify(traineeRepository).deleteTraineeByUser_Username("john");
     }
 
-
     @Test
-    void testDeleteTraineeNotFound() {
-        when(traineeRepository.existsTraineeByUser_Username("testUser")).thenReturn(false);
-        assertThrows(TraineeNotFoundException.class, () -> traineeService.deleteTrainee("testUser"));
+    void shouldThrowWhenDeletingNonExistingTrainee() {
+        when(authentication.getPrincipal()).thenReturn(userDetails);
+        when(userDetails.getUsername()).thenReturn("john");
+        when(traineeRepository.existsTraineeByUser_Username("john")).thenReturn(false);
+
+        assertThrows(TraineeNotFoundException.class, () -> traineeService.deleteTrainee(authentication));
     }
 
     @Test
-    void testGetTraineeByUsername() {
-        lenient().when(traineeRepository.findTraineeByUser_Username("testUser".toLowerCase())).thenReturn(Optional.of(trainee));
-        when(traineeMapper.toTraineeResponseDTO(trainee)).thenReturn(new TraineeResponseDTO());
+    void shouldGetTraineeProfileSuccessfully() {
+        User user = new User();
+        user.setUsername("john");
+        Trainee trainee = new Trainee();
 
-        TraineeResponseDTO result = traineeService.getTraineeProfile("testUser");
+        when(authentication.getPrincipal()).thenReturn(userDetails);
+        when(userDetails.getUsername()).thenReturn("john");
+        when(traineeRepository.findTraineeByUser_Username("john")).thenReturn(Optional.of(trainee));
+
+        TraineeResponseDTO responseDTO = new TraineeResponseDTO();
+        when(traineeMapper.toTraineeResponseDTO(trainee)).thenReturn(responseDTO);
+
+        TraineeResponseDTO result = traineeService.getTraineeProfile(authentication);
+
         assertNotNull(result);
+        assertEquals(responseDTO, result);
     }
 
     @Test
-    void testGetTraineeByUsernameNotFound() {
-        lenient().when(traineeRepository.findTraineeByUser_Username("testUser")).thenReturn(Optional.of(trainee));
-        assertThrows(TraineeNotFoundException.class, () -> traineeService.getTraineeProfile("testUser"));
+    void shouldUpdateTraineeStatusSuccessfully() {
+        User user = new User();
+        user.setUsername("john");
+        Trainee trainee = new Trainee();
+        trainee.setUser(user);
+
+        when(authentication.getPrincipal()).thenReturn(userDetails);
+        when(userDetails.getUsername()).thenReturn("john");
+        when(traineeRepository.findTraineeByUser_Username("john")).thenReturn(Optional.of(trainee));
+
+        traineeService.updateTraineeStatus(authentication, true);
+
+        assertTrue(trainee.getUser().getIsActive());
     }
 
     @Test
-    void testUpdateTraineeStatus() {
-        when(traineeRepository.findTraineeByUser_Username("testUser")).thenReturn(Optional.of(trainee));
-        assertDoesNotThrow(() -> traineeService.updateTraineeStatus("testUser", true));
+    void shouldThrowWhenUpdatingStatusForNonExistingTrainee() {
+        when(authentication.getPrincipal()).thenReturn(userDetails);
+        when(userDetails.getUsername()).thenReturn("john");
+        when(traineeRepository.findTraineeByUser_Username("john")).thenReturn(Optional.empty());
+
+        assertThrows(TraineeNotFoundException.class, () -> traineeService.updateTraineeStatus(authentication, true));
     }
 
     @Test
-    void testUpdateTraineeStatusNotFound() {
-        when(traineeRepository.findTraineeByUser_Username("testUser")).thenReturn(Optional.empty());
-        assertThrows(TraineeNotFoundException.class, () -> traineeService.updateTraineeStatus("testUser", true));
+    void shouldGetTraineeTrainingsSuccessfully() {
+        String username = "john";
+        List<Training> trainingList = List.of(new Training());
+        List<TrainingResponseDTO> trainingDTOs = List.of(new TrainingResponseDTO());
+
+        when(authentication.getPrincipal()).thenReturn(userDetails);
+        when(userDetails.getUsername()).thenReturn(username);
+        when(traineeRepository.getTraineeTrainings(username, "2024-01-01", "2024-12-31", "Trainer", "Fitness"))
+                .thenReturn(Optional.of(trainingList));
+        when(trainingMapper.toTrainingResponseDTO(any())).thenReturn(trainingDTOs.get(0));
+
+        List<TrainingResponseDTO> result = traineeService.getTraineeTrainings("2024-01-01", "2024-12-31", "Trainer", "Fitness", authentication);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
     }
 
     @Test
-    void testGetTraineeTrainingsSuccess() {
-        List<Training> trainings = List.of(new Training());
-        when(traineeRepository.getTraineeTrainings("testUser", "2023-01-01", "2023-12-31", null, null)).thenReturn(Optional.of(trainings));
-        when(trainingMapper.toTrainingResponseDTO(any())).thenReturn(new TrainingResponseDTO());
+    void shouldThrowWhenGettingTrainingsForNonExistingTrainee() {
+        when(authentication.getPrincipal()).thenReturn(userDetails);
+        when(userDetails.getUsername()).thenReturn("john");
+        when(traineeRepository.getTraineeTrainings("john", "2024-01-01", "2024-12-31", "Trainer", "Fitness"))
+                .thenReturn(Optional.empty());
 
-        List<TrainingResponseDTO> result = traineeService.getTraineeTrainings("testUser", "2023-01-01", "2023-12-31", null, null);
-        assertFalse(result.isEmpty());
-    }
-
-    @Test
-    void testGetTraineeTrainingsNotFound() {
-        when(traineeRepository.getTraineeTrainings("testUser", "2023-01-01", "2023-12-31", null, null)).thenReturn(Optional.empty());
-        assertThrows(TraineeNotFoundException.class, () -> traineeService.getTraineeTrainings("testUser", "2023-01-01", "2023-12-31", null, null));
+        assertThrows(TraineeNotFoundException.class, () -> traineeService.getTraineeTrainings("2024-01-01", "2024-12-31", "Trainer", "Fitness", authentication));
     }
 }

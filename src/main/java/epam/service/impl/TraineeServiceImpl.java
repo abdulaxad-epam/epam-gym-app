@@ -7,7 +7,6 @@ import epam.dto.response_dto.TraineeResponseDTO;
 import epam.dto.response_dto.TrainingResponseDTO;
 import epam.entity.Trainee;
 import epam.entity.Training;
-import epam.entity.User;
 import epam.exception.exception.TraineeNotFoundException;
 import epam.mapper.TraineeMapper;
 import epam.mapper.TrainingMapper;

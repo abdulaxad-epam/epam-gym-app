@@ -26,7 +26,6 @@ public class ChangePasswordRequestDTOTest {
     @Test
     public void testValidChangePasswordRequest() {
         ChangePasswordRequestDTO request = ChangePasswordRequestDTO.builder()
-                .username("testUser")
                 .oldPassword("1234567890")
                 .newPassword("0987654321")
                 .build();
@@ -36,35 +35,8 @@ public class ChangePasswordRequestDTOTest {
     }
 
     @Test
-    public void testBlankUsername() {
-        ChangePasswordRequestDTO request = ChangePasswordRequestDTO.builder()
-                .username("")
-                .oldPassword("1234567890")
-                .newPassword("0987654321")
-                .build();
-
-        Set<ConstraintViolation<ChangePasswordRequestDTO>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
-        assertEquals("Username is required", violations.iterator().next().getMessage());
-    }
-
-    @Test
-    public void testNullUsername() {
-        ChangePasswordRequestDTO request = ChangePasswordRequestDTO.builder()
-                .username(null)
-                .oldPassword("1234567890")
-                .newPassword("0987654321")
-                .build();
-
-        Set<ConstraintViolation<ChangePasswordRequestDTO>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
-        assertEquals("Username is required", violations.iterator().next().getMessage());
-    }
-
-    @Test
     public void testShortOldPassword() {
         ChangePasswordRequestDTO request = ChangePasswordRequestDTO.builder()
-                .username("testUser")
                 .oldPassword("12345")
                 .newPassword("0987654321")
                 .build();
@@ -76,7 +48,6 @@ public class ChangePasswordRequestDTOTest {
     @Test
     public void testLongOldPassword() {
         ChangePasswordRequestDTO request = ChangePasswordRequestDTO.builder()
-                .username("testUser")
                 .oldPassword("1234567890123")
                 .newPassword("0987654321")
                 .build();
@@ -88,7 +59,6 @@ public class ChangePasswordRequestDTOTest {
     @Test
     public void testShortNewPassword() {
         ChangePasswordRequestDTO request = ChangePasswordRequestDTO.builder()
-                .username("testUser")
                 .oldPassword("1234567890")
                 .newPassword("09876")
                 .build();
@@ -100,7 +70,6 @@ public class ChangePasswordRequestDTOTest {
     @Test
     public void testLongNewPassword() {
         ChangePasswordRequestDTO request = ChangePasswordRequestDTO.builder()
-                .username("testUser")
                 .oldPassword("1234567890")
                 .newPassword("0987654321123")
                 .build();
@@ -112,7 +81,6 @@ public class ChangePasswordRequestDTOTest {
     @Test
     public void testNullOldPassword() {
         ChangePasswordRequestDTO request = ChangePasswordRequestDTO.builder()
-                .username("testUser")
                 .oldPassword(null)
                 .newPassword("0987654321")
                 .build();
@@ -125,7 +93,6 @@ public class ChangePasswordRequestDTOTest {
     @Test
     public void testNullNewPassword() {
         ChangePasswordRequestDTO request = ChangePasswordRequestDTO.builder()
-                .username("testUser")
                 .oldPassword("1234567890")
                 .newPassword(null)
                 .build();

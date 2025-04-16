@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Set;
 
-import static epam.controller.TrainerControllerTest.settings;
+import static epam.dto.request_dto.RegisterTraineeRequestDTOTest.settings;
 import static org.instancio.Select.field;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

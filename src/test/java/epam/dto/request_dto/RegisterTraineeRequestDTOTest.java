@@ -6,6 +6,9 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.instancio.Instancio;
 import org.instancio.junit.InstancioExtension;
+import org.instancio.junit.WithSettings;
+import org.instancio.settings.Keys;
+import org.instancio.settings.Settings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import java.time.LocalDate;
 import java.util.Set;
 
-import static epam.controller.TrainerControllerTest.settings;
 import static org.instancio.Select.field;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -24,6 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RegisterTraineeRequestDTOTest {
 
     private Validator validator;
+
+    @WithSettings
+    public static final Settings settings = Settings.create()
+            .set(Keys.STRING_MIN_LENGTH, 10).lock();
 
     @BeforeEach
     public void setUp() {

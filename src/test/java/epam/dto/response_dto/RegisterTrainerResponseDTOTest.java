@@ -19,10 +19,8 @@ public class RegisterTrainerResponseDTOTest {
 
         assertNotNull(response);
         assertNotNull(response.getUser());
-        assertNotNull(response.getPassword());
         assertNotNull(response.getTrainerSpecialization());
 
-        assertFalse(response.getPassword().isEmpty());
         assertFalse(response.getTrainerSpecialization().isEmpty());
     }
 
@@ -35,7 +33,6 @@ public class RegisterTrainerResponseDTOTest {
         assertNull(response.getUser().getUsername());
         assertNull(response.getUser().getFirstName());
         assertNull(response.getUser().getLastName());
-        assertNull(response.getPassword());
         assertNull(response.getTrainerSpecialization());
 
     }

@@ -20,10 +20,8 @@ public class RegisterTraineeResponseDTOTest {
 
         assertNotNull(response);
         assertNotNull(response.getUser());
-        assertNotNull(response.getPassword());
         assertNotNull(response.getTraineeDateOfBirth());
         assertNotNull(response.getAddress());
-        assertFalse(response.getPassword().isEmpty());
         assertFalse(response.getTraineeDateOfBirth().isEmpty());
         assertFalse(response.getAddress().isEmpty());
     }
@@ -39,7 +37,6 @@ public class RegisterTraineeResponseDTOTest {
         assertNull(response.getUser().getLastName());
         assertNull(response.getUser().getIsActive());
         assertNull(response.getUser().getUsername());
-        assertNull(response.getPassword());
         assertNull(response.getTraineeDateOfBirth());
         assertNull(response.getAddress());
 

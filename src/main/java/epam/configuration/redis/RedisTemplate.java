@@ -21,6 +21,7 @@ public class RedisTemplate {
         return new ValueOperations();
     }
 
+
     public Boolean hasKey(String token) {
         RedisEntry entry = store.get(token);
         return entry != null && !entry.isExpired();

@@ -150,5 +150,4 @@ public class JwtServiceImpl implements JwtService {
         return Boolean.TRUE.equals(redisTemplate.hasKey(token));
     }
 
-
 }

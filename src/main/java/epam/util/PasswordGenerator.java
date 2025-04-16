@@ -1,12 +1,13 @@
 package epam.util;
 
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
 
 @Component
-public class PasswordGenerator {
+public class PasswordGenerator extends BCryptPasswordEncoder {
 
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final SecureRandom RANDOM = new SecureRandom();
