@@ -6,7 +6,6 @@ import epam.dto.response_dto.TrainerResponseDTO;
 import epam.dto.response_dto.TrainingResponseDTO;
 import epam.entity.Trainer;
 import epam.entity.Training;
-import epam.entity.User;
 import epam.exception.exception.TrainerNotFoundException;
 import epam.mapper.TrainerMapper;
 import epam.mapper.TrainingMapper;
@@ -20,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,6 +72,7 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
+    @Transactional
     public void deleteTrainer(Authentication connectedUser) {
         UserDetails user = (UserDetails) connectedUser.getPrincipal();
         String username = user.getUsername();
@@ -93,8 +94,10 @@ public class TrainerServiceImpl implements TrainerService {
     public List<TrainingResponseDTO> getTrainerTrainings(Authentication connectedUser,
                                                          String periodFrom, String periodTo, String traineeName) {
         UserDetails user = (UserDetails) connectedUser.getPrincipal();
+
         List<Training> training = trainerRepository.getTrainerTrainings(
-                user.getUsername(), periodFrom, periodTo, traineeName).orElseThrow(
+                user.getUsername(), periodFrom != null ? LocalDate.parse(periodFrom).atStartOfDay() : null,
+                periodTo != null ? LocalDate.parse(periodTo).atStartOfDay() : null, traineeName).orElseThrow(
                 () -> new TrainerNotFoundException("Trainer not found")
         );
         return training.stream().map(trainingMapper::toTrainingResponseDTO).toList();

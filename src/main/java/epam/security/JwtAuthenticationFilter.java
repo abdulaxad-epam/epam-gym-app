@@ -56,11 +56,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 } else {
-                    throw new TokenExpiredException("Your authentication token is blacklisted or expired. Please log in again.");
+                    throw new TokenExpiredException("Invalid access token");
                 }
             } catch (TokenExpiredException | AuthenticationException ex) {
                 SecurityContextHolder.clearContext();
                 authenticationEntryPoint.commence(request, response, new InsufficientAuthenticationException(ex.getMessage()));
+                return;
             }
         }
 

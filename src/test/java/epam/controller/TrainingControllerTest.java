@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 
 import static epam.dto.request_dto.RegisterTraineeRequestDTOTest.settings;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,6 +20,9 @@ public class TrainingControllerTest {
 
     @Mock
     private TrainingService trainingService;
+
+    @Mock
+    private Authentication authentication;
 
     @InjectMocks
     private TrainingController trainingController;
@@ -35,8 +39,8 @@ public class TrainingControllerTest {
         TrainingResponseDTO expectedResponse = Instancio.of(TrainingResponseDTO.class).withSettings(settings).create();
 
         // When
-        when(trainingService.createTraining(trainingRequestDTO)).thenReturn(expectedResponse);
-        ResponseEntity<TrainingResponseDTO> response = trainingController.createTraining(trainingRequestDTO);
+        when(trainingService.createTraining(trainingRequestDTO, authentication)).thenReturn(expectedResponse);
+        ResponseEntity<TrainingResponseDTO> response = trainingController.createTraining(trainingRequestDTO, authentication);
 
         // Then
         assertEquals(200,  response.getStatusCode().value());

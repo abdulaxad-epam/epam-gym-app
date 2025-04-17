@@ -21,6 +21,7 @@ import java.util.Collections;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -93,7 +94,6 @@ class JwtAuthenticationFilterTest {
 
         // Then
         verify(entryPoint).commence(eq(request), eq(response), any(InsufficientAuthenticationException.class));
-        verify(filterChain).doFilter(request, response);
         assert SecurityContextHolder.getContext().getAuthentication() == null;
     }
 

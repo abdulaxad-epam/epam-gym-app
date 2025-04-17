@@ -5,11 +5,7 @@ import epam.dto.request_dto.ChangePasswordRequestDTO;
 import epam.dto.request_dto.RegisterTraineeRequestDTO;
 import epam.dto.request_dto.RegisterTrainerRequestDTO;
 import epam.dto.response_dto.AuthenticationResponseDTO;
-import epam.dto.response_dto.RegisterTraineeResponseDTO;
-import epam.dto.response_dto.RegisterTrainerResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
 

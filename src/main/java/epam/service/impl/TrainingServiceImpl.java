@@ -15,6 +15,8 @@ import epam.service.TrainingService;
 import epam.service.TrainingTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,13 +36,14 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     @Transactional
     @PreAuthorize("hasRole('TRAINER')")
-    public TrainingResponseDTO createTraining(TrainingRequestDTO trainingRequestDTO) {
+    public TrainingResponseDTO createTraining(TrainingRequestDTO trainingRequestDTO, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Training training = trainingMapper.toTraining(
                 trainingRequestDTO,
                 trainingTypeService.getTrainingByTrainingName(trainingRequestDTO.getTrainingType()),
-                trainerRepository.findTraineeByUser_Username(trainingRequestDTO.getTrainerUsername())
+                trainerRepository.findTraineeByUser_Username(userDetails.getUsername())
                         .orElseThrow(
-                                () -> new TrainerNotFoundException("Trainer with username " + trainingRequestDTO.getTrainerUsername() + " not found")
+                                () -> new TrainerNotFoundException("Trainer with username " +userDetails.getUsername() + " not found")
                         ),
                 traineeRepository.findTraineeByUser_Username(trainingRequestDTO.getTraineeUsername())
                         .orElseThrow(
@@ -48,7 +51,7 @@ public class TrainingServiceImpl implements TrainingService {
                         )
         );
 
-        traineeTrainerService.assignTrainerToTrainee(trainingRequestDTO.getTraineeUsername(), trainingRequestDTO.getTrainerUsername());
+        traineeTrainerService.assignTrainerToTrainee(trainingRequestDTO.getTraineeUsername(), userDetails.getUsername());
 
         trainingRepository.save(training);
 
@@ -56,7 +59,7 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    @PreAuthorize("hasRole('TRAINER')")
+    @Transactional
     public void deleteTraining(String username) {
         trainingRepository.getIdByUsername(username).ifPresentOrElse(trainingRepository::deleteTrainingByTrainingId, () -> {
             throw new TrainingNotFoundException("Training with username " + username + " not found");

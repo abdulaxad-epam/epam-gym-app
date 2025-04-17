@@ -4,9 +4,7 @@ import epam.dto.response_dto.TrainerResponseDTO;
 import epam.entity.Trainee;
 import epam.entity.Trainer;
 import epam.entity.TrainerTrainee;
-import epam.entity.User;
 import epam.exception.exception.TraineeHasAssignedBeforeException;
-import epam.exception.exception.TraineeHasNotAssignedBeforeException;
 import epam.exception.exception.TraineeNotFoundException;
 import epam.exception.exception.TrainerNotFoundException;
 import epam.mapper.TrainerMapper;
@@ -58,7 +56,7 @@ public class TrainerTraineeServiceImpl implements TraineeTrainerService {
     @Override
     public List<TrainerResponseDTO> updateTraineeTrainer(Authentication connectedUser, List<String> trainerUsernames) {
 
-        User user = (User) connectedUser.getPrincipal();
+        UserDetails user = (UserDetails) connectedUser.getPrincipal();
         String username = user.getUsername();
         trainerTraineeRepository.removeTrainerTraineeByTrainee_User_Username(username);
 

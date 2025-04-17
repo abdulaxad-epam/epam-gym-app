@@ -1,6 +1,9 @@
 package epam.controller;
 
-import epam.dto.request_dto.*;
+import epam.dto.request_dto.AuthenticateRequestDTO;
+import epam.dto.request_dto.ChangePasswordRequestDTO;
+import epam.dto.request_dto.RegisterTraineeRequestDTO;
+import epam.dto.request_dto.RegisterTrainerRequestDTO;
 import epam.dto.response_dto.AuthenticationResponseDTO;
 import epam.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,8 +15,12 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import java.nio.file.AccessDeniedException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AuthenticationControllerTest {
 
@@ -68,7 +75,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void testChangePassword_ShouldReturnAccepted() {
+    public void testChangePassword_ShouldReturnAccepted() throws AccessDeniedException {
         ChangePasswordRequestDTO requestDTO = new ChangePasswordRequestDTO();
         Authentication auth = mock(Authentication.class);
 

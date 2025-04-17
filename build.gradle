@@ -23,6 +23,7 @@ ext {
     loggerVersion = "2.0.16"
     mockitoVersion = "5.2.0"
     jjwtVersion = "0.12.6"
+    aspectjVersion = "1.9.19"
 }
 
 repositories {
@@ -37,15 +38,15 @@ dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security'
-    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation group: 'org.springframework.security', name: 'spring-security-test'
     runtimeOnly group: 'io.micrometer', name: 'micrometer-registry-prometheus'
 
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: jjwtVersion
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: jjwtVersion
-    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version:  jjwtVersion
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: jjwtVersion
 
     // AspectJ
-    implementation group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.19'
+    implementation group: 'org.aspectj', name: 'aspectjweaver', version: aspectjVersion
 
     // Databases
     implementation group: 'com.h2database', name: 'h2'
@@ -77,10 +78,6 @@ dependencies {
     testImplementation group: 'org.mockito', name: 'mockito-core', version: mockitoVersion
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion
     testImplementation group: 'org.mockito', name: 'mockito-inline', version: mockitoVersion
-
-    // ByteBuddy
-    testImplementation group: 'net.bytebuddy', name: 'byte-buddy', version: '1.14.5'
-    testImplementation group: 'net.bytebuddy', name: 'byte-buddy-agent', version: '1.14.5'
 
     // Instancio
     testImplementation group: 'org.instancio', name: 'instancio-junit', version: instancioVersion

@@ -45,6 +45,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
+    @Transactional
     public TraineeResponseDTO updateTrainee(Authentication connectedUser, UpdateTraineeRequestDTO requestDTO) {
 
         UserDetails user = (UserDetails) connectedUser.getPrincipal();
@@ -73,6 +74,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
+    @Transactional
     public void deleteTrainee(Authentication connectedUser) {
 
         UserDetails user = (UserDetails) connectedUser.getPrincipal();

@@ -33,8 +33,8 @@ public class RegisterTrainerRequestDTOTest {
     public void testValidRegisterTrainerRequest() {
         RegisterTrainerRequestDTO request = Instancio.of(RegisterTrainerRequestDTO.class)
                 .withSettings(settings)
-                .set(field(UserRequestDTO::getFirstName), "John")
-                .set(field(UserRequestDTO::getLastName),"John")
+                .set(field(UserRequestDTO::getRole), null)
+                .set(field(UserRequestDTO::getPassword), null)
                 .create();
 
         Set<ConstraintViolation<RegisterTrainerRequestDTO>> violations = validator.validate(request);
@@ -47,6 +47,8 @@ public class RegisterTrainerRequestDTOTest {
     public void testBlankSpecialization() {
         RegisterTrainerRequestDTO request = Instancio.of(RegisterTrainerRequestDTO.class)
                 .withSettings(settings)
+                .set(field(UserRequestDTO::getRole), null)
+                .set(field(UserRequestDTO::getPassword), null)
                 .set(field(RegisterTrainerRequestDTO::getSpecialization), "")
                 .create();
 

@@ -1,10 +1,17 @@
 package epam.exception;
 
-import epam.exception.exception.*;
+import epam.exception.exception.InvalidTokenType;
+import epam.exception.exception.TraineeHasAssignedBeforeException;
+import epam.exception.exception.TraineeHasNotAssignedBeforeException;
+import epam.exception.exception.TraineeNotFoundException;
+import epam.exception.exception.TrainerNotFoundException;
+import epam.exception.exception.TrainingNotFoundException;
+import epam.exception.exception.TrainingTypeNotFoundException;
+import epam.exception.exception.UserNotAuthenticated;
+import epam.exception.exception.UserNotFoundException;
+import epam.exception.exception.UsernameGenerateException;
 import epam.exception.exception_handler.ExceptionMessage;
 import epam.exception.exception_handler.GlobalExceptionHandler;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +20,10 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.util.Objects;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GlobalExceptionHandlerTest {
 
@@ -36,80 +41,80 @@ public class GlobalExceptionHandlerTest {
 
         ResponseEntity<ExceptionMessage> response = handler.handleTraineeNotFound(exception);
 
-        assertEquals(404, response.getStatusCodeValue());
-        assertEquals(message, response.getBody().getMessage());
+        assertEquals(404, response.getStatusCode().value());
+        assertEquals(message, Objects.requireNonNull(response.getBody()).getMessage());
     }
 
     @Test
     void testHandleTrainerNotFound() {
         TrainerNotFoundException exception = new TrainerNotFoundException("Trainer missing");
         ResponseEntity<ExceptionMessage> response = handler.handleTrainerNotFound(exception);
-        assertEquals(404, response.getStatusCodeValue());
-        assertEquals("Trainer missing", response.getBody().getMessage());
+        assertEquals(404, response.getStatusCode().value());
+        assertEquals("Trainer missing", Objects.requireNonNull(response.getBody()).getMessage());
     }
 
     @Test
     void testHandleTrainingNotFound() {
         TrainingNotFoundException exception = new TrainingNotFoundException("Training not found");
         ResponseEntity<ExceptionMessage> response = handler.handleTrainingNotFound(exception);
-        assertEquals(404, response.getStatusCodeValue());
-        assertEquals("Training not found", response.getBody().getMessage());
+        assertEquals(404, response.getStatusCode().value());
+        assertEquals("Training not found", Objects.requireNonNull(response.getBody()).getMessage());
     }
 
     @Test
     void testHandleTraineeHasNotAssignedBefore() {
         TraineeHasNotAssignedBeforeException exception = new TraineeHasNotAssignedBeforeException("Not assigned before");
         ResponseEntity<ExceptionMessage> response = handler.handleTraineeHasNotAssignedBefore(exception);
-        assertEquals(409, response.getStatusCodeValue());
-        assertEquals("Not assigned before", response.getBody().getMessage());
+        assertEquals(409, response.getStatusCode().value());
+        assertEquals("Not assigned before", Objects.requireNonNull(response.getBody()).getMessage());
     }
 
     @Test
     void testHandleUserNotFound() {
         UserNotFoundException exception = new UserNotFoundException("User does not exist");
         ResponseEntity<ExceptionMessage> response = handler.handleUserNotFound(exception);
-        assertEquals(404, response.getStatusCodeValue());
-        assertEquals("User does not exist", response.getBody().getMessage());
+        assertEquals(404, response.getStatusCode().value());
+        assertEquals("User does not exist", Objects.requireNonNull(response.getBody()).getMessage());
     }
 
     @Test
     void testHandleInvalidTokenType() {
         InvalidTokenType exception = new InvalidTokenType("Invalid token type");
         ResponseEntity<ExceptionMessage> response = handler.handleInvalidTokenType(exception);
-        assertEquals(400, response.getStatusCodeValue());
-        assertEquals("Invalid token type", response.getBody().getMessage());
+        assertEquals(400, response.getStatusCode().value());
+        assertEquals("Invalid token type", Objects.requireNonNull(response.getBody()).getMessage());
     }
 
     @Test
     void testHandleUsernameGenerate() {
-        UsernameGenerateException exception = new UsernameGenerateException("Username generation failed", any(IllegalAccessException.class));
+        UsernameGenerateException exception = new UsernameGenerateException("Username generation failed", new IllegalAccessException("Could not set generated username"));
         ResponseEntity<ExceptionMessage> response = handler.handleUsernameGenerate(exception);
-        assertEquals(303, response.getStatusCodeValue());
-        assertEquals("Username generation failed", response.getBody().getMessage());
+        assertEquals(303, response.getStatusCode().value());
+        assertEquals("Username generation failed", Objects.requireNonNull(response.getBody()).getMessage());
     }
 
     @Test
     void testHandleUserNotAuthenticated() {
         UserNotAuthenticated exception = new UserNotAuthenticated("User not authenticated");
         ResponseEntity<ExceptionMessage> response = handler.handleUserNotAuthenticated(exception);
-        assertEquals(403, response.getStatusCodeValue());
-        assertEquals("User not authenticated", response.getBody().getMessage());
+        assertEquals(403, response.getStatusCode().value());
+        assertEquals("User not authenticated", Objects.requireNonNull(response.getBody()).getMessage());
     }
 
     @Test
     void testHandleTrainingTypeNotFound() {
         TrainingTypeNotFoundException exception = new TrainingTypeNotFoundException("Type not found");
         ResponseEntity<ExceptionMessage> response = handler.handleTrainingTypeNotFound(exception);
-        assertEquals(404, response.getStatusCodeValue());
-        assertEquals("Type not found", response.getBody().getMessage());
+        assertEquals(404, response.getStatusCode().value());
+        assertEquals("Type not found", Objects.requireNonNull(response.getBody()).getMessage());
     }
 
     @Test
     void testHandleTraineeHasAssignedBefore() {
         TraineeHasAssignedBeforeException exception = new TraineeHasAssignedBeforeException("Already assigned");
         ResponseEntity<ExceptionMessage> response = handler.handleTraineeHasAssignedBefore(exception);
-        assertEquals(400, response.getStatusCodeValue());
-        assertEquals("Already assigned", response.getBody().getMessage());
+        assertEquals(400, response.getStatusCode().value());
+        assertEquals("Already assigned", Objects.requireNonNull(response.getBody()).getMessage());
     }
 
     @Test
@@ -120,8 +125,8 @@ public class GlobalExceptionHandlerTest {
         exception.getBindingResult().addError(fieldError);
 
         ResponseEntity<ExceptionMessage> response = handler.handleMethodArgumentNotValid(exception);
-        assertEquals(400, response.getStatusCodeValue());
-        assertTrue(response.getBody().getMessage().contains("must not be null"));
+        assertEquals(400, response.getStatusCode().value());
+        assertTrue(Objects.requireNonNull(response.getBody()).getMessage().contains("must not be null"));
     }
 
 //    @Test
@@ -135,8 +140,8 @@ public class GlobalExceptionHandlerTest {
 //        ConstraintViolationException exception = new ConstraintViolationException(violations);
 //
 //        ResponseEntity<ExceptionMessage> response = handler.handleConstraintViolation(exception);
-//        assertEquals(400, response.getStatusCodeValue());
-//        assertTrue(response.getBody().getMessage().contains("must not be empty"));
+//        assertEquals(400, response.getStatusCode().value());
+//        assertTrue(Objects.requireNonNull(response.getBody()).getMessage().contains("must not be empty"));
 //    }
 
     @Test
@@ -145,8 +150,8 @@ public class GlobalExceptionHandlerTest {
         HttpMessageNotReadableException exception = new HttpMessageNotReadableException("Invalid JSON", cause);
 
         ResponseEntity<ExceptionMessage> response = handler.handleJsonParsingException(exception);
-        assertEquals(400, response.getStatusCodeValue());
-        assertTrue(response.getBody().getMessage().contains("Unrecognized date format"));
+        assertEquals(400, response.getStatusCode().value());
+        assertTrue(Objects.requireNonNull(response.getBody()).getMessage().contains("Unrecognized date format"));
     }
 
     @Test
@@ -155,7 +160,7 @@ public class GlobalExceptionHandlerTest {
 
         ResponseEntity<ExceptionMessage> response = handler.handleException(exception);
 
-        assertEquals(500, response.getStatusCodeValue());
-        assertEquals("Unexpected error", response.getBody().getMessage());
+        assertEquals(500, response.getStatusCode().value());
+        assertEquals("Unexpected error", Objects.requireNonNull(response.getBody()).getMessage());
     }
 }

@@ -23,6 +23,5 @@ public class AuthenticateRequestDTO implements Serializable {
     private String username;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 10, max = 10, message = "Password length must be exactly 10 characters")
     private String password;
 }

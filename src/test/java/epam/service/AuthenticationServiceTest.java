@@ -12,6 +12,7 @@ import epam.dto.response_dto.RegisterTrainerResponseDTO;
 import epam.dto.response_dto.UserResponseDTO;
 import epam.entity.User;
 import epam.exception.exception.InvalidTokenType;
+import epam.exception.exception.UserNotAuthenticated;
 import epam.exception.exception.UserNotFoundException;
 import epam.service.impl.AuthenticationServiceImpl;
 import epam.service.impl.BruteForceProtectionService;
@@ -26,8 +27,8 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -168,7 +169,7 @@ public class AuthenticationServiceTest {
     }
 
     @Test
-    void testChangePassword_Success() {
+    void testChangePassword_Success() throws AccessDeniedException {
         ChangePasswordRequestDTO request = new ChangePasswordRequestDTO("old", "new");
 
         Authentication auth = mock(Authentication.class);
@@ -188,6 +189,23 @@ public class AuthenticationServiceTest {
         when(passwordGenerator.encode("new")).thenReturn("newHashed");
 
         assertTrue(authenticationService.changePassword(request, auth));
+    }
+
+    @Test
+    void testChangePassword_Thrown() {
+        ChangePasswordRequestDTO request = new ChangePasswordRequestDTO("old", "new");
+
+        User user = User.builder()
+                .username("user")
+                .isActive(true)
+                .password("oldHashed")
+                .build();
+
+        when(userService.findByUsername("user")).thenReturn(Optional.of(user));
+        when(passwordGenerator.matches("old", "oldHashed")).thenReturn(true);
+        when(passwordGenerator.encode("new")).thenReturn("newHashed");
+
+        assertThrows(UserNotAuthenticated.class,()->authenticationService.changePassword(request, null));
     }
 
     @Test

@@ -1,9 +1,9 @@
 package epam.repository;
 
-import epam.entity.Trainee;
 import epam.entity.Trainer;
 import epam.entity.TrainerTrainee;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -22,6 +22,6 @@ public interface TrainerTraineeRepository extends JpaRepository<TrainerTrainee, 
 
     boolean existsById_TrainerIdAndId_TraineeId(UUID trainer, UUID trainee);
 
-
+    @Modifying
     void removeTrainerTraineeByTrainee_User_Username(String traineeUsername);
 }

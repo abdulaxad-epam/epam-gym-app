@@ -37,8 +37,8 @@ public class ChangePasswordRequestDTOTest {
     @Test
     public void testShortOldPassword() {
         ChangePasswordRequestDTO request = ChangePasswordRequestDTO.builder()
-                .oldPassword("12345")
-                .newPassword("0987654321")
+                .oldPassword("1234512341234")
+                .newPassword("0987")
                 .build();
 
         Set<ConstraintViolation<ChangePasswordRequestDTO>> violations = validator.validate(request);
@@ -48,8 +48,8 @@ public class ChangePasswordRequestDTOTest {
     @Test
     public void testLongOldPassword() {
         ChangePasswordRequestDTO request = ChangePasswordRequestDTO.builder()
-                .oldPassword("1234567890123")
-                .newPassword("0987654321")
+                .oldPassword("1234567")
+                .newPassword("098765432112")
                 .build();
 
         Set<ConstraintViolation<ChangePasswordRequestDTO>> violations = validator.validate(request);

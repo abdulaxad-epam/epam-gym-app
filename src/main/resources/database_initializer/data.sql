@@ -15,18 +15,18 @@ INSERT INTO training_types (training_type_id, description) VALUES ('d1c3ed9a-e0a
 INSERT INTO training_types (training_type_id, description) VALUES ('5e8d317b-aae7-4ba6-9729-57e3b8c617ef', 'Yoga');
 
 -- Insert Users
-INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('a1b2c3d4-e5f6-4a1b-8c1d-1a2b3c4d5e6f', 'John', 'Jose', 'john.jose', 'TRAINEE','$2a$10$cgCaoJdl4PL4Qh9tEQqmBuwtPL2sFnnHxpTzKVpnw8/fO9jrS2dbS', true);
-INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('b2c3d4e5-f6a1-4b2c-9d1e-2a3b4c5d6e7f', 'Jane', 'Smith', 'jane.smith', 'TRAINEE','$2a$10$xiOLmP2DeJlOeC8wI.hb9.4rsfK2Z5cbZWW/ISaeEXjI73gyZyaNS', true);
-INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('c3d4e5f6-a1b2-4c3d-0e1f-3a4b5c6d7e8f', 'Michael', 'Johnson', 'michael.johnson','TRAINEE', '$2a$10$AGSko5ZT0XFoIchWGdqR1.FnaZoLnxTv7iMGLKgYVF5YZRWD3vg1.', true);
-INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('d4e5f6a1-b2c3-4d4e-1f1a-4a5b6c7d8e9f', 'Emma', 'Williams', 'emma.williams','TRAINEE', '$2a$10$/zuG6WDCBZz0RNFvtPXGveugduXe.zC8b5LWo4OXpHjpBbVWvYod.', true);
+INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('a1b2c3d4-e5f6-4a1b-8c1d-1a2b3c4d5e6f', 'John', 'Jose', 'john.jose', 'TRAINEE', /*  password  */'$2a$10$aeG.8A9AWkFf7Pocf26ntebmEm/Ps1XgS4f39MOwPhhJB9JVdSVT2',true);
+INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('b2c3d4e5-f6a1-4b2c-9d1e-2a3b4c5d6e7f', 'Jane', 'Smith', 'jane.smith', 'TRAINEE', /* password1 */'$2a$10$8iLKAfT/ChG659cxTMqqoO9G7AVhBuA44EoxljS.UwEgYckYsA7Qi', true);
+INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('c3d4e5f6-a1b2-4c3d-0e1f-3a4b5c6d7e8f', 'Michael', 'Johnson', 'michael.johnson','TRAINEE',  /* password2 */'$2a$10$W9eGzvxxzrQFi3ot4xOiBei5LHZo8b8pYBUmZGwOUsaPQSKdt4NRy', true);
+INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('d4e5f6a1-b2c3-4d4e-1f1a-4a5b6c7d8e9f', 'Emma', 'Williams', 'emma.williams','TRAINEE',  /* password3 */'$2a$10$kAs3SP2FFkQVpmmeP2ZRyeYdL8LT6.Pg67/N07kPPg8RTwbAN3Ovq', true);
 
-INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('e5f6a1b2-c3d4-4e5f-2a1b-5a6b7c8d9e0f', 'Robert', 'Brown', 'robert.brown', 'TRAINER', '$2a$10$6QFYro8X89S1Tw78fGE.6OsJcdhapUXWGIPNbGSmk8YoLLotlr0mG', true);
-INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('f6a1b2c3-d4e5-4f6a-3b1c-6a7b8c9d0e1f', 'Sarah', 'Davis', 'sarah.davis','TRAINER',  '$2a$10$lNXrtyD8Bdd73VWrId1j9eIaVyVDLmBdiSMcxBMYNZ335hHA1N5Li', true);
-INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('1a2b3c4d-5e6f-4a1b-4c1d-7a8b9c0d1e2f', 'David', 'Miller', 'david.miller', 'TRAINER', '$2a$10$gDfVc58kg4jRzbYh4fkaeOZ6ahPfOsko9aRNmo9WDcQY0oQDHZsau', true);
-INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('2b3c4d5e-6f1a-4b2c-5d1e-8a9b0c1d2e3f', 'Lisa', 'Wilson', 'lisa.wilson', 'TRAINER', '$2a$10$FXq5KwEp3M2/VQwkzn.Gee0VnwYX58uHAo2uh9bSkZrd7WFa.6N3q', true);
+INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('e5f6a1b2-c3d4-4e5f-2a1b-5a6b7c8d9e0f', 'Robert', 'Brown', 'robert.brown', 'TRAINER',  /* password4 */'$2a$10$5dvPjErUFDfgQzyWkNx1NesxWeplYFqbt/X3Cy3tuoxNKX6Qb4VOi', true);
+INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('f6a1b2c3-d4e5-4f6a-3b1c-6a7b8c9d0e1f', 'Sarah', 'Davis', 'sarah.davis','TRAINER',  /* password5 */ '$2a$10$mlpJ5p03GL1FWBpmyGYhrOwEloNrS0Mfsm3MIydA.TLvgB5rFlNd.', true);
+INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('1a2b3c4d-5e6f-4a1b-4c1d-7a8b9c0d1e2f', 'David', 'Miller', 'david.miller', 'TRAINER',  /* password6 */'$2a$10$UNqmPYdSNj.S9BKGqWGjQeiMkU3f8FTrMQ41/FTpuTvQxT6LaI.RO', true);
+INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('2b3c4d5e-6f1a-4b2c-5d1e-8a9b0c1d2e3f', 'Lisa', 'Wilson', 'lisa.wilson', 'TRAINER',  /* password7 */'$2a$10$ZiP24r6o6quAafK9IsxNq.0SdUXSU.nrwLGf7HqiCH9pOTNNmQBGS', true);
 
-INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('3c4d5e6f-7a8b-4c3d-9e0f-9a0b1c2d3e4f', 'James', 'Taylor', 'james.taylor', 'TRAINER', '$2a$10$6LaxPjZX3Q.987m41Kt9Z.ULcRevwuDeb4lPOcNqskGcziGJoMzSy', true);
-INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('4d5e6f7a-8b9c-4d5e-0f1a-0b1c2d3e4f5a', 'Emily', 'Anderson', 'emily.anderson', 'TRAINER', '$2a$10$Iviqgf6GUVDgqG41/yEfIeBSOs.ffHj1uhT6dgv6/udJWLlmx1ejS', true);
+INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('3c4d5e6f-7a8b-4c3d-9e0f-9a0b1c2d3e4f', 'James', 'Taylor', 'james.taylor', 'TRAINER',  /* password8 */'$2a$10$n1tMfyV.zH4Lvg0E7w2JI.Z7mqSQLtdvV0dSSC0NxL1dvdOHfgFti', true);
+INSERT INTO users (user_id, firstname, lastname, username, role, password, is_active) VALUES ('4d5e6f7a-8b9c-4d5e-0f1a-0b1c2d3e4f5a', 'Emily', 'Anderson', 'emily.anderson', 'TRAINER',  /* password9 */'$2a$10$INqPVTSSeVH29hcBTW3TNeiE7G7YfNg/ujvviqSpWxw6dFR8WcIl6', true);
 
 
 INSERT INTO trainees (trainee_id, date_of_birth, address, user_id) VALUES ('1a2b3c4d-5e6f-4a1b-8c1d-1a2b3c4d5e6f', '1990-05-15', '123 Main St, Anytown', 'a1b2c3d4-e5f6-4a1b-8c1d-1a2b3c4d5e6f');

@@ -81,7 +81,7 @@ public class AuthenticationController {
     })
     @PutMapping(value = "/changePassword", consumes = "application/json")
     public ResponseEntity<Boolean> changePassword(
-            @Valid @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO, Authentication authentication) throws TraineeNotFoundException {
+            @Valid @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO, Authentication authentication) throws TraineeNotFoundException{
         authenticationService.changePassword(changePasswordRequestDTO, authentication);
         return ResponseEntity.accepted().build();
     }

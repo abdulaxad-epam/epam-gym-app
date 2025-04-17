@@ -1,7 +1,6 @@
 package epam.dto.response_dto;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +14,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Tokens implements Serializable {
+public class TokenDTO implements Serializable {
     private String accessToken;
     private String refreshToken;
 }

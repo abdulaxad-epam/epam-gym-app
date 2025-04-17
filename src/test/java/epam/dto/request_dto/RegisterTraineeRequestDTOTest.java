@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.util.Set;
 
 import static org.instancio.Select.field;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,67 +31,79 @@ public class RegisterTraineeRequestDTOTest {
             .set(Keys.STRING_MIN_LENGTH, 10).lock();
 
     @BeforeEach
-    public void setUp() {
+    void setup() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
 
-    @Test
-    public void testValidRegisterTraineeRequest() {
-        RegisterTraineeRequestDTO request = Instancio.of(RegisterTraineeRequestDTO.class)
+    private UserRequestDTO getValidUserRequest() {
+        return Instancio.of(UserRequestDTO.class)
                 .withSettings(settings)
-                .set(field(RegisterTraineeRequestDTO::getDateOfBirth), LocalDate.of(2000, 1, 1))
-                .set(field(RegisterTraineeRequestDTO::getAddress), "123 Test Street")
-                .set(field(RegisterTraineeRequestDTO::getUser),
-                        Instancio.of(UserRequestDTO.class)
-                                .set(field(UserRequestDTO::getFirstName), "John")
-                                .set(field(UserRequestDTO::getLastName), "Aspect")
-                                .set(field(UserRequestDTO::getIsActive), true)
-                                .create())
+                .set(field(UserRequestDTO::getRole), null)
+                .set(field(UserRequestDTO::getPassword), null)
                 .create();
-
-        Set<ConstraintViolation<RegisterTraineeRequestDTO>> violations = validator.validate(request);
-        assertTrue(violations.isEmpty());
     }
 
     @Test
-    public void testInvalidFutureDateOfBirth() {
-        RegisterTraineeRequestDTO request = Instancio.of(RegisterTraineeRequestDTO.class)
-                .withSettings(settings)
-                .set(field(UserRequestDTO::getFirstName), "John")
-                .set(field(RegisterTraineeRequestDTO::getDateOfBirth), LocalDate.now().plusDays(1))
-                .create();
+    void testValidTraineeRequest() {
+        RegisterTraineeRequestDTO dto = RegisterTraineeRequestDTO.builder()
+                .dateOfBirth(LocalDate.of(1990, 1, 1))
+                .address("123 Main St")
+                .user(getValidUserRequest())
+                .build();
 
-        Set<ConstraintViolation<RegisterTraineeRequestDTO>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
-        assertEquals("Date of birth must be in the past", violations.iterator().next().getMessage());
-    }
-
-
-
-    @Test
-    public void testBlankAddress() {
-        RegisterTraineeRequestDTO request = Instancio.of(RegisterTraineeRequestDTO.class)
-                .withSettings(settings)
-                .set(field(RegisterTraineeRequestDTO::getDateOfBirth), LocalDate.of(2000, 1, 1))
-                .set(field(RegisterTraineeRequestDTO::getAddress), "")
-                .create();
-
-        Set<ConstraintViolation<RegisterTraineeRequestDTO>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
-        assertEquals("Address is required", violations.iterator().next().getMessage());
+        Set<ConstraintViolation<RegisterTraineeRequestDTO>> violations = validator.validate(dto);
+        assertTrue(violations.isEmpty(), "DTO should be valid");
     }
 
     @Test
-    public void testNullUserDetails() {
-        RegisterTraineeRequestDTO request = Instancio.of(RegisterTraineeRequestDTO.class)
-                .withSettings(settings)
-                .set(field(RegisterTraineeRequestDTO::getDateOfBirth), LocalDate.of(2000, 1, 1))
-                .set(field(RegisterTraineeRequestDTO::getUser), null)
-                .create();
+    void testMissingDateOfBirth() {
+        RegisterTraineeRequestDTO dto = RegisterTraineeRequestDTO.builder()
+                .address("Some Address")
+                .user(getValidUserRequest())
+                .build();
 
-        Set<ConstraintViolation<RegisterTraineeRequestDTO>> violations = validator.validate(request);
+        Set<ConstraintViolation<RegisterTraineeRequestDTO>> violations = validator.validate(dto);
         assertFalse(violations.isEmpty());
-        assertEquals("User details are required", violations.iterator().next().getMessage());
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Date of birth is required")));
+    }
+
+    @Test
+    void testFutureDateOfBirth() {
+        RegisterTraineeRequestDTO dto = RegisterTraineeRequestDTO.builder()
+                .dateOfBirth(LocalDate.now().plusDays(1))
+                .address("Some Address")
+                .user(getValidUserRequest())
+                .build();
+
+        Set<ConstraintViolation<RegisterTraineeRequestDTO>> violations = validator.validate(dto);
+        assertFalse(violations.isEmpty());
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Date of birth must be in the past")));
+    }
+
+    @Test
+    void testBlankAddress() {
+        RegisterTraineeRequestDTO dto = RegisterTraineeRequestDTO.builder()
+                .dateOfBirth(LocalDate.of(1995, 5, 15))
+                .address("   ")
+                .user(getValidUserRequest())
+                .build();
+
+        Set<ConstraintViolation<RegisterTraineeRequestDTO>> violations = validator.validate(dto);
+        assertFalse(violations.isEmpty());
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Address is required")));
+    }
+
+    @Test
+    void testNullUserObject() {
+        RegisterTraineeRequestDTO dto = RegisterTraineeRequestDTO.builder()
+                .dateOfBirth(LocalDate.of(1995, 5, 15))
+                .address("Some Address")
+                .user(null)
+                .build();
+
+        Set<ConstraintViolation<RegisterTraineeRequestDTO>> violations = validator.validate(dto);
+        assertFalse(violations.isEmpty());
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("User details are required")));
     }
 }

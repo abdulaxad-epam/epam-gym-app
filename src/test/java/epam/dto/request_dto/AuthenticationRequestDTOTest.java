@@ -60,28 +60,6 @@ public class AuthenticationRequestDTOTest {
     }
 
     @Test
-    public void testShortPassword() {
-        AuthenticateRequestDTO request = AuthenticateRequestDTO.builder()
-                .username("testUser")
-                .password("12345") // Less than 10 characters
-                .build();
-
-        Set<ConstraintViolation<AuthenticateRequestDTO>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
-    }
-
-    @Test
-    public void testLongPassword() {
-        AuthenticateRequestDTO request = AuthenticateRequestDTO.builder()
-                .username("testUser")
-                .password("12345678901") // More than 10 characters
-                .build();
-
-        Set<ConstraintViolation<AuthenticateRequestDTO>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
-    }
-
-    @Test
     public void testNullPassword() {
         AuthenticateRequestDTO request = AuthenticateRequestDTO.builder()
                 .username("testUser")

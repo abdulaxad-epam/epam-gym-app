@@ -17,6 +17,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthenticationResponseDTO implements Serializable {
-    private Tokens token;
+    private TokenDTO token;
     private UserAuthenticationResponseDTO user;
 }

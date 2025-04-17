@@ -1,13 +1,10 @@
 package epam.service.impl;
 
-import epam.dto.request_dto.ChangePasswordRequestDTO;
 import epam.entity.User;
-import epam.exception.exception.UserNotFoundException;
 import epam.repository.UserRepository;
 import epam.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 

@@ -9,10 +9,11 @@ import epam.dto.request_dto.TrainerRequestDTO;
 import epam.dto.response_dto.AuthenticationResponseDTO;
 import epam.dto.response_dto.RegisterTraineeResponseDTO;
 import epam.dto.response_dto.RegisterTrainerResponseDTO;
-import epam.dto.response_dto.Tokens;
+import epam.dto.response_dto.TokenDTO;
 import epam.dto.response_dto.UserAuthenticationResponseDTO;
 import epam.dto.response_dto.UserResponseDTO;
 import epam.exception.exception.InvalidTokenType;
+import epam.exception.exception.UserNotAuthenticated;
 import epam.exception.exception.UserNotFoundException;
 import epam.service.AuthenticationService;
 import epam.service.JwtService;
@@ -111,7 +112,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         return AuthenticationResponseDTO.builder()
                 .token(
-                        Tokens.builder()
+                        TokenDTO.builder()
                                 .refreshToken(refreshToken)
                                 .accessToken(accessToken)
                                 .build())
@@ -121,8 +122,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     @Transactional
-    public Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO, Authentication authentication) {
-
+    public Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO, Authentication authentication){
+        if (authentication == null) {
+            throw new UserNotAuthenticated("Access denied");
+        }
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         var userOptional = userService.findByUsername(userDetails.getUsername());
@@ -166,7 +169,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         String accessToken = jwtService.generateAccessToken(user);
         return AuthenticationResponseDTO.builder()
-                .token(Tokens.builder()
+                .token(TokenDTO.builder()
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
                         .build()).build();
@@ -185,7 +188,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
 
         return AuthenticationResponseDTO.builder()
-                .token(Tokens.builder()
+                .token(TokenDTO.builder()
                         .refreshToken(refreshToken)
                         .accessToken(accessToken)
                         .build())

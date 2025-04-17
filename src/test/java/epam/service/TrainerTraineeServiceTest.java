@@ -35,6 +35,7 @@ public class TrainerTraineeServiceTest {
     private TrainerRepository trainerRepository;
     private TrainerMapper trainerMapper;
     private TrainerTraineeServiceImpl service;
+    private UserDetails userDetails;
 
     @BeforeEach
     void setUp() {
@@ -42,6 +43,7 @@ public class TrainerTraineeServiceTest {
         traineeRepository = mock(TraineeRepository.class);
         trainerRepository = mock(TrainerRepository.class);
         trainerMapper = mock(TrainerMapper.class);
+        userDetails = mock(UserDetails.class);
 
         service = new TrainerTraineeServiceImpl(trainerTraineeRepository, traineeRepository, trainerRepository, trainerMapper);
     }
@@ -111,9 +113,13 @@ public class TrainerTraineeServiceTest {
 
         Trainer trainer = new Trainer();
         trainer.setTrainerId(UUID.randomUUID());
-        User trainerUser = new User();
-        trainerUser.setUsername("trainer1");
+
+        User trainerUser = User.builder().username("trainer1").build();
         trainer.setUser(trainerUser);
+
+
+        when(userDetails.getUsername()).thenReturn("trainee1");
+        when(auth.getPrincipal()).thenReturn(userDetails);
 
         when(traineeRepository.findTraineeByUser_Username("trainee1")).thenReturn(Optional.of(trainee));
         when(trainerRepository.findTraineeByUser_Username("trainer1")).thenReturn(Optional.of(trainer));

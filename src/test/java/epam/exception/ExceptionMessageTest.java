@@ -56,7 +56,7 @@ public class ExceptionMessageTest {
         exceptionMassage.setError("Forbidden");
         exceptionMassage.setMessage("You don't have permission to access this resource");
 
-        String expected = "ExceptionMassage(timestamp=" + exceptionMassage.getTimestamp() +
+        String expected = "ExceptionMessage(timestamp=" + exceptionMassage.getTimestamp() +
                 ", status=403, error=Forbidden, message=You don't have permission to access this resource)";
 
         assertEquals(expected, exceptionMassage.toString());

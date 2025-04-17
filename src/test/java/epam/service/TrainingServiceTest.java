@@ -17,6 +17,8 @@ import epam.service.impl.TrainingServiceImpl;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -35,6 +37,8 @@ public class TrainingServiceTest {
     private TraineeRepository traineeRepository;
     private TrainerRepository trainerRepository;
     private TraineeTrainerService traineeTrainerService;
+    private Authentication authentication;
+    private UserDetails userDetails;
 
     private TrainingServiceImpl trainingService;
 
@@ -46,6 +50,8 @@ public class TrainingServiceTest {
         traineeRepository = mock(TraineeRepository.class);
         trainerRepository = mock(TrainerRepository.class);
         traineeTrainerService = mock(TraineeTrainerService.class);
+        authentication = mock(Authentication.class);
+        userDetails = mock(UserDetails.class);
 
         trainingService = new TrainingServiceImpl(
                 trainingRepository,
@@ -60,7 +66,6 @@ public class TrainingServiceTest {
     @Test
     void createTraining_shouldSucceed() {
         TrainingRequestDTO dto = new TrainingRequestDTO();
-        dto.setTrainerUsername("trainer1");
         dto.setTraineeUsername("trainee1");
         dto.setTrainingType("Yoga");
 
@@ -75,13 +80,15 @@ public class TrainingServiceTest {
         Training training = new Training();
         TrainingResponseDTO responseDTO = new TrainingResponseDTO();
 
+        when(authentication.getPrincipal()).thenReturn(userDetails);
+        when(userDetails.getUsername()).thenReturn("trainer1");
         when(trainingTypeService.getTrainingByTrainingName("Yoga")).thenReturn(type);
         when(trainerRepository.findTraineeByUser_Username("trainer1")).thenReturn(Optional.of(trainer));
         when(traineeRepository.findTraineeByUser_Username("trainee1")).thenReturn(Optional.of(trainee));
         when(trainingMapper.toTraining(dto, type, trainer, trainee)).thenReturn(training);
         when(trainingMapper.toTrainingResponseDTO(training)).thenReturn(responseDTO);
 
-        TrainingResponseDTO result = trainingService.createTraining(dto);
+        TrainingResponseDTO result = trainingService.createTraining(dto, authentication);
 
         assertNotNull(result);
         verify(trainingRepository).save(training);
@@ -91,23 +98,31 @@ public class TrainingServiceTest {
     @Test
     void createTraining_shouldThrowTrainerNotFound() {
         TrainingRequestDTO dto = new TrainingRequestDTO();
-        dto.setTrainerUsername("trainer1");
         dto.setTraineeUsername("trainee1");
         dto.setTrainingType("Yoga");
+
+        UserDetails userDetails = mock(UserDetails.class);
+        when(userDetails.getUsername()).thenReturn("trainer1");
+        when(authentication.getPrincipal()).thenReturn(userDetails);
 
         when(trainingTypeService.getTrainingByTrainingName("Yoga")).thenReturn(new TrainingType());
         when(trainerRepository.findTraineeByUser_Username("trainer1")).thenReturn(Optional.empty());
 
         assertThrows(TrainerNotFoundException.class,
-                () -> trainingService.createTraining(dto));
+                () -> trainingService.createTraining(dto, authentication));
     }
+
 
     @Test
     void createTraining_shouldThrowTraineeNotFound() {
         TrainingRequestDTO dto = new TrainingRequestDTO();
-        dto.setTrainerUsername("trainer1");
         dto.setTraineeUsername("trainee1");
         dto.setTrainingType("Yoga");
+
+        UserDetails userDetails = mock(UserDetails.class);
+        when(userDetails.getUsername()).thenReturn("trainer1");
+        when(authentication.getPrincipal()).thenReturn(userDetails);
+
 
         Trainer trainer = new Trainer();
         when(trainingTypeService.getTrainingByTrainingName("Yoga")).thenReturn(new TrainingType());
@@ -115,8 +130,9 @@ public class TrainingServiceTest {
         when(traineeRepository.findTraineeByUser_Username("trainee1")).thenReturn(Optional.empty());
 
         assertThrows(TraineeNotFoundException.class,
-                () -> trainingService.createTraining(dto));
+                () -> trainingService.createTraining(dto, authentication));
     }
+
 
     @Test
     void deleteTraining_shouldDeleteSuccessfully() {

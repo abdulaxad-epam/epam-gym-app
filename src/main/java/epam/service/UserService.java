@@ -1,6 +1,5 @@
 package epam.service;
 
-import epam.dto.request_dto.ChangePasswordRequestDTO;
 import epam.entity.User;
 
 import java.util.Optional;

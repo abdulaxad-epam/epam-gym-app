@@ -3,6 +3,7 @@ package epam.repository;
 import epam.entity.Trainee;
 import epam.entity.Training;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -17,6 +18,7 @@ public interface TraineeRepository extends JpaRepository<Trainee, UUID> {
 
     boolean existsTraineeByUser_Username(String username);
 
+    @Modifying
     void deleteTraineeByUser_Username(String username);
 
     @Query("SELECT t FROM Training t " +
