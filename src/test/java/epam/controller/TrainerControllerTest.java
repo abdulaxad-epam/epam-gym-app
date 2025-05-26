@@ -2,7 +2,7 @@ package epam.controller;
 
 import epam.dto.request_dto.TrainerRequestDTO;
 import epam.dto.response_dto.TrainerResponseDTO;
-import epam.dto.response_dto.TrainingResponseDTO;
+import epam.client.dto.TrainingResponseDTO;
 import epam.service.TrainerService;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;

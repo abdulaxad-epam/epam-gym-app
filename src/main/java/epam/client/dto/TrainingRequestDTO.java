@@ -1,4 +1,4 @@
-package epam.dto.request_dto;
+package epam.client.dto;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Max;

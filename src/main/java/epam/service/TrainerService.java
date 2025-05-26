@@ -3,7 +3,7 @@ package epam.service;
 import epam.dto.request_dto.TrainerRequestDTO;
 import epam.dto.response_dto.RegisterTrainerResponseDTO;
 import epam.dto.response_dto.TrainerResponseDTO;
-import epam.dto.response_dto.TrainingResponseDTO;
+import epam.client.dto.TrainingResponseDTO;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;

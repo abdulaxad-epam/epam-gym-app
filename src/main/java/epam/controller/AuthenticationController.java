@@ -36,52 +36,33 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
+    
     @Operation(summary = "Register a new trainer")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Trainer registered successfully",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RegisterTrainerResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content)
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Trainer registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = RegisterTrainerResponseDTO.class))), @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content)})
     @PostMapping(value = "/register/trainer", consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<AuthenticationResponseDTO> createTrainer(
-            @Valid @RequestBody RegisterTrainerRequestDTO trainerRequestDTO) {
+    public ResponseEntity<AuthenticationResponseDTO> createTrainer(@Valid @RequestBody RegisterTrainerRequestDTO trainerRequestDTO) {
         return ResponseEntity.ok(authenticationService.register(trainerRequestDTO));
     }
 
     @Operation(summary = "Register a new trainee")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Trainee registered successfully",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RegisterTraineeResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content)
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Trainee registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = RegisterTraineeResponseDTO.class))), @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content)})
     @PostMapping(value = "/register/trainee", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<AuthenticationResponseDTO> createTrainee(
-            @Valid @RequestBody RegisterTraineeRequestDTO traineeRequestDTO) {
+    public ResponseEntity<AuthenticationResponseDTO> createTrainee(@Valid @RequestBody RegisterTraineeRequestDTO traineeRequestDTO) {
         return ResponseEntity.ok(authenticationService.register(traineeRequestDTO));
     }
 
     @Operation(summary = "Authenticate a user (trainee or trainer)")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Authentication successful"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - invalid credentials", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Trainee not found", content = @Content)
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Authentication successful"), @ApiResponse(responseCode = "401", description = "Unauthorized - invalid credentials", content = @Content), @ApiResponse(responseCode = "404", description = "Trainee not found", content = @Content)})
     @PostMapping(value = "/authenticate", consumes = "application/json")
-    public ResponseEntity<AuthenticationResponseDTO> authenticateTraining(
-            @Valid @RequestBody AuthenticateRequestDTO authenticateRequestDTO) throws TraineeNotFoundException {
+    public ResponseEntity<AuthenticationResponseDTO> authenticateTraining(@Valid @RequestBody AuthenticateRequestDTO authenticateRequestDTO) throws TraineeNotFoundException {
         return ResponseEntity.ok(authenticationService.authenticate(authenticateRequestDTO));
     }
 
     @Operation(summary = "Change password for a user")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Password changed successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Trainee not found", content = @Content)
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Password changed successfully"), @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content), @ApiResponse(responseCode = "404", description = "Trainee not found", content = @Content)})
     @PutMapping(value = "/changePassword", consumes = "application/json")
-    public ResponseEntity<Boolean> changePassword(
-            @Valid @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO, Authentication authentication) throws TraineeNotFoundException{
+    public ResponseEntity<Boolean> changePassword(@Valid @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO, Authentication authentication) throws TraineeNotFoundException {
         authenticationService.changePassword(changePasswordRequestDTO, authentication);
         return ResponseEntity.accepted().build();
     }

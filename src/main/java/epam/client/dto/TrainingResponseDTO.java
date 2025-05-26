@@ -1,7 +1,9 @@
-package epam.dto.response_dto;
+package epam.client.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import epam.dto.response_dto.TraineeResponseDTO;
+import epam.dto.response_dto.TrainerResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

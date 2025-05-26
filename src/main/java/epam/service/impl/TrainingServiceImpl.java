@@ -1,7 +1,7 @@
 package epam.service.impl;
 
-import epam.dto.request_dto.TrainingRequestDTO;
-import epam.dto.response_dto.TrainingResponseDTO;
+import epam.client.dto.TrainingRequestDTO;
+import epam.client.dto.TrainingResponseDTO;
 import epam.entity.Training;
 import epam.exception.exception.TraineeNotFoundException;
 import epam.exception.exception.TrainerNotFoundException;
@@ -65,5 +65,4 @@ public class TrainingServiceImpl implements TrainingService {
             throw new TrainingNotFoundException("Training with username " + username + " not found");
         });
     }
-
 }

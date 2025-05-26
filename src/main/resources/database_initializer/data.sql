@@ -61,3 +61,6 @@ INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, train
 INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('f4a3b2c1-d0e9-4f4a-3b2c-6f4a3b2c1d0e', '3c4d5e6f-1a2b-4c3d-0e1f-3a4b5c6d7e8f', '8b2c3d4e-5f6a-4b2c-5d1e-8a9b0c1d2e3f', 'Power Yoga', '2025-02-23 08:00:00', '5e8d317b-aae7-4ba6-9729-57e3b8c617ef', 75);
 INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('1d2e3f4a-5b6c-41d2-e3f4-71d2e3f4a5b6', '4d5e6f1a-2b3c-4d4e-1f1a-4a5b6c7d8e9f', '8b2c3d4e-5f6a-4b2c-5d1e-8a9b0c1d2e3f', 'Relaxation Yoga', '2025-02-24 17:00:00', '5e8d317b-aae7-4ba6-9729-57e3b8c617ef', 60);
 INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('2e3f4a5b-6c7d-42e3-f4a5-82e3f4a5b6c7', '4d5e6f1a-2b3c-4d4e-1f1a-4a5b6c7d8e9f', '5e6f1a2b-3c4d-4e5f-2a1b-5a6b7c8d9e0f', 'Lower Body Strength', '2025-02-25 12:45:00', 'f582d589-c3a0-4864-9c97-ddae809a92e9', 55);
+
+
+ALTER TABLE trainer_trainee ADD CONSTRAINT FK_TRAINER FOREIGN KEY (trainer_id) REFERENCES trainers (trainer_id) ON DELETE CASCADE;

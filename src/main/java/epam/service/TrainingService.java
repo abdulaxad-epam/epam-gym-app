@@ -1,8 +1,8 @@
 package epam.service;
 
 
-import epam.dto.request_dto.TrainingRequestDTO;
-import epam.dto.response_dto.TrainingResponseDTO;
+import epam.client.dto.TrainingRequestDTO;
+import epam.client.dto.TrainingResponseDTO;
 import org.springframework.security.core.Authentication;
 
 public interface TrainingService {

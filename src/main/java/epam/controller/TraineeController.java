@@ -2,7 +2,7 @@ package epam.controller;
 
 import epam.dto.request_dto.UpdateTraineeRequestDTO;
 import epam.dto.response_dto.TraineeResponseDTO;
-import epam.dto.response_dto.TrainingResponseDTO;
+import epam.client.dto.TrainingResponseDTO;
 import epam.service.TraineeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -69,14 +69,11 @@ public class TraineeController {
     ) {
         return ResponseEntity.ok(traineeService.updateTrainee(connectedUser, requestDTO));
     }
-
-
     @Operation(summary = "Delete a trainee by username")
     @ApiResponse(responseCode = "200", description = "Trainee deleted successfully")
     @ApiResponse(responseCode = "404", description = "Trainee not found", content = @Content)
     @DeleteMapping(value = "/delete", produces = "application/json")
-    public ResponseEntity<Void> delete(
-            Authentication connectedUser) {
+    public ResponseEntity<Void> delete(Authentication connectedUser) {
         traineeService.deleteTrainee(connectedUser);
 
         return ResponseEntity.ok().build();

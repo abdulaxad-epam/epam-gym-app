@@ -61,7 +61,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } catch (TokenExpiredException | AuthenticationException ex) {
                 SecurityContextHolder.clearContext();
                 authenticationEntryPoint.commence(request, response, new InsufficientAuthenticationException(ex.getMessage()));
-                return;
             }
         }
 

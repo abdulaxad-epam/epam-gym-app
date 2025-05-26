@@ -1,8 +1,8 @@
 package epam.mapper;
 
 
-import epam.dto.request_dto.TrainingRequestDTO;
-import epam.dto.response_dto.TrainingResponseDTO;
+import epam.client.dto.TrainingRequestDTO;
+import epam.client.dto.TrainingResponseDTO;
 import epam.entity.Trainee;
 import epam.entity.Trainer;
 import epam.entity.Training;

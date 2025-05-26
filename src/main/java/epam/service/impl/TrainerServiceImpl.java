@@ -1,19 +1,23 @@
 package epam.service.impl;
 
+import epam.client.TrainingClient;
 import epam.dto.request_dto.TrainerRequestDTO;
 import epam.dto.response_dto.RegisterTrainerResponseDTO;
 import epam.dto.response_dto.TrainerResponseDTO;
-import epam.dto.response_dto.TrainingResponseDTO;
+import epam.client.dto.TrainingResponseDTO;
 import epam.entity.Trainer;
 import epam.entity.Training;
 import epam.exception.exception.TrainerNotFoundException;
 import epam.mapper.TrainerMapper;
 import epam.mapper.TrainingMapper;
 import epam.repository.TrainerRepository;
+import epam.service.TraineeTrainerService;
 import epam.service.TrainerService;
+import epam.service.TrainingService;
 import epam.service.TrainingTypeService;
 import epam.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TrainerServiceImpl implements TrainerService {
@@ -32,6 +37,9 @@ public class TrainerServiceImpl implements TrainerService {
     private final TrainingTypeService trainingTypeService;
 
     private final TrainerMapper trainerMapper;
+
+    private final TrainingClient trainingClient;
+
     private final TrainingMapper trainingMapper;
 
     private final UserService userService;
@@ -76,10 +84,17 @@ public class TrainerServiceImpl implements TrainerService {
     public void deleteTrainer(Authentication connectedUser) {
         UserDetails user = (UserDetails) connectedUser.getPrincipal();
         String username = user.getUsername();
-        if (userService.existsByUsername(username)) {
+
+        userService.findByUsername(username).ifPresentOrElse(trainer -> {
             trainerRepository.deleteTrainerByUser_Username(username);
-        }
-        throw new TrainerNotFoundException("Trainer not found");
+
+            trainingClient.deleteTrainingsByTrainer(trainer.getUserId());
+
+            log.info("Deleted trainings from user {}", username);
+        }, () -> {
+            throw new TrainerNotFoundException("Trainer not found");
+        });
+
     }
 
     @Override

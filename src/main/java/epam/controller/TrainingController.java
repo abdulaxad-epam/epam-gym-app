@@ -1,7 +1,7 @@
 package epam.controller;
 
-import epam.dto.request_dto.TrainingRequestDTO;
-import epam.dto.response_dto.TrainingResponseDTO;
+import epam.client.dto.TrainingRequestDTO;
+import epam.client.dto.TrainingResponseDTO;
 import epam.service.TrainingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

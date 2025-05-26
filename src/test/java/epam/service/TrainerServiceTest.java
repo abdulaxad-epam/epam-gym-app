@@ -1,5 +1,6 @@
 package epam.service;
 
+import epam.client.TrainingClient;
 import epam.dto.request_dto.TrainerRequestDTO;
 import epam.dto.response_dto.RegisterTrainerResponseDTO;
 import epam.dto.response_dto.TrainerResponseDTO;
@@ -32,6 +33,7 @@ public class TrainerServiceTest {
     private TrainerMapper trainerMapper;
     private UserService userService;
     private TrainerServiceImpl trainerService;
+    private TrainingClient trainingClient;
 
     @BeforeEach
     void setUp() {
@@ -41,7 +43,7 @@ public class TrainerServiceTest {
         TrainingMapper trainingMapper = mock(TrainingMapper.class);
         userService = mock(UserService.class);
         trainerService = new TrainerServiceImpl(
-                trainerRepository, trainingTypeService, trainerMapper, trainingMapper, userService
+                trainerRepository, trainingTypeService, trainerMapper,trainingClient, trainingMapper, userService
         );
     }
 

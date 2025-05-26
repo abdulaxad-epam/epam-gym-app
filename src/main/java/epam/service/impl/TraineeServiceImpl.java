@@ -4,7 +4,7 @@ import epam.dto.request_dto.TraineeRequestDTO;
 import epam.dto.request_dto.UpdateTraineeRequestDTO;
 import epam.dto.response_dto.RegisterTraineeResponseDTO;
 import epam.dto.response_dto.TraineeResponseDTO;
-import epam.dto.response_dto.TrainingResponseDTO;
+import epam.client.dto.TrainingResponseDTO;
 import epam.entity.Trainee;
 import epam.entity.Training;
 import epam.exception.exception.TraineeNotFoundException;
@@ -83,8 +83,6 @@ public class TraineeServiceImpl implements TraineeService {
         if (!traineeRepository.existsTraineeByUser_Username(username)) {
             throw new TraineeNotFoundException(String.format("Trainee not found with username: %s", username));
         }
-
-        trainingService.deleteTraining(username);
 
         traineeRepository.deleteTraineeByUser_Username(username);
     }

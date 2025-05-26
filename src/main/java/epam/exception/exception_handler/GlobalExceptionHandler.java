@@ -180,14 +180,14 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionMessage> handleException(Exception e) {
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ExceptionMessage.builder()
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                        .message(e.getMessage())
-                        .build()
-                );
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ExceptionMessage> handleException(Exception e) {
+//        return ResponseEntity
+//                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                .body(ExceptionMessage.builder()
+//                        .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+//                        .message(e.getMessage())
+//                        .build()
+//                );
+//    }
 }
