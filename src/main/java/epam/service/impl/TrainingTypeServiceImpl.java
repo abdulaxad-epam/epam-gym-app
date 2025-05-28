@@ -5,11 +5,12 @@ import epam.entity.TrainingType;
 import epam.exception.exception.TrainingTypeNotFoundException;
 import epam.mapper.TrainingTypeMapper;
 import epam.repository.TrainingTypeRepository;
-import epam.service.TrainingTypeService;
+import epam.client.service.TrainingTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,12 +22,17 @@ public class TrainingTypeServiceImpl implements TrainingTypeService {
     @Override
     public TrainingType getTrainingByTrainingName(String trainingName) {
         return trainingTypeRepository.findTrainingTypeByDescription(trainingName)
-                .orElseThrow(() -> new TrainingTypeNotFoundException("Training with training name " + trainingName + " not found"));
+                .orElseThrow(() -> new TrainingTypeNotFoundException("Training type with training type name " + trainingName + " not found"));
     }
 
     @Override
     public List<TrainingTypeResponseDTO> findAll() {
         List<TrainingType> trainingTypes = trainingTypeRepository.findAll();
         return trainingTypes.stream().map(trainingTypeMapper::toTrainingTypeResponseDTO).toList();
+    }
+
+    @Override
+    public String getTrainingNameById(UUID trainingId) {
+        return trainingTypeRepository.findTrainingTypeDescriptionByTrainingTypeId((trainingId)).orElseThrow(()-> new TrainingTypeNotFoundException("Training type with training id " + trainingId + " not found"));
     }
 }

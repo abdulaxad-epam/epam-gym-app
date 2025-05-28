@@ -5,9 +5,12 @@ import epam.dto.request_dto.UpdateTraineeRequestDTO;
 import epam.dto.response_dto.RegisterTraineeResponseDTO;
 import epam.dto.response_dto.TraineeResponseDTO;
 import epam.client.dto.TrainingResponseDTO;
+import epam.entity.Trainee;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface TraineeService {
 
@@ -22,4 +25,8 @@ public interface TraineeService {
     void updateTraineeStatus(Authentication connectedUser, Boolean isActive);
 
     TraineeResponseDTO updateTrainee(Authentication connectedUser, UpdateTraineeRequestDTO updateTrainee);
+
+    Trainee getTraineeProfile(String traineeUsername);
+
+    Trainee getTraineeProfile(UUID traineeId);
 }

@@ -1,18 +1,16 @@
 package epam.service.impl;
 
+import epam.client.TrainingServiceClient;
 import epam.dto.request_dto.TraineeRequestDTO;
 import epam.dto.request_dto.UpdateTraineeRequestDTO;
 import epam.dto.response_dto.RegisterTraineeResponseDTO;
 import epam.dto.response_dto.TraineeResponseDTO;
 import epam.client.dto.TrainingResponseDTO;
 import epam.entity.Trainee;
-import epam.entity.Training;
 import epam.exception.exception.TraineeNotFoundException;
 import epam.mapper.TraineeMapper;
-import epam.mapper.TrainingMapper;
 import epam.repository.TraineeRepository;
 import epam.service.TraineeService;
-import epam.service.TrainingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,9 +29,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     private final TraineeMapper traineeMapper;
 
-    private final TrainingService trainingService;
-
-    private final TrainingMapper trainingMapper;
+    private final TrainingServiceClient trainingServiceClient;
 
     @Override
     public RegisterTraineeResponseDTO createTrainee(TraineeRequestDTO traineeRequestDTO) {
@@ -88,6 +85,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TraineeResponseDTO getTraineeProfile(Authentication connectedUser) {
         UserDetails user = (UserDetails) connectedUser.getPrincipal();
         return traineeMapper.toTraineeResponseDTO(traineeRepository.findTraineeByUser_Username(user.getUsername().toLowerCase())
@@ -106,13 +104,28 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<TrainingResponseDTO> getTraineeTrainings(String periodFrom, String periodTo,
                                                          String trainerName, String trainingType, Authentication connectedUser) {
         UserDetails user = (UserDetails) connectedUser.getPrincipal();
-        String username = user.getUsername();
+        String traineeName = user.getUsername();
 
-        List<Training> trainings = traineeRepository.getTraineeTrainings(username, periodFrom, periodTo, trainerName, trainingType)
-                .orElseThrow(() -> new TraineeNotFoundException(String.format("Trainee not found with username: %s", username)));
-        return trainings.stream().map(trainingMapper::toTrainingResponseDTO).toList();
+        return trainingServiceClient.getTraineeTrainings(traineeName, periodFrom, periodTo, trainerName, trainingType);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Trainee getTraineeProfile(String traineeUsername) {
+        return traineeRepository.findTraineeByUser_username((traineeUsername))
+                .orElseThrow(() -> new TraineeNotFoundException("Trainee not found with username: " + traineeUsername));
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public Trainee getTraineeProfile(UUID traineeId) {
+        return traineeRepository.findTraineeByTraineeId((traineeId))
+                .orElseThrow(() -> new TraineeNotFoundException("Trainee not found with traineeId: " + traineeId));
+    }
+
 }

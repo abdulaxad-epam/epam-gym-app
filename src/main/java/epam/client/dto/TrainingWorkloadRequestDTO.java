@@ -1,7 +1,5 @@
 package epam.client.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -16,6 +14,7 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.UUID;
 
 
 @Builder
@@ -24,20 +23,20 @@ import java.time.LocalDate;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrainingRequestDTO implements Serializable {
+public class TrainingWorkloadRequestDTO implements Serializable {
 
-    @NotBlank(message = "Trainee username is required")
-    private String traineeUsername;
+    @NotNull(message = "Training type cannot be blank or null")
+    private UUID trainingTypeId;
 
-    @NotBlank(message = "Training name is required")
-    private String trainingName;
+    @NotNull(message = "TrainerId must be specified")
+    private UUID trainerId;
+
+    @NotNull(message = "TraineeId must be specified")
+    private UUID traineeId;
 
     @Future(message = "The training start date must be in the future")
     @NotNull(message = "Training date must be specified")
     private LocalDate trainingDate;
-
-    @NotBlank(message = "Training type cannot be blank or null")
-    private String trainingType;
 
     @Min(value = 30, message = "Training duration must be at least 30 minute")
     @Max(value = 480, message = "Training duration cannot exceed 8 hours (480 minutes)")

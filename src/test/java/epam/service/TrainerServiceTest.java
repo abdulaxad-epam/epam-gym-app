@@ -1,6 +1,7 @@
 package epam.service;
 
-import epam.client.TrainingClient;
+import epam.client.TrainingServiceClient;
+import epam.client.service.TrainingTypeService;
 import epam.dto.request_dto.TrainerRequestDTO;
 import epam.dto.response_dto.RegisterTrainerResponseDTO;
 import epam.dto.response_dto.TrainerResponseDTO;
@@ -9,7 +10,6 @@ import epam.entity.TrainingType;
 import epam.entity.User;
 import epam.exception.exception.TrainerNotFoundException;
 import epam.mapper.TrainerMapper;
-import epam.mapper.TrainingMapper;
 import epam.repository.TrainerRepository;
 import epam.service.impl.TrainerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,18 +33,15 @@ public class TrainerServiceTest {
     private TrainerMapper trainerMapper;
     private UserService userService;
     private TrainerServiceImpl trainerService;
-    private TrainingClient trainingClient;
+    private TrainingServiceClient trainingClient;
 
     @BeforeEach
     void setUp() {
         trainerRepository = mock(TrainerRepository.class);
         trainingTypeService = mock(TrainingTypeService.class);
         trainerMapper = mock(TrainerMapper.class);
-        TrainingMapper trainingMapper = mock(TrainingMapper.class);
         userService = mock(UserService.class);
-        trainerService = new TrainerServiceImpl(
-                trainerRepository, trainingTypeService, trainerMapper,trainingClient, trainingMapper, userService
-        );
+
     }
 
     @Test
@@ -81,14 +78,14 @@ public class TrainerServiceTest {
         Trainer trainer = new Trainer();
         trainer.setUser(new User());
 
-        when(trainerRepository.findTraineeByUser_Username("trainerUser")).thenReturn(Optional.of(trainer));
+        when(trainerRepository.findTrainerByUser_Username("trainerUser")).thenReturn(Optional.of(trainer));
         when(trainingTypeService.getTrainingByTrainingName("Pilates")).thenReturn(trainingType);
         when(trainerMapper.toTrainerResponseDTO(trainer)).thenReturn(new TrainerResponseDTO());
 
         TrainerResponseDTO result = trainerService.updateTrainer(auth, requestDTO);
 
         assertNotNull(result);
-        verify(trainerRepository).findTraineeByUser_Username("trainerUser");
+        verify(trainerRepository).findTrainerByUser_Username("trainerUser");
         verify(trainingTypeService).getTrainingByTrainingName("Pilates");
     }
 
@@ -99,7 +96,7 @@ public class TrainerServiceTest {
         when(auth.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn("missingTrainer");
 
-        when(trainerRepository.findTraineeByUser_Username("missingTrainer")).thenReturn(Optional.empty());
+        when(trainerRepository.findTrainerByUser_Username("missingTrainer")).thenReturn(Optional.empty());
 
         assertThrows(TrainerNotFoundException.class, () -> trainerService.updateTrainer(auth, new TrainerRequestDTO()));
     }
@@ -126,13 +123,13 @@ public class TrainerServiceTest {
 
         when(auth.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn("trainerX");
-        when(trainerRepository.findTraineeByUser_Username("trainerX")).thenReturn(Optional.of(trainer));
+        when(trainerRepository.findTrainerByUser_Username("trainerX")).thenReturn(Optional.of(trainer));
         when(trainerMapper.toTrainerResponseDTO(trainer)).thenReturn(new TrainerResponseDTO());
 
-        TrainerResponseDTO result = trainerService.getTrainerByUsername(auth);
+        TrainerResponseDTO result = trainerService.getTrainerProfile(auth);
 
         assertNotNull(result);
-        verify(trainerRepository).findTraineeByUser_Username("trainerX");
+        verify(trainerRepository).findTrainerByUser_Username("trainerX");
     }
 
     @Test
@@ -142,9 +139,9 @@ public class TrainerServiceTest {
         when(auth.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn("notFound");
 
-        when(trainerRepository.findTraineeByUser_Username("notFound")).thenReturn(Optional.empty());
+        when(trainerRepository.findTrainerByUser_Username("notFound")).thenReturn(Optional.empty());
 
-        assertThrows(TrainerNotFoundException.class, () -> trainerService.getTrainerByUsername(auth));
+        assertThrows(TrainerNotFoundException.class, () -> trainerService.getTrainerProfile(auth));
     }
 
     @Test
@@ -157,7 +154,7 @@ public class TrainerServiceTest {
 
         when(auth.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn("trainerX");
-        when(trainerRepository.findTraineeByUser_Username("trainerX")).thenReturn(Optional.of(trainer));
+        when(trainerRepository.findTrainerByUser_Username("trainerX")).thenReturn(Optional.of(trainer));
 
         trainerService.updateTrainerStatus(auth, true);
 
@@ -171,7 +168,7 @@ public class TrainerServiceTest {
 
         when(auth.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn("ghost");
-        when(trainerRepository.findTraineeByUser_Username("ghost")).thenReturn(Optional.empty());
+        when(trainerRepository.findTrainerByUser_Username("ghost")).thenReturn(Optional.empty());
 
         assertThrows(TrainerNotFoundException.class, () -> trainerService.updateTrainerStatus(auth, true));
     }

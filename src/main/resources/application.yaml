@@ -29,4 +29,4 @@ eureka:
 
 training:
   service:
-    name: epam-gym-app-training-service
+    name: EPAM-GYM-APP-TRAINING-SERVICE

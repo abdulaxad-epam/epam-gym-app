@@ -45,7 +45,7 @@ public class TrainerController {
     })
     @GetMapping(value = "/profile", produces = "application/json")
     public ResponseEntity<TrainerResponseDTO> getTrainer(Authentication connectedUser) {
-        return ResponseEntity.ok(trainerService.getTrainerByUsername(connectedUser));
+        return ResponseEntity.ok(trainerService.getTrainerProfile(connectedUser));
     }
 
     @Operation(summary = "Update trainer profile by username")

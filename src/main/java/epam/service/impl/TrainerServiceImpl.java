@@ -1,20 +1,17 @@
 package epam.service.impl;
 
-import epam.client.TrainingClient;
+import epam.client.TrainingServiceClient;
+import epam.client.dto.TrainingResponseDTO;
 import epam.dto.request_dto.TrainerRequestDTO;
 import epam.dto.response_dto.RegisterTrainerResponseDTO;
 import epam.dto.response_dto.TrainerResponseDTO;
-import epam.client.dto.TrainingResponseDTO;
 import epam.entity.Trainer;
-import epam.entity.Training;
 import epam.exception.exception.TrainerNotFoundException;
 import epam.mapper.TrainerMapper;
-import epam.mapper.TrainingMapper;
 import epam.repository.TrainerRepository;
 import epam.service.TraineeTrainerService;
 import epam.service.TrainerService;
-import epam.service.TrainingService;
-import epam.service.TrainingTypeService;
+import epam.client.service.TrainingTypeService;
 import epam.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +20,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -38,11 +35,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     private final TrainerMapper trainerMapper;
 
-    private final TrainingClient trainingClient;
-
-    private final TrainingMapper trainingMapper;
-
-    private final UserService userService;
+    private final TrainingServiceClient trainingServiceClient;
 
     @Override
     public RegisterTrainerResponseDTO createTrainer(TrainerRequestDTO trainerRequestDTO) {
@@ -60,7 +53,7 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public TrainerResponseDTO updateTrainer(Authentication connectedUser, TrainerRequestDTO trainerRequestDTO) {
         UserDetails user = (UserDetails) connectedUser.getPrincipal();
-        return trainerRepository.findTraineeByUser_Username(user.getUsername()).map(trainer -> {
+        return trainerRepository.findTrainerByUser_Username(user.getUsername()).map(trainer -> {
             trainer.setSpecialization(
                     trainingTypeService.getTrainingByTrainingName(trainerRequestDTO.getSpecialization())
             );
@@ -85,22 +78,25 @@ public class TrainerServiceImpl implements TrainerService {
         UserDetails user = (UserDetails) connectedUser.getPrincipal();
         String username = user.getUsername();
 
-        userService.findByUsername(username).ifPresentOrElse(trainer -> {
-            trainerRepository.deleteTrainerByUser_Username(username);
 
-            trainingClient.deleteTrainingsByTrainer(trainer.getUserId());
+        trainerRepository.findTrainerByUser_Username(username).ifPresentOrElse(
+                trainer -> {
+                    trainingServiceClient.deleteTrainingsByTrainer(trainer.getTrainerId());
+                    trainerRepository.deleteFromTrainerTrainee(trainer.getTrainerId());
+                    trainerRepository.deleteTrainerByTrainerId(trainer.getTrainerId());
+                    trainerRepository.flush();
+                }
+                , () -> {
+                    throw new TrainerNotFoundException("Trainer with username: " + username + " does not exist");
+                });
 
-            log.info("Deleted trainings from user {}", username);
-        }, () -> {
-            throw new TrainerNotFoundException("Trainer not found");
-        });
-
+        log.info("Deleted trainings from user {}", username);
     }
 
     @Override
-    public TrainerResponseDTO getTrainerByUsername(Authentication connectedUser) {
+    public TrainerResponseDTO getTrainerProfile(Authentication connectedUser) {
         UserDetails user = (UserDetails) connectedUser.getPrincipal();
-        return trainerRepository.findTraineeByUser_Username(user.getUsername())
+        return trainerRepository.findTrainerByUser_Username(user.getUsername())
                 .map(trainerMapper::toTrainerResponseDTO)
                 .orElseThrow(() -> new TrainerNotFoundException("Trainer not found"));
     }
@@ -110,21 +106,28 @@ public class TrainerServiceImpl implements TrainerService {
                                                          String periodFrom, String periodTo, String traineeName) {
         UserDetails user = (UserDetails) connectedUser.getPrincipal();
 
-        List<Training> training = trainerRepository.getTrainerTrainings(
-                user.getUsername(), periodFrom != null ? LocalDate.parse(periodFrom).atStartOfDay() : null,
-                periodTo != null ? LocalDate.parse(periodTo).atStartOfDay() : null, traineeName).orElseThrow(
-                () -> new TrainerNotFoundException("Trainer not found")
-        );
-        return training.stream().map(trainingMapper::toTrainingResponseDTO).toList();
+        return trainingServiceClient.getTrainerTrainings(traineeName, periodFrom, periodTo, user.getUsername());
     }
 
     @Transactional
     @Override
     public void updateTrainerStatus(Authentication connectedUser, Boolean isActive) {
         UserDetails user = (UserDetails) connectedUser.getPrincipal();
-        Optional<Trainer> trainer = trainerRepository.findTraineeByUser_Username(user.getUsername());
+        Optional<Trainer> trainer = trainerRepository.findTrainerByUser_Username(user.getUsername());
         trainer.ifPresentOrElse(t -> t.getUser().setIsActive(isActive), () -> {
             throw new TrainerNotFoundException("Trainer not found");
         });
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Trainer getTrainerProfile(String username) {
+        return trainerRepository.findTrainerByUser_Username(username).orElseThrow(() -> new TrainerNotFoundException("Trainer not found"));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Trainer getTrainerProfile(UUID trainerId) {
+        return trainerRepository.findTrainerByTrainerId(trainerId).orElseThrow(() -> new TrainerNotFoundException("Trainer not found"));
     }
 }

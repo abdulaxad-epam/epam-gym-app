@@ -39,7 +39,7 @@ public class TrainerControllerTest {
     @Test
     public void testGetTrainerProfile_ShouldReturnTrainerResponseDTO() {
         TrainerResponseDTO expected = Instancio.of(TrainerResponseDTO.class).withSettings(settings).create();
-        when(trainerService.getTrainerByUsername(authentication)).thenReturn(expected);
+        when(trainerService.getTrainerProfile(authentication)).thenReturn(expected);
 
         ResponseEntity<TrainerResponseDTO> response = trainerController.getTrainer(authentication);
 

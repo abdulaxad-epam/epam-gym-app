@@ -2,18 +2,15 @@ package epam.service;
 
 import epam.client.dto.TrainingRequestDTO;
 import epam.client.dto.TrainingResponseDTO;
+import epam.client.service.TrainingTypeService;
 import epam.entity.Trainee;
 import epam.entity.Trainer;
-import epam.entity.Training;
 import epam.entity.TrainingType;
 import epam.exception.exception.TraineeNotFoundException;
 import epam.exception.exception.TrainerNotFoundException;
 import epam.exception.exception.TrainingNotFoundException;
-import epam.mapper.TrainingMapper;
 import epam.repository.TraineeRepository;
 import epam.repository.TrainerRepository;
-import epam.repository.TrainingRepository;
-import epam.service.impl.TrainingServiceImpl;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -83,7 +80,7 @@ public class TrainingServiceTest {
         when(authentication.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn("trainer1");
         when(trainingTypeService.getTrainingByTrainingName("Yoga")).thenReturn(type);
-        when(trainerRepository.findTraineeByUser_Username("trainer1")).thenReturn(Optional.of(trainer));
+        when(trainerRepository.findTrainerByUser_Username("trainer1")).thenReturn(Optional.of(trainer));
         when(traineeRepository.findTraineeByUser_Username("trainee1")).thenReturn(Optional.of(trainee));
         when(trainingMapper.toTraining(dto, type, trainer, trainee)).thenReturn(training);
         when(trainingMapper.toTrainingResponseDTO(training)).thenReturn(responseDTO);
@@ -106,7 +103,7 @@ public class TrainingServiceTest {
         when(authentication.getPrincipal()).thenReturn(userDetails);
 
         when(trainingTypeService.getTrainingByTrainingName("Yoga")).thenReturn(new TrainingType());
-        when(trainerRepository.findTraineeByUser_Username("trainer1")).thenReturn(Optional.empty());
+        when(trainerRepository.findTrainerByUser_Username("trainer1")).thenReturn(Optional.empty());
 
         assertThrows(TrainerNotFoundException.class,
                 () -> trainingService.createTraining(dto, authentication));
@@ -126,7 +123,7 @@ public class TrainingServiceTest {
 
         Trainer trainer = new Trainer();
         when(trainingTypeService.getTrainingByTrainingName("Yoga")).thenReturn(new TrainingType());
-        when(trainerRepository.findTraineeByUser_Username("trainer1")).thenReturn(Optional.of(trainer));
+        when(trainerRepository.findTrainerByUser_Username("trainer1")).thenReturn(Optional.of(trainer));
         when(traineeRepository.findTraineeByUser_Username("trainee1")).thenReturn(Optional.empty());
 
         assertThrows(TraineeNotFoundException.class,

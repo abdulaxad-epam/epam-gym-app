@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 class LoggingAspectTest {
 
     @Mock
-    private Logging mockLogger;
+    private TransactionContext mockLogger;
 
     @Mock
     private Signature mockSignature;

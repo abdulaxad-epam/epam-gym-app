@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoggingAspect {
 
-    private final Logging logger = new Logging(LoggingAspect.class);
+    private final TransactionContext logger = new TransactionContext(LoggingAspect.class);
 
     @Before("execution(* epam.controller.*.*(..))")
     public void logRequest(JoinPoint joinPoint) {

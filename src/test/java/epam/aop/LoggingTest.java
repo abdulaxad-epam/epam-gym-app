@@ -23,13 +23,13 @@ class LoggingTest {
     @Mock
     private Logger mockLogger;
 
-    private Logging logging;
+    private TransactionContext logging;
 
     @BeforeEach
     void setUp() throws Exception {
-        logging = new Logging(LoggingTest.class);
+        logging = new TransactionContext(LoggingTest.class);
 
-        Field loggerField = Logging.class.getDeclaredField("logger");
+        Field loggerField = TransactionContext.class.getDeclaredField("logger");
         loggerField.setAccessible(true);
         loggerField.set(logging, mockLogger);
     }
