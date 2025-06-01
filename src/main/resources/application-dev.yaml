@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5434/epam_gym_app_trainer_workload_service
+    driver-class-name: org.postgresql.Driver
+    username: epam
+    password: root
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: false
+      jakarta.persistence.sql-load-script-source: classpath:database_initializer/data.sql
+    open-in-view: true
+
+application:
+  security:
+      internal-token:
+        issuer: main-service
+        audience-id: trainer-workload-service
+        keys:
+          secret-key: "Y3UJgeJVhg5NaWXypLkC4y0ADrUBfGAxhvGdRdULZivfvzuVtv6AzW6NRuEE6DM9xpoWX4hereyvLS2YPiBTZ8xbB3axdM99LhES"

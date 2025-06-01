@@ -1,29 +1,9 @@
 spring:
+  profiles:
+    active: dev
   application:
     name: epam-gym-app-trainer-workload-service
-
-  h2:
-    console:
-      path: /h2-console
-      settings:
-        web-allow-others: true
-  datasource:
-    url: jdbc:postgresql://localhost:5434/epam_gym_app_training_service
-    driver-class-name: org.h2.Driver
-    username: epam
-    password: root
-
-  jpa:
-    hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        format_sql: true
-        show_sql: true
-    open-in-view: true
-
   data:
-
     jpa:
       repositories:
         enabled: true
