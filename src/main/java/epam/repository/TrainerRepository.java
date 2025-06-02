@@ -22,8 +22,8 @@ public interface TrainerRepository extends JpaRepository<Trainer, Integer> {
             "JOIN t.trainer tr " +
             "JOIN tr.user u " +
             "WHERE u.username = :username " +
-            "AND (:periodFrom IS NULL OR t.trainingDate >= :periodFrom) " +
-            "AND (:periodTo IS NULL OR t.trainingDate <= :periodTo) " +
+            "AND t.trainingDate >= :periodFrom " +
+            "AND t.trainingDate <= :periodTo " +
             "AND (:traineeName IS NULL OR t.trainee.user.username = :traineeName)")
     Optional<List<Training>> getTrainerTrainings(
             @Param("username") String username,

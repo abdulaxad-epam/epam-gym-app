@@ -39,7 +39,7 @@ public class UsernameGeneratorListener {
     }
 
     private long findNextAvailableIndex(String baseUsername) {
-        try (EntityManager entityManager = ApplicationContextProvider.getBean(EntityManagerFactory.class).createEntityManager()){
+        try (EntityManager entityManager = ApplicationContextProvider.getBean(EntityManagerFactory.class).createEntityManager()) {
             log.info("Finding next available index...");
             Long serials = entityManager.createQuery(
                             "SELECT COUNT(*) FROM User u WHERE u.username LIKE :username", Long.class)

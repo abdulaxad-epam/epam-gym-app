@@ -4,7 +4,7 @@ import epam.dto.request_dto.TraineeRequestDTO;
 import epam.dto.request_dto.UpdateTraineeRequestDTO;
 import epam.dto.response_dto.RegisterTraineeResponseDTO;
 import epam.dto.response_dto.TraineeResponseDTO;
-import epam.client.dto.TrainingResponseDTO;
+import epam.dto.response_dto.TrainingResponseDTO;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;

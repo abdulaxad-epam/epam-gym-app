@@ -8,10 +8,7 @@ import org.springframework.security.core.AuthenticationException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,6 +34,7 @@ class JwtAuthenticationEntryPointTest {
         when(response.getWriter()).thenReturn(printWriter);
         when(exception.getMessage()).thenReturn("Unauthorized access");
     }
+
     @Test
     void testCommence_ShouldSetUnauthorizedStatusAndJsonErrorMessage() throws Exception {
 

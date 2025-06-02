@@ -1,10 +1,12 @@
 package epam.exception.exception_handler;
 
+import epam.aop.Logging;
 import epam.exception.exception.InvalidTokenType;
 import epam.exception.exception.TraineeHasAssignedBeforeException;
 import epam.exception.exception.TraineeHasNotAssignedBeforeException;
 import epam.exception.exception.TraineeNotFoundException;
 import epam.exception.exception.TrainerNotFoundException;
+import epam.exception.exception.TrainerWorkloadIsUnavailableException;
 import epam.exception.exception.TrainingNotFoundException;
 import epam.exception.exception.TrainingTypeNotFoundException;
 import epam.exception.exception.UserNotAuthenticated;
@@ -32,7 +34,8 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(ExceptionMessage.builder()
                         .status(HttpStatus.NOT_FOUND.value())
-                        .error(e.getMessage())
+                        .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+                        .requestId(Logging.getTransactionId())
                         .message(e.getMessage())
                         .build());
     }
@@ -43,7 +46,8 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(ExceptionMessage.builder()
                         .status(HttpStatus.NOT_FOUND.value())
-                        .error(e.getMessage())
+                        .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+                        .requestId(Logging.getTransactionId())
                         .message(e.getMessage())
                         .build());
     }
@@ -54,7 +58,8 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(ExceptionMessage.builder()
                         .status(HttpStatus.NOT_FOUND.value())
-                        .error(e.getMessage())
+                        .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+                        .requestId(Logging.getTransactionId())
                         .message(e.getMessage())
                         .build());
     }
@@ -65,7 +70,8 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.CONFLICT)
                 .body(ExceptionMessage.builder()
                         .status(HttpStatus.CONFLICT.value())
-                        .error(e.getMessage())
+                        .error(HttpStatus.CONFLICT.getReasonPhrase())
+                        .requestId(Logging.getTransactionId())
                         .message(e.getMessage())
                         .build());
     }
@@ -76,7 +82,8 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(ExceptionMessage.builder()
                         .status(HttpStatus.NOT_FOUND.value())
-                        .error(e.getMessage())
+                        .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+                        .requestId(Logging.getTransactionId())
                         .message(e.getMessage())
                         .build());
     }
@@ -87,7 +94,8 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ExceptionMessage.builder()
                         .status(HttpStatus.BAD_REQUEST.value())
-                        .error(e.getMessage())
+                        .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                        .requestId(Logging.getTransactionId())
                         .message(e.getMessage())
                         .build());
     }
@@ -98,7 +106,8 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.SEE_OTHER)
                 .body(ExceptionMessage.builder()
                         .status(HttpStatus.SEE_OTHER.value())
-                        .error(e.getMessage())
+                        .error(HttpStatus.SEE_OTHER.getReasonPhrase())
+                        .requestId(Logging.getTransactionId())
                         .message(e.getMessage())
                         .build());
     }
@@ -108,7 +117,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ExceptionMessage.builder()
                         .status(HttpStatus.FORBIDDEN.value())
-                        .error(e.getMessage())
+                        .error(HttpStatus.FORBIDDEN.getReasonPhrase())
+                        .requestId(Logging.getTransactionId())
                         .message(e.getMessage())
                         .build());
     }
@@ -118,7 +128,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ExceptionMessage.builder()
                         .status(HttpStatus.NOT_FOUND.value())
-                        .error(e.getMessage())
+                        .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+                        .requestId(Logging.getTransactionId())
                         .message(e.getMessage())
                         .build()
                 );
@@ -130,7 +141,20 @@ public class GlobalExceptionHandler {
                 .body(ExceptionMessage.builder()
                         .status(HttpStatus.BAD_REQUEST.value())
                         .error(e.getMessage())
+                        .requestId(Logging.getTransactionId())
                         .message(e.getMessage())
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(TrainerWorkloadIsUnavailableException.class)
+    public ResponseEntity<ExceptionMessage> handleTrainerWorkloadIsUnavailable(TrainerWorkloadIsUnavailableException e) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(ExceptionMessage.builder()
+                        .status(HttpStatus.SERVICE_UNAVAILABLE.value())
+                        .error(HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase())
+                        .requestId(Logging.getTransactionId())
+                        .message(e.getLocalizedMessage())
                         .build()
                 );
     }
@@ -147,6 +171,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ExceptionMessage.builder()
                         .status(HttpStatus.BAD_REQUEST.value())
+                        .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                        .requestId(Logging.getTransactionId())
                         .message(errors.values().toString())
                         .build()
         );
@@ -162,6 +188,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ExceptionMessage.builder()
                         .status(HttpStatus.BAD_REQUEST.value())
+                        .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                        .requestId(Logging.getTransactionId())
                         .message(errors.values().toString())
                         .build()
         );
@@ -170,24 +198,28 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ExceptionMessage> handleJsonParsingException(HttpMessageNotReadableException e) {
         Map<String, String> error = new HashMap<>();
-        error.put("error", "Invalid date format: " + e.getMostSpecificCause().getMessage() +". Must be yyyy-MM-dd");
+        error.put("error", "Invalid date format: " + e.getMostSpecificCause().getMessage() + ". Must be yyyy-MM-dd");
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ExceptionMessage.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .message(error.values().toString())
-                .build()
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                        .requestId(Logging.getTransactionId())
+                        .message(error.values().toString())
+                        .build()
         );
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<ExceptionMessage> handleException(Exception e) {
-//        return ResponseEntity
-//                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                .body(ExceptionMessage.builder()
-//                        .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-//                        .message(e.getMessage())
-//                        .build()
-//                );
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionMessage> handleException(Exception e) {
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ExceptionMessage.builder()
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                        .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+                        .requestId(Logging.getTransactionId())
+                        .message(e.getMessage())
+                        .build()
+                );
+    }
 }

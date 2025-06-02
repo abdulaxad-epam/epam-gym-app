@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum OpenEndpoints {
     AUTHENTICATION("/api/v1/auth/**"),
     SWAGGER_UI("/swagger-ui/**"),
-    SWAGGER_DOCS("/v3/api-docs/**");
+    SWAGGER_DOCS("/v3/api-docs/**"),
+    ACTUATOR("/actuator/**");
 
     private final String url;
 

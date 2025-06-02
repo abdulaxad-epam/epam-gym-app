@@ -6,13 +6,13 @@ import java.util.UUID;
 
 public class Logging {
     private final Logger logger;
-    private final ThreadLocal<String> transactionId = ThreadLocal.withInitial(() -> UUID.randomUUID().toString().substring(4, 16));
+    private static final ThreadLocal<String> transactionId = ThreadLocal.withInitial(() -> UUID.randomUUID().toString().substring(4, 16));
 
     public Logging(Class<?> clazz) {
         this.logger = Logger.getLogger(clazz);
     }
 
-    public String getTransactionId() {
+    public static String getTransactionId() {
         return transactionId.get();
     }
 

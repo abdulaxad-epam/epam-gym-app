@@ -2,13 +2,10 @@ package epam;
 
 import org.junit.platform.suite.api.SelectPackages;
 import org.junit.platform.suite.api.Suite;
-
-import static org.junit.Assert.assertTrue;
+import org.junit.platform.suite.api.SuiteDisplayName;
 
 @Suite
 @SelectPackages("epam")
+@SuiteDisplayName("All Application Tests")
 public class MainTest {
-    public void testApp() {
-        assertTrue(true);
-    }
 }

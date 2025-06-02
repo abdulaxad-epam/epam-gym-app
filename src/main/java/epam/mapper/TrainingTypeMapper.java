@@ -26,6 +26,7 @@ public interface TrainingTypeMapper {
                 .description(specialization)
                 .build();
     }
+
     @Named("toTrainingTypeResponseDTO")
     @Mapping(source = "description", target = "trainingType")
     TrainingTypeResponseDTO toTrainingTypeResponseDTO(TrainingType s);

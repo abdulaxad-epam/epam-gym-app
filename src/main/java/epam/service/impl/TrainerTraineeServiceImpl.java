@@ -4,6 +4,7 @@ import epam.dto.response_dto.TrainerResponseDTO;
 import epam.entity.Trainee;
 import epam.entity.Trainer;
 import epam.entity.TrainerTrainee;
+import epam.entity.Training;
 import epam.exception.exception.TraineeHasAssignedBeforeException;
 import epam.exception.exception.TraineeNotFoundException;
 import epam.exception.exception.TrainerNotFoundException;
@@ -51,6 +52,12 @@ public class TrainerTraineeServiceImpl implements TraineeTrainerService {
     }
 
 
+    @Override
+    @Transactional
+    public void unassignTrainerFromTrainee(Training training) {
+        trainerTraineeRepository.removeTrainerTraineeByTrainee_TraineeIdAndTrainer_TrainerId(training.getTrainee().getTraineeId(), training.getTrainer().getTrainerId());
+    }
+
     @PreAuthorize("hasRole('TRAINEE')")
     @Transactional
     @Override
@@ -83,7 +90,7 @@ public class TrainerTraineeServiceImpl implements TraineeTrainerService {
 
         UserDetails user = (UserDetails) connectedUser.getPrincipal();
         String username = user.getUsername();
-        if (!traineeRepository.existsTraineeByUser_Username(username)){
+        if (!traineeRepository.existsTraineeByUser_Username(username)) {
             throw new TraineeNotFoundException("Trainee not found");
         }
         return trainerTraineeRepository.findByUsernameNotAssignedToTrainee(username)

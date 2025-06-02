@@ -2,7 +2,7 @@ package epam.controller;
 
 import epam.dto.request_dto.TrainerRequestDTO;
 import epam.dto.response_dto.TrainerResponseDTO;
-import epam.client.dto.TrainingResponseDTO;
+import epam.dto.response_dto.TrainingResponseDTO;
 import epam.service.TrainerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -94,7 +94,7 @@ public class TrainerController {
     public ResponseEntity<Void> trainerStatus(
             @Parameter(description = "New active status (true/false)", required = true)
             @RequestParam(value = "isActive") @NotNull(message = "isActive status must be provided") Boolean isActive,
-             Authentication connectedUser) {
+            Authentication connectedUser) {
 
         trainerService.updateTrainerStatus(connectedUser, isActive);
         return ResponseEntity.ok().build();

@@ -5,6 +5,7 @@ import epam.exception.exception.TraineeHasAssignedBeforeException;
 import epam.exception.exception.TraineeHasNotAssignedBeforeException;
 import epam.exception.exception.TraineeNotFoundException;
 import epam.exception.exception.TrainerNotFoundException;
+import epam.exception.exception.TrainerWorkloadIsUnavailableException;
 import epam.exception.exception.TrainingNotFoundException;
 import epam.exception.exception.TrainingTypeNotFoundException;
 import epam.exception.exception.UserNotAuthenticated;
@@ -12,18 +13,26 @@ import epam.exception.exception.UserNotFoundException;
 import epam.exception.exception.UsernameGenerateException;
 import epam.exception.exception_handler.ExceptionMessage;
 import epam.exception.exception_handler.GlobalExceptionHandler;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class GlobalExceptionHandlerTest {
 
@@ -129,20 +138,36 @@ public class GlobalExceptionHandlerTest {
         assertTrue(Objects.requireNonNull(response.getBody()).getMessage().contains("must not be null"));
     }
 
-//    @Test
-//    void testHandleConstraintViolation() {
-//        ConstraintViolation<?> violation = mock(ConstraintViolation.class);
-//        when(violation.getPropertyPath()).thenReturn(() -> "field");
-//        when(violation.getMessage()).thenReturn("must not be empty");
-//        Set<ConstraintViolation<?>> violations = new HashSet<>();
-//        violations.add(violation);
-//
-//        ConstraintViolationException exception = new ConstraintViolationException(violations);
-//
-//        ResponseEntity<ExceptionMessage> response = handler.handleConstraintViolation(exception);
-//        assertEquals(400, response.getStatusCode().value());
-//        assertTrue(Objects.requireNonNull(response.getBody()).getMessage().contains("must not be empty"));
-//    }
+
+    @Test
+    public void testHandleTrainerWorkloadIsUnavailable() {
+        TrainerWorkloadIsUnavailableException ex = new TrainerWorkloadIsUnavailableException("Service not available");
+
+        ResponseEntity<ExceptionMessage> response = handler.handleTrainerWorkloadIsUnavailable(ex);
+
+        assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
+        assertEquals("Service not available", response.getBody().getMessage());
+        assertEquals(HttpStatus.SERVICE_UNAVAILABLE.value(), response.getBody().getStatus());
+    }
+
+    @Test
+    public void testHandleConstraintViolation() {
+        ConstraintViolation<?> violation = mock(ConstraintViolation.class);
+        Path path = mock(Path.class);
+        when(violation.getPropertyPath()).thenReturn(path);
+        when(violation.getMessage()).thenReturn("must not be null");
+
+        Set<ConstraintViolation<?>> violations = new HashSet<>();
+        violations.add(violation);
+
+        ConstraintViolationException exception = new ConstraintViolationException(violations);
+
+        ResponseEntity<ExceptionMessage> response = handler.handleConstraintViolation(exception);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertTrue(response.getBody().getMessage().contains("must not be null"));
+        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getBody().getStatus());
+    }
 
     @Test
     void testHandleJsonParsingException() {

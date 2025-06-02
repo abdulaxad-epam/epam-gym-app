@@ -38,7 +38,7 @@ public class TrainingTypeControllerTest {
         ResponseEntity<List<TrainingTypeResponseDTO>> response = trainingTypeController.getTrainingTypes();
 
         // Then
-        assertEquals(200,  response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(Collections.emptyList(), response.getBody());
     }
 
@@ -53,7 +53,7 @@ public class TrainingTypeControllerTest {
         ResponseEntity<List<TrainingTypeResponseDTO>> response = trainingTypeController.getTrainingTypes();
 
         // Then
-        assertEquals(200,  response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(List.of(dto), response.getBody());
     }
 }

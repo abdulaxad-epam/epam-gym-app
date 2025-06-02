@@ -2,7 +2,7 @@ package epam.controller;
 
 import epam.dto.request_dto.TrainerRequestDTO;
 import epam.dto.response_dto.TrainerResponseDTO;
-import epam.client.dto.TrainingResponseDTO;
+import epam.dto.response_dto.TrainingResponseDTO;
 import epam.service.TrainerService;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +18,8 @@ import java.util.List;
 
 import static epam.dto.request_dto.RegisterTraineeRequestDTOTest.settings;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class TrainerControllerTest {
@@ -43,7 +45,7 @@ public class TrainerControllerTest {
 
         ResponseEntity<TrainerResponseDTO> response = trainerController.getTrainer(authentication);
 
-        assertEquals(200,  response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(expected, response.getBody());
     }
 
@@ -56,7 +58,7 @@ public class TrainerControllerTest {
 
         ResponseEntity<TrainerResponseDTO> response = trainerController.updateTrainer(requestDTO, authentication);
 
-        assertEquals(200,  response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(expectedResponse, response.getBody());
     }
 
@@ -70,7 +72,7 @@ public class TrainerControllerTest {
 
         ResponseEntity<List<TrainingResponseDTO>> response = trainerController.getTrainings("2024-01-01", "2024-12-31", "John", authentication);
 
-        assertEquals(200,  response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(expectedTrainings, response.getBody());
     }
 
@@ -80,7 +82,7 @@ public class TrainerControllerTest {
 
         ResponseEntity<List<TrainingResponseDTO>> response = trainerController.getTrainings(null, null, null, authentication);
 
-        assertEquals(200,  response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(Collections.emptyList(), response.getBody());
     }
 
@@ -90,6 +92,15 @@ public class TrainerControllerTest {
 
         ResponseEntity<Void> response = trainerController.trainerStatus(isActive, authentication);
 
-        assertEquals(200,  response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value());
     }
+
+    @Test
+    public void testDeleteTrainer_ShouldReturnNoContent() {
+        ResponseEntity<Void> response = trainerController.delete(authentication);
+
+        assertEquals(204, response.getStatusCode().value());
+        verify(trainerService, times(1)).deleteTrainer(authentication);
+    }
+
 }

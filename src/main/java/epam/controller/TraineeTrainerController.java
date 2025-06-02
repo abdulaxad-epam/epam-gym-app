@@ -35,6 +35,7 @@ public class TraineeTrainerController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = TrainerResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "Trainee not found", content = @Content)
+
     })
     @GetMapping(value = "/not-assigned-trainers", produces = "application/json")
     public ResponseEntity<List<TrainerResponseDTO>> getNotAssignedTrainers(Authentication connectedUser) {

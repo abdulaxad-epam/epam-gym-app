@@ -24,4 +24,7 @@ public interface TrainerTraineeRepository extends JpaRepository<TrainerTrainee, 
 
     @Modifying
     void removeTrainerTraineeByTrainee_User_Username(String traineeUsername);
+
+    @Modifying
+    void removeTrainerTraineeByTrainee_TraineeIdAndTrainer_TrainerId(UUID traineeTraineeId, UUID trainerTrainerId);
 }

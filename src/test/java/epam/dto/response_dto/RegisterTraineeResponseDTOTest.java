@@ -29,7 +29,7 @@ public class RegisterTraineeResponseDTOTest {
     @Test
     @InstancioSource
     public void testRegisterTraineeResponseWithGeneratedData() {
-        RegisterTraineeResponseDTO response =  Instancio.ofBlank(RegisterTraineeResponseDTO.class).create();
+        RegisterTraineeResponseDTO response = Instancio.ofBlank(RegisterTraineeResponseDTO.class).create();
 
         assertNotNull(response);
         assertNotNull(response.getUser());

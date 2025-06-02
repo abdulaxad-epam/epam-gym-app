@@ -2,7 +2,7 @@ package epam.controller;
 
 import epam.dto.request_dto.UpdateTraineeRequestDTO;
 import epam.dto.response_dto.TraineeResponseDTO;
-import epam.client.dto.TrainingResponseDTO;
+import epam.dto.response_dto.TrainingResponseDTO;
 import epam.service.TraineeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ class TraineeControllerTest {
 
         ResponseEntity<TraineeResponseDTO> response = traineeController.getTraineeProfile(authentication);
 
-        assertEquals(200,  response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(expectedResponse, response.getBody());
     }
 
@@ -61,7 +61,7 @@ class TraineeControllerTest {
                 "2024-01-01", "2024-12-31", "Trainer Name", "Cardio", authentication
         );
 
-        assertEquals(200,  response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(expectedTrainings, response.getBody());
     }
 
@@ -74,7 +74,7 @@ class TraineeControllerTest {
 
         ResponseEntity<TraineeResponseDTO> response = traineeController.update(requestDTO, authentication);
 
-        assertEquals(200,  response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(updatedResponse, response.getBody());
     }
 
@@ -84,7 +84,7 @@ class TraineeControllerTest {
 
         ResponseEntity<Void> response = traineeController.delete(authentication);
 
-        assertEquals(200,  response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value());
         assertNull(response.getBody());
     }
 
@@ -95,7 +95,7 @@ class TraineeControllerTest {
 
         ResponseEntity<Void> response = traineeController.updateTraineeStatus(isActive, authentication);
 
-        assertEquals(200,  response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value());
         assertNull(response.getBody());
     }
 }

@@ -122,7 +122,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     @Transactional
-    public Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO, Authentication authentication){
+    public Boolean changePassword(ChangePasswordRequestDTO changePasswordRequestDTO, Authentication authentication) {
         if (authentication == null) {
             throw new UserNotAuthenticated("Access denied");
         }

@@ -36,7 +36,7 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
-    
+
     @Operation(summary = "Register a new trainer")
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Trainer registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = RegisterTrainerResponseDTO.class))), @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content)})
     @PostMapping(value = "/register/trainer", consumes = "application/json", produces = "application/json")

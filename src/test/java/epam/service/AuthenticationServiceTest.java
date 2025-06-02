@@ -103,7 +103,7 @@ public class AuthenticationServiceTest {
     @Test
     void registerTrainer_shouldReturnAuthResponse() {
         // Given
-        var trainerUser = new UserResponseDTO("firstname", "lastname","username",  true);
+        var trainerUser = new UserResponseDTO("firstname", "lastname", "username", true);
         var trainerResponseDTO = RegisterTrainerResponseDTO.builder().user(trainerUser).build();
 
         var trainerRequestDTO = RegisterTrainerRequestDTO.builder()
@@ -205,7 +205,7 @@ public class AuthenticationServiceTest {
         when(passwordGenerator.matches("old", "oldHashed")).thenReturn(true);
         when(passwordGenerator.encode("new")).thenReturn("newHashed");
 
-        assertThrows(UserNotAuthenticated.class,()->authenticationService.changePassword(request, null));
+        assertThrows(UserNotAuthenticated.class, () -> authenticationService.changePassword(request, null));
     }
 
     @Test
@@ -227,7 +227,7 @@ public class AuthenticationServiceTest {
         when(passwordGenerator.matches("old", "oldHashed")).thenReturn(true);
         when(passwordGenerator.encode("new")).thenReturn("newHashed");
 
-        assertThrows(UserNotFoundException.class, ()-> authenticationService.changePassword(request, auth));
+        assertThrows(UserNotFoundException.class, () -> authenticationService.changePassword(request, auth));
     }
 
     @Test
@@ -257,8 +257,8 @@ public class AuthenticationServiceTest {
     void testRefreshToken_InvalidToken() {
         HttpServletRequest request = mock(HttpServletRequest.class);
 
-       when(jwtService.isTokenNotExpired("expiredToken")).thenReturn(false);
-       when(jwtService.validateRefreshToken("invalidToken", mock(UserDetails.class))).thenReturn(false);
+        when(jwtService.isTokenNotExpired("expiredToken")).thenReturn(false);
+        when(jwtService.validateRefreshToken("invalidToken", mock(UserDetails.class))).thenReturn(false);
 
         assertThrows(InvalidTokenType.class, () -> authenticationService.refreshToken(request));
     }

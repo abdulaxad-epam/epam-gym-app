@@ -63,7 +63,7 @@ public class TrainingTypeServiceTest {
     @Test
     void testFindAllTrainingTypes() {
         List<TrainingType> trainingTypes = List.of(trainingType);
-        List<TrainingTypeResponseDTO> responseDTOs = List.of(new TrainingTypeResponseDTO(UUID.randomUUID(),"Yoga"));
+        List<TrainingTypeResponseDTO> responseDTOs = List.of(new TrainingTypeResponseDTO(UUID.randomUUID(), "Yoga"));
 
         when(trainingTypeRepository.findAll()).thenReturn(trainingTypes);
         when(trainingTypeMapper.toTrainingTypeResponseDTO(any(TrainingType.class))).thenReturn(responseDTOs.get(0));

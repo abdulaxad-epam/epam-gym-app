@@ -27,11 +27,12 @@ public class ExceptionMessageTest {
     @Test
     void testAllArgsConstructor() {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        ExceptionMessage exceptionMassage = new ExceptionMessage(timestamp, 500, "Internal Server Error", "Something went wrong");
+        ExceptionMessage exceptionMassage = new ExceptionMessage(timestamp, 500, "Internal Server Error", "Server Error", "2681-5360-4b");
 
         assertEquals(500, exceptionMassage.getStatus());
         assertEquals("Internal Server Error", exceptionMassage.getError());
-        assertEquals("Something went wrong", exceptionMassage.getMessage());
+        assertEquals("Server Error", exceptionMassage.getMessage());
+        assertEquals("2681-5360-4b", exceptionMassage.getRequestId());
         assertEquals(timestamp, exceptionMassage.getTimestamp());
     }
 
@@ -55,9 +56,9 @@ public class ExceptionMessageTest {
         exceptionMassage.setStatus(403);
         exceptionMassage.setError("Forbidden");
         exceptionMassage.setMessage("You don't have permission to access this resource");
-
+        exceptionMassage.setRequestId("2681-5360-4b");
         String expected = "ExceptionMessage(timestamp=" + exceptionMassage.getTimestamp() +
-                ", status=403, error=Forbidden, message=You don't have permission to access this resource)";
+                ", status=403, error=Forbidden, message=You don't have permission to access this resource, requestId=2681-5360-4b)";
 
         assertEquals(expected, exceptionMassage.toString());
     }

@@ -1,17 +1,15 @@
 package epam.service.impl;
 
-import epam.client.TrainingClient;
 import epam.dto.request_dto.TrainerRequestDTO;
 import epam.dto.response_dto.RegisterTrainerResponseDTO;
 import epam.dto.response_dto.TrainerResponseDTO;
-import epam.client.dto.TrainingResponseDTO;
+import epam.dto.response_dto.TrainingResponseDTO;
 import epam.entity.Trainer;
 import epam.entity.Training;
 import epam.exception.exception.TrainerNotFoundException;
 import epam.mapper.TrainerMapper;
 import epam.mapper.TrainingMapper;
 import epam.repository.TrainerRepository;
-import epam.service.TraineeTrainerService;
 import epam.service.TrainerService;
 import epam.service.TrainingService;
 import epam.service.TrainingTypeService;
@@ -24,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,11 +38,12 @@ public class TrainerServiceImpl implements TrainerService {
 
     private final TrainerMapper trainerMapper;
 
-    private final TrainingClient trainingClient;
-
     private final TrainingMapper trainingMapper;
 
     private final UserService userService;
+
+    private final TrainingService trainingService;
+
 
     @Override
     public RegisterTrainerResponseDTO createTrainer(TrainerRequestDTO trainerRequestDTO) {
@@ -86,9 +87,12 @@ public class TrainerServiceImpl implements TrainerService {
         String username = user.getUsername();
 
         userService.findByUsername(username).ifPresentOrElse(trainer -> {
-            trainerRepository.deleteTrainerByUser_Username(username);
 
-            trainingClient.deleteTrainingsByTrainer(trainer.getUserId());
+            List<Training> trainerTrainings = trainingService.getTrainerTrainings(trainer.getUsername());
+
+            trainerTrainings.forEach(training -> trainingService.deleteTraining(training, username));
+
+            trainerRepository.deleteTrainerByUser_Username(username);
 
             log.info("Deleted trainings from user {}", username);
         }, () -> {
@@ -110,9 +114,12 @@ public class TrainerServiceImpl implements TrainerService {
                                                          String periodFrom, String periodTo, String traineeName) {
         UserDetails user = (UserDetails) connectedUser.getPrincipal();
 
+        LocalDateTime from = (periodFrom != null) ? LocalDate.parse(periodFrom).atStartOfDay() : LocalDateTime.of(LocalDate.EPOCH, LocalTime.MIDNIGHT);
+        LocalDateTime to = (periodTo != null) ? LocalDate.parse(periodTo).atTime(LocalTime.MAX) : LocalDateTime.of(LocalDate.of(2035, 1, 1), LocalTime.MAX);
+
+
         List<Training> training = trainerRepository.getTrainerTrainings(
-                user.getUsername(), periodFrom != null ? LocalDate.parse(periodFrom).atStartOfDay() : null,
-                periodTo != null ? LocalDate.parse(periodTo).atStartOfDay() : null, traineeName).orElseThrow(
+                user.getUsername(), from, to, traineeName).orElseThrow(
                 () -> new TrainerNotFoundException("Trainer not found")
         );
         return training.stream().map(trainingMapper::toTrainingResponseDTO).toList();

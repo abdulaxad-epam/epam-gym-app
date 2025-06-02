@@ -4,7 +4,7 @@ import epam.dto.request_dto.TraineeRequestDTO;
 import epam.dto.request_dto.UpdateTraineeRequestDTO;
 import epam.dto.response_dto.RegisterTraineeResponseDTO;
 import epam.dto.response_dto.TraineeResponseDTO;
-import epam.client.dto.TrainingResponseDTO;
+import epam.dto.response_dto.TrainingResponseDTO;
 import epam.entity.Trainee;
 import epam.entity.Training;
 import epam.entity.User;
@@ -22,6 +22,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -121,12 +123,10 @@ public class TraineeServiceTest {
         when(userDetails.getUsername()).thenReturn("john");
         when(traineeRepository.existsTraineeByUser_Username("john")).thenReturn(true);
 
-        doNothing().when(trainingService).deleteTraining("john");
         doNothing().when(traineeRepository).deleteTraineeByUser_Username("john");
 
         traineeService.deleteTrainee(authentication);
 
-        verify(trainingService).deleteTraining("john");
         verify(traineeRepository).deleteTraineeByUser_Username("john");
     }
 
@@ -191,7 +191,8 @@ public class TraineeServiceTest {
 
         when(authentication.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn(username);
-        when(traineeRepository.getTraineeTrainings(username, "2024-01-01", "2024-12-31", "Trainer", "Fitness"))
+        when(traineeRepository.getTraineeTrainings(username, LocalDateTime.of(LocalDate.parse("2024-01-01"),
+                LocalTime.MIDNIGHT), LocalDateTime.of(LocalDate.parse("2024-12-31"), LocalTime.MAX), "Trainer", "Fitness"))
                 .thenReturn(Optional.of(trainingList));
         when(trainingMapper.toTrainingResponseDTO(any())).thenReturn(trainingDTOs.get(0));
 
@@ -205,7 +206,8 @@ public class TraineeServiceTest {
     void shouldThrowWhenGettingTrainingsForNonExistingTrainee() {
         when(authentication.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn("john");
-        when(traineeRepository.getTraineeTrainings("john", "2024-01-01", "2024-12-31", "Trainer", "Fitness"))
+        when(traineeRepository.getTraineeTrainings("john", LocalDateTime.of(LocalDate.parse("2024-01-01"), LocalTime.MIDNIGHT),
+                LocalDateTime.of(LocalDate.parse("2024-12-31"), LocalTime.MAX), "Trainer", "Fitness"))
                 .thenReturn(Optional.empty());
 
         assertThrows(TraineeNotFoundException.class, () -> traineeService.getTraineeTrainings("2024-01-01", "2024-12-31", "Trainer", "Fitness", authentication));

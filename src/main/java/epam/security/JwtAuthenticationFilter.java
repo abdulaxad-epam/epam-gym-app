@@ -68,7 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    public boolean shouldNotFilter(HttpServletRequest request){
+    public boolean shouldNotFilter(HttpServletRequest request) {
         return request.getRequestURI().equals("/api/v1/auth/refresh-token");
     }
 }

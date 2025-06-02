@@ -3,7 +3,7 @@ package epam.service;
 import epam.dto.request_dto.TrainerRequestDTO;
 import epam.dto.response_dto.RegisterTrainerResponseDTO;
 import epam.dto.response_dto.TrainerResponseDTO;
-import epam.client.dto.TrainingResponseDTO;
+import epam.dto.response_dto.TrainingResponseDTO;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
@@ -17,7 +17,6 @@ public interface TrainerService {
     void deleteTrainer(Authentication connectedUser);
 
     TrainerResponseDTO getTrainerByUsername(Authentication connectedUser);
-
 
     List<TrainingResponseDTO> getTrainerTrainings(Authentication connectedUser, String periodFrom, String periodTo, String traineeName);
 

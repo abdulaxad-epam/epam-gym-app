@@ -1,8 +1,8 @@
 package epam.mapper;
 
 
-import epam.client.dto.TrainingRequestDTO;
-import epam.client.dto.TrainingResponseDTO;
+import epam.dto.response_dto.TrainingRequestDTO;
+import epam.dto.response_dto.TrainingResponseDTO;
 import epam.entity.Trainee;
 import epam.entity.Trainer;
 import epam.entity.Training;
@@ -20,6 +20,7 @@ public interface TrainingMapper {
     @Mapping(source = "trainee", target = "trainee", qualifiedByName = "toTraineeResponseDTO")
     @Mapping(source = "trainer", target = "trainer", qualifiedByName = "toTrainerResponseDTO")
     @Mapping(source = "trainingType.description", target = "trainingType")
+    @Mapping(source = "trainingId", target = "trainingId")
     TrainingResponseDTO toTrainingResponseDTO(Training training);
 
     @Named("toTraining")

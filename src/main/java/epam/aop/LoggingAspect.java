@@ -18,7 +18,7 @@ public class LoggingAspect {
     @Before("execution(* epam.controller.*.*(..))")
     public void logRequest(JoinPoint joinPoint) {
 
-                logger.info("Controller Method: {0}.{1}(), Args: {2}",
+        logger.info("Controller Method: {0}.{1}(), Args: {2}",
                 joinPoint.getSignature().getDeclaringTypeName(),
                 joinPoint.getSignature().getName(),
                 joinPoint.getArgs());

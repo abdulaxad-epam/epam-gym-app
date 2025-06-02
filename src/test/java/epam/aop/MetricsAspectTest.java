@@ -4,6 +4,7 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -26,17 +27,17 @@ public class MetricsAspectTest {
         lenient().when(meterRegistry.counter("event_counter")).thenReturn(counter);
 
         lenient().when(meterRegistry.get("event_counter")).thenReturn(null);
+        try (MockedStatic<Counter> mockedStaticCounter = mockStatic(Counter.class)) {
+            Counter.Builder builder = mock(Counter.Builder.class);
+            when(builder.description(anyString())).thenReturn(builder);
+            when(builder.register(meterRegistry)).thenReturn(counter);
+            mockedStaticCounter.when(() -> Counter.builder("event_counter")).thenReturn(builder);
 
-        Counter.Builder builder = mock(Counter.Builder.class);
-        when(builder.description(anyString())).thenReturn(builder);
-        when(builder.register(meterRegistry)).thenReturn(counter);
-        mockStatic(Counter.class).when(() -> Counter.builder("event_counter")).thenReturn(builder);
+            MetricsAspect metricsAspect = new MetricsAspect(meterRegistry);
 
-        MetricsAspect metricsAspect = new MetricsAspect(meterRegistry);
+            metricsAspect.trackCustomEvent();
 
-        metricsAspect.trackCustomEvent();
-
-        verify(counter, times(1)).increment();
+            verify(counter, times(1)).increment();
+        }
     }
-
 }

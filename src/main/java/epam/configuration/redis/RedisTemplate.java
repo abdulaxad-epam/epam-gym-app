@@ -27,13 +27,10 @@ public class RedisTemplate {
         return entry != null && !entry.isExpired();
     }
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 600)
     public void cleanUpExpiredEntries() {
-        store.entrySet().removeIf(entry -> {
-            log.info("Cleaning up expired entries in Redis (checking if token is expired: {})", entry.getKey());
-            return entry.getValue().isExpired();
-
-        });
+        store.entrySet().removeIf(entry ->
+                entry.getValue().isExpired());
     }
 
     public class ValueOperations {

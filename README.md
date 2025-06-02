@@ -47,7 +47,7 @@ http://localhost:8080/swagger-ui/index.html
 
 1. Clone the repository:
 ```bash
-git clone --branch epam-gym-app-security https://github.com/abdulaxad-epam/epam-gym-app.git 
+git clone --branch epam-gym-app-main-service https://github.com/abdulaxad-epam/epam-gym-app.git 
 cd epam-gym-app
 ```
 2. Build the application:
@@ -96,11 +96,24 @@ curl -X POST http://localhost:8080/api/v1/trainings \
     "traineeUsername": "trainee_username",
     "trainerUsername": "trainer_username",
     "trainingName": "Morning Workout",
-    "trainingDate": "2023-01-15",
+    "trainingDate": "2025-07-15",
     "trainingDuration": 60,
     "trainingTypeId": 1
   }'
 ```
+
+
+The `TrainerWorkloadService` provides methods to interact with the external trainer workload system.
+
+* `actionOnADD(Training training)`: Sends a request to add a new training workload for a trainer.
+* `actionOnDELETE(Training training)`: Sends a request to delete an existing training workload for a trainer.
+
+These methods internally handle:
+* Mapping `Training` entities to `TrainerWorkloadRequestDTO`.
+* Generating JWT tokens.
+* Making HTTP POST requests to the configured workload service endpoint.
+* Applying Circuit Breaker logic for resilience.
+
 
 ## Authentication
 
@@ -148,3 +161,19 @@ Handles training session creation and management.
 ### Training Type Controller
 Provides access to available training types.
 - Get all training types: `GET /api/v1/training-types`
+
+### Trainer-Workload Controller (`/api/v1/trainer-workload`)
+
+| Method | Path | Description                                     | Request Body DTO               | Response Body DTO                 |
+| :----- | :--- | :---------------------------------------------- | :----------------------------- | :-------------------------------- |
+| `GET`  | `/`  | Get trainer workload summary for a given year and month | - (`year`, `month` as params)  | `TrainerWorkloadSummaryResponseDTO` |
+
+
+
+## Testing
+
+The project includes integration tests that leverage WireMock to simulate the external `trainer-workload-service`.
+
+To run the tests:
+```bash
+./gradlew build test

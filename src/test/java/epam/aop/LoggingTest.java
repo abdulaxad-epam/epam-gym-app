@@ -36,17 +36,17 @@ class LoggingTest {
 
     @Test
     void testGetTransactionId() {
-        String transactionId1 = logging.getTransactionId();
-        String transactionId2 = logging.getTransactionId();
+        String transactionId1 = Logging.getTransactionId();
+        String transactionId2 = Logging.getTransactionId();
         assertNotNull(transactionId1);
         assertEquals(transactionId1, transactionId2, "Transaction ID should be consistent within the same thread");
     }
 
     @Test
     void testResetTransactionId() {
-        String oldTransactionId = logging.getTransactionId();
+        String oldTransactionId = Logging.getTransactionId();
         logging.resetTransactionId();
-        String newTransactionId = logging.getTransactionId();
+        String newTransactionId = Logging.getTransactionId();
         assertNotNull(newTransactionId);
         assertNotEquals(oldTransactionId, newTransactionId, "Transaction ID should change after reset");
     }

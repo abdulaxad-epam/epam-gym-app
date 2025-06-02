@@ -15,7 +15,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -44,10 +43,9 @@ public class Training {
     private String trainingName;
 
     @Column(nullable = false)
-    @CreationTimestamp
     private LocalDateTime trainingDate;
 
-    @JoinColumn(name = "trainingType_id")
+    @JoinColumn(name = "training_type_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private TrainingType trainingType;
 

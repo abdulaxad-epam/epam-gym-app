@@ -31,6 +31,7 @@ public class TrainingTypeController {
                             schema = @Schema(implementation = TrainingTypeResponseDTO.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
     })
+
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<TrainingTypeResponseDTO>> getTrainingTypes() {
         return ResponseEntity.ok(trainingTypeService.findAll());

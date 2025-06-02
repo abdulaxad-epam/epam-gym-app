@@ -53,14 +53,24 @@ INSERT INTO trainer_trainee (trainee_id, trainer_id) VALUES ('4d5e6f1a-2b3c-4d4e
 INSERT INTO trainer_trainee (trainee_id, trainer_id) VALUES ('4d5e6f1a-2b3c-4d4e-1f1a-4a5b6c7d8e9f', '5e6f1a2b-3c4d-4e5f-2a1b-5a6b7c8d9e0f');
 
 
-INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('a9b8c7d6-e5f4-4a9b-8c7d-1a9b8c7d6e5f', '1a2b3c4d-5e6f-4a1b-8c1d-1a2b3c4d5e6f', '5e6f1a2b-3c4d-4e5f-2a1b-5a6b7c8d9e0f', 'Upper Body Focus', '2025-02-15 10:00:00', 'f582d589-c3a0-4864-9c97-ddae809a92e9', 60);
-INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('b8c7d6e5-f4a3-4b8c-7d6e-2b8c7d6e5f4a', '1a2b3c4d-5e6f-4a1b-8c1d-1a2b3c4d5e6f', '6f1a2b3c-4d5e-4f6a-3b1c-6a7b8c9d0e1f', 'Endurance Run', '2025-02-17 14:30:00', 'b7c9b5d0-1a9c-4ea0-82f7-559a9a3c4283', 45);
-INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('c7d6e5f4-a3b2-4c7d-6e5f-3c7d6e5f4a3b', '2b3c4d5e-6f1a-4b2c-9d1e-2a3b4c5d6e7f', '6f1a2b3c-4d5e-4f6a-3b1c-6a7b8c9d0e1f', 'Interval Training', '2025-02-19 09:00:00', 'b7c9b5d0-1a9c-4ea0-82f7-559a9a3c4283', 30);
-INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('d6e5f4a3-b2c1-4d6e-5f4a-4d6e5f4a3b2c', '2b3c4d5e-6f1a-4b2c-9d1e-2a3b4c5d6e7f', '7a1b2c3d-4e5f-4a1b-4c1d-7a8b9c0d1e2f', 'Advanced HIIT', '2025-02-21 16:00:00', 'd1c3ed9a-e0a7-4fcc-8829-f32f5d701d10', 40);
-INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('e5f4a3b2-c1d0-4e5f-4a3b-5e5f4a3b2c1d', '3c4d5e6f-1a2b-4c3d-0e1f-3a4b5c6d7e8f', '7a1b2c3d-4e5f-4a1b-4c1d-7a8b9c0d1e2f', 'Core Blast', '2025-02-22 11:30:00', 'd1c3ed9a-e0a7-4fcc-8829-f32f5d701d10', 50);
-INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('f4a3b2c1-d0e9-4f4a-3b2c-6f4a3b2c1d0e', '3c4d5e6f-1a2b-4c3d-0e1f-3a4b5c6d7e8f', '8b2c3d4e-5f6a-4b2c-5d1e-8a9b0c1d2e3f', 'Power Yoga', '2025-02-23 08:00:00', '5e8d317b-aae7-4ba6-9729-57e3b8c617ef', 75);
-INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('1d2e3f4a-5b6c-41d2-e3f4-71d2e3f4a5b6', '4d5e6f1a-2b3c-4d4e-1f1a-4a5b6c7d8e9f', '8b2c3d4e-5f6a-4b2c-5d1e-8a9b0c1d2e3f', 'Relaxation Yoga', '2025-02-24 17:00:00', '5e8d317b-aae7-4ba6-9729-57e3b8c617ef', 60);
-INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('2e3f4a5b-6c7d-42e3-f4a5-82e3f4a5b6c7', '4d5e6f1a-2b3c-4d4e-1f1a-4a5b6c7d8e9f', '5e6f1a2b-3c4d-4e5f-2a1b-5a6b7c8d9e0f', 'Lower Body Strength', '2025-02-25 12:45:00', 'f582d589-c3a0-4864-9c97-ddae809a92e9', 55);
+INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('a9b8c7d6-e5f4-4a9b-8c7d-1a9b8c7d6e5f', '1a2b3c4d-5e6f-4a1b-8c1d-1a2b3c4d5e6f', '5e6f1a2b-3c4d-4e5f-2a1b-5a6b7c8d9e0f', 'Upper Body Focus', '2025-02-01 10:00:00', 'f582d589-c3a0-4864-9c97-ddae809a92e9', 60);
+INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('b8c7d6e5-f4a3-4b8c-7d6e-2b8c7d6e5f4a', '1a2b3c4d-5e6f-4a1b-8c1d-1a2b3c4d5e6f', '6f1a2b3c-4d5e-4f6a-3b1c-6a7b8c9d0e1f', 'Endurance Run', '2025-02-01 14:30:00', 'b7c9b5d0-1a9c-4ea0-82f7-559a9a3c4283', 45);
+INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('c7d6e5f4-a3b2-4c7d-6e5f-3c7d6e5f4a3b', '2b3c4d5e-6f1a-4b2c-9d1e-2a3b4c5d6e7f', '6f1a2b3c-4d5e-4f6a-3b1c-6a7b8c9d0e1f', 'Interval Training', '2025-02-01 09:00:00', 'b7c9b5d0-1a9c-4ea0-82f7-559a9a3c4283', 30);
+INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('d6e5f4a3-b2c1-4d6e-5f4a-4d6e5f4a3b2c', '2b3c4d5e-6f1a-4b2c-9d1e-2a3b4c5d6e7f', '7a1b2c3d-4e5f-4a1b-4c1d-7a8b9c0d1e2f', 'Advanced HIIT', '2025-02-01 16:00:00', 'd1c3ed9a-e0a7-4fcc-8829-f32f5d701d10', 40);
+INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('e5f4a3b2-c1d0-4e5f-4a3b-5e5f4a3b2c1d', '3c4d5e6f-1a2b-4c3d-0e1f-3a4b5c6d7e8f', '7a1b2c3d-4e5f-4a1b-4c1d-7a8b9c0d1e2f', 'Core Blast', '2025-02-01 11:30:00', 'd1c3ed9a-e0a7-4fcc-8829-f32f5d701d10', 50);
+INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('f4a3b2c1-d0e9-4f4a-3b2c-6f4a3b2c1d0e', '3c4d5e6f-1a2b-4c3d-0e1f-3a4b5c6d7e8f', '8b2c3d4e-5f6a-4b2c-5d1e-8a9b0c1d2e3f', 'Power Yoga', '2025-02-01 08:00:00', '5e8d317b-aae7-4ba6-9729-57e3b8c617ef', 75);
+INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('1d2e3f4a-5b6c-41d2-e3f4-71d2e3f4a5b6', '4d5e6f1a-2b3c-4d4e-1f1a-4a5b6c7d8e9f', '8b2c3d4e-5f6a-4b2c-5d1e-8a9b0c1d2e3f', 'Relaxation Yoga', '2025-02-01 17:00:00', '5e8d317b-aae7-4ba6-9729-57e3b8c617ef', 60);
+INSERT INTO trainings (training_id, trainee_id, trainer_id, training_name, training_date, training_type_id, training_duration) VALUES ('2e3f4a5b-6c7d-42e3-f4a5-82e3f4a5b6c7', '4d5e6f1a-2b3c-4d4e-1f1a-4a5b6c7d8e9f', '5e6f1a2b-3c4d-4e5f-2a1b-5a6b7c8d9e0f', 'Lower Body Strength', '2025-02-01 12:45:00', 'f582d589-c3a0-4864-9c97-ddae809a92e9', 55);
 
 
 ALTER TABLE trainer_trainee ADD CONSTRAINT FK_TRAINER FOREIGN KEY (trainer_id) REFERENCES trainers (trainer_id) ON DELETE CASCADE;
+
+
+ALTER TABLE trainings DROP CONSTRAINT fk4btmw0yu4tbogiw8qi0ewba74;
+
+ALTER TABLE trainings ADD CONSTRAINT fk4btmw0yu4tbogiw8qi0ewba74 FOREIGN KEY (trainee_id) REFERENCES trainees(trainee_id) ON DELETE CASCADE;
+
+
+ALTER TABLE trainer_trainee DROP CONSTRAINT fk2sl2lr5n7g2swroe2gid185nk;
+
+ALTER TABLE trainer_trainee ADD CONSTRAINT fk2sl2lr5n7g2swroe2gid185nk FOREIGN KEY (trainee_id) REFERENCES trainees(trainee_id) ON DELETE CASCADE;

@@ -1,7 +1,6 @@
 package epam.dto.response_dto;
 
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +21,6 @@ public class TraineeResponseDTO implements Serializable {
     private String traineeDateOfBirth;
 
     private String address;
-    
+
     private UserResponseDTO user;
 }

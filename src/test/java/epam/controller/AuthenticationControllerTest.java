@@ -44,7 +44,7 @@ public class AuthenticationControllerTest {
 
         ResponseEntity<AuthenticationResponseDTO> response = authenticationController.createTrainer(requestDTO);
 
-        assertEquals(200,  response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(responseDTO, response.getBody());
     }
 
@@ -57,7 +57,7 @@ public class AuthenticationControllerTest {
 
         ResponseEntity<AuthenticationResponseDTO> response = authenticationController.createTrainee(requestDTO);
 
-        assertEquals(200,  response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(responseDTO, response.getBody());
     }
 
@@ -70,7 +70,7 @@ public class AuthenticationControllerTest {
 
         ResponseEntity<AuthenticationResponseDTO> response = authenticationController.authenticateTraining(requestDTO);
 
-        assertEquals(200,  response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(responseDTO, response.getBody());
     }
 
@@ -83,7 +83,7 @@ public class AuthenticationControllerTest {
 
         ResponseEntity<Boolean> response = authenticationController.changePassword(requestDTO, auth);
 
-        assertEquals(202,  response.getStatusCode().value());
+        assertEquals(202, response.getStatusCode().value());
     }
 
     @Test
@@ -94,7 +94,7 @@ public class AuthenticationControllerTest {
 
         ResponseEntity<Void> response = authenticationController.logout(request);
 
-        assertEquals(204,  response.getStatusCode().value());
+        assertEquals(204, response.getStatusCode().value());
     }
 
     @Test

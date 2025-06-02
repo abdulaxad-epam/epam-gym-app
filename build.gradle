@@ -14,6 +14,7 @@ java {
 }
 
 ext {
+    springCloudVersion = "2023.0.1"
     openApiVersion = "2.3.0"
     mapstructVersion = "1.6.0.Beta1"
     mapstructBindingVersion = "0.2.0"
@@ -24,6 +25,8 @@ ext {
     mockitoVersion = "5.2.0"
     jjwtVersion = "0.12.6"
     aspectjVersion = "1.9.19"
+    hoverflyVersion = "0.19.1"
+    wiremockVersion = "3.9.1"
 }
 
 repositories {
@@ -32,12 +35,12 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.1"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
     }
 }
 
 dependencies {
-    // Spring Boot
+    // Implementation dependencies
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
@@ -45,48 +48,40 @@ dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security'
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client'
-    testImplementation group: 'org.springframework.security', name: 'spring-security-test'
-    runtimeOnly group: 'io.micrometer', name: 'micrometer-registry-prometheus'
-
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-circuitbreaker-resilience4j'
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: jjwtVersion
+    implementation group: 'org.aspectj', name: 'aspectjweaver', version: aspectjVersion
+    implementation group: 'com.h2database', name: 'h2'
+    implementation group: 'org.postgresql', name: 'postgresql'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: loggerVersion
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: openApiVersion
+    implementation group: 'org.mapstruct', name: 'mapstruct', version: mapstructVersion
+
+    // CompileOnly dependencies
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+
+    // RuntimeOnly dependencies
+    runtimeOnly group: 'io.micrometer', name: 'micrometer-registry-prometheus'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: jjwtVersion
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: jjwtVersion
 
-    // AspectJ
-    implementation group: 'org.aspectj', name: 'aspectjweaver', version: aspectjVersion
-
-    // Databases
-    implementation group: 'com.h2database', name: 'h2'
-    implementation group: 'org.postgresql', name: 'postgresql'
-
-    // Logging
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: loggerVersion
-
-    // OpenAPI
-    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: openApiVersion
-
-    // MapStruct
-    implementation group: 'org.mapstruct', name: 'mapstruct', version: mapstructVersion
+    // AnnotationProcessor dependencies
     annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: mapstructVersion
-
-    // Lombok
-    compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
     annotationProcessor group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: mapstructBindingVersion
 
-    // Tests
+    // Test dependencies
+
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+    testImplementation group: 'org.springframework.security', name: 'spring-security-test'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter'
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-suite-engine', version: suitVersion
     testImplementation group: 'org.junit.platform', name: 'junit-platform-suite-api', version: suitVersion
     testImplementation group: 'org.junit.platform', name: 'junit-platform-launcher', version: suitVersion
     testImplementation group: 'junit', name: 'junit'
-
-    // Mockito
     testImplementation group: 'org.mockito', name: 'mockito-core', version: mockitoVersion
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion
     testImplementation group: 'org.mockito', name: 'mockito-inline', version: mockitoVersion
-
-    // Instancio
     testImplementation group: 'org.instancio', name: 'instancio-junit', version: instancioVersion
 }
 
