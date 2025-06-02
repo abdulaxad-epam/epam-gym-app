@@ -10,12 +10,8 @@ import java.util.Optional;
 public interface TrainerWorkloadRepository extends JpaRepository<TrainerWorkload, Long> {
     List<TrainerWorkload> findTrainerWorkloadsByTrainerUsername(String trainerUsername);
 
-    List<TrainerWorkload> findTrainerWorkloadsByTrainerUsernameAndTrainingDateBetween(String trainerUsername, LocalDate trainingDateAfter, LocalDate trainingDateBefore);
-
     Optional<TrainerWorkload> findTrainerWorkloadByTrainerUsernameAndTrainingDate(String trainerUsername, LocalDate trainingDate);
 
     List<TrainerWorkload> findTrainerWorkloadsByTrainerUsernameAndTrainingDate(String trainerUsername, LocalDate trainingDate);
-
-    void removeTrainerWorkloadByTrainingDurationLessThanEqual(Integer trainingDurationIsLessThan);
 }
 
