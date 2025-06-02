@@ -47,7 +47,7 @@ http://localhost:8080/swagger-ui/index.html
 
 1. Clone the repository:
 ```bash
-git clone --branch epam-gym-app-main-service https://github.com/abdulaxad-epam/epam-gym-app.git 
+git clone --branch epam-gym-app-trainer-workload-service https://github.com/abdulaxad-epam/epam-gym-app.git 
 cd epam-gym-app
 ```
 2. Build the application:
