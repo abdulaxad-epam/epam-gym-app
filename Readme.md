@@ -1,15 +1,13 @@
 # Epam Gym CRM
-
+## Trainer Workload Service
 A comprehensive Spring Boot application for managing trainers, trainees, and training sessions.
 
 ## Table of Contents
 - [Overview](#overview)
 - [Features](#features)
 - [Technology Stack](#technology-stack)
-- [API Documentation](#api-documentation)
 - [Setup Instructions](#setup-instructions)
 - [Usage Examples](#usage-examples)
-- [Authentication](#authentication)
 - [Controllers](#controllers)
 
 ## Overview
@@ -34,13 +32,6 @@ This system provides a platform for managing the relationships between trainers 
 - **Lombok**: Reducing boilerplate code
 - **Jakarta Validation**: Input validation
 
-## API Documentation
-
-API documentation is available via Swagger UI. After starting the application, access the documentation at:
-```
-http://localhost:8080/swagger-ui/index.html
-```
-
 ## Setup Instructions
 
 ### Installation
@@ -62,46 +53,71 @@ java -jar build/libs/epam-gym-application-boot-1.0-0.jar
 ```
 
 ## Usage Examples
+### Trainer Workload API Documentation
 
-### Register a Trainer
+### 1. Perform an Action on Trainer Workload
+
+### Endpoint
+```http
+POST /api/v1/trainer-workload/action
+```
+
+### Description
+Triggers a workload-related action for a specific trainer based on the provided request data.
+
+### Request Headers
+```http
+Content-Type: application/json
+```
+
+### Request Body
+```json
+{
+  "traineeUsername": "jane.smith",
+  "trainingName": "Flexibility",
+  "trainingDate": "2025-06-10",
+  "trainingType": "CARDIOVASCULAR_TRAINING",
+  "trainingDuration": 60
+}
+```
+
+*Note: Adjust `actionType` and `hours` according to business rules.*
+
+### Example cURL
 ```bash
-curl -X POST http://localhost:8080/api/v1/auth/register/trainer \
+curl -X POST http://localhost:8081/api/v1/trainer-workload/action \
   -H "Content-Type: application/json" \
   -d '{
-    "firstname": "John",
-    "lastname": "Smith",
-    "specialization": "Strength Training"
+        "traineeUsername": "jane.smith",
+        "trainingName": "Flexibility",
+        "trainingDate": "2025-06-10",
+        "trainingType": "CARDIOVASCULAR_TRAINING",
+        "trainingDuration": 60
+        "actionType": ADD/DELETE
   }'
 ```
 
-### Register a Trainee
-```bash
-curl -X POST http://localhost:8080/api/v1/auth/register/trainee \
-  -H "Content-Type: application/json" \
-  -d '{
-    "firstname": "Jane",
-    "lastname": "Doe",
-    "dateOfBirth": "1990-01-01",
-    "address": "123 Fitness Street"
-  }'
+---
+
+### 2. Retrieve Trainer Workload Summary
+
+#### Endpoint
+```http
+GET /api/v1/trainer-workload-summary
 ```
 
-### Create a Training Session
-```bash
-curl -X POST http://localhost:8080/api/v1/trainings \
-  -H "Content-Type: application/json" \
-  -H "username: trainer_username" \
-  -H "password: password" \
-  -d '{
-    "traineeUsername": "trainee_username",
-    "trainerUsername": "trainer_username",
-    "trainingName": "Morning Workout",
-    "trainingDate": "2025-07-15",
-    "trainingDuration": 60,
-    "trainingTypeId": 1
-  }'
-```
+#### Description
+Returns a summary of a trainer’s workload for a specific month and year.
 
+#### Query Parameters
+- `trainerUsername` (String) — required
+- `year` (Integer) — required
+- `month` (Integer) — required
+
+### Example cURL
+```bash
+curl -X GET "http://localhost:8081/api/v1/trainer-workload-summary?trainerUsername=john.smith&year=2025&month=6"
+```
 
 The `TrainerWorkloadService` provides methods to interact with the external trainer workload system.
 
@@ -114,16 +130,6 @@ These methods internally handle:
 * Making HTTP POST requests to the configured workload service endpoint.
 * Applying Circuit Breaker logic for resilience.
 
-
-## Authentication
-
-Authentication is required for most endpoints. Pass credentials via headers:
-```bash
-curl -X GET http://localhost:8080/api/v1/trainees/username \
-  -H "password: user_password"
-```
-
-Password changes can be performed using the `/api/v1/auth/changePassword` endpoint.
 
 ## Controllers
 
@@ -171,8 +177,6 @@ Provides access to available training types.
 
 
 ## Testing
-
-The project includes integration tests that leverage WireMock to simulate the external `trainer-workload-service`.
 
 To run the tests:
 ```bash
