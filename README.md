@@ -172,8 +172,6 @@ Provides access to available training types.
 
 ## Testing
 
-The project includes integration tests that leverage WireMock to simulate the external `trainer-workload-service`.
-
 To run the tests:
 ```bash
 ./gradlew build test
